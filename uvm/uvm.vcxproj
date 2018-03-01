@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\uvm\uvm_api_types.cpp" />
+    <ClCompile Include="src\uvm\uvm_lib.cpp" />
+    <ClCompile Include="src\uvm\uvm_lutil.cpp" />
+    <ClCompile Include="src\uvm\uvm_state_scope.cpp" />
+    <ClCompile Include="src\uvm\uvm_storage.cpp" />
+    <ClCompile Include="src\uvm\uvm_tokenparser.cpp" />
+    <ClCompile Include="src\uvm\lapi.cpp" />
+    <ClCompile Include="src\uvm\lauxlib.cpp" />
+    <ClCompile Include="src\uvm\lbaselib.cpp" />
+    <ClCompile Include="src\uvm\lbitlib.cpp" />
+    <ClCompile Include="src\uvm\lcode.cpp" />
+    <ClCompile Include="src\uvm\lcorolib.cpp" />
+    <ClCompile Include="src\uvm\lctype.cpp" />
+    <ClCompile Include="src\uvm\ldblib.cpp" />
+    <ClCompile Include="src\uvm\ldebug.cpp" />
+    <ClCompile Include="src\uvm\ldo.cpp" />
+    <ClCompile Include="src\uvm\ldump.cpp" />
+    <ClCompile Include="src\uvm\lfunc.cpp" />
+    <ClCompile Include="src\uvm\lgc.cpp" />
+    <ClCompile Include="src\uvm\lhashmap.cpp" />
+    <ClCompile Include="src\uvm\lhttplib.cpp" />
+    <ClCompile Include="src\uvm\linit.cpp" />
+    <ClCompile Include="src\uvm\liolib.cpp" />
+    <ClCompile Include="src\uvm\ljsonlib.cpp" />
+    <ClCompile Include="src\uvm\ljsonrpclib.cpp" />
+    <ClCompile Include="src\uvm\llex.cpp" />
+    <ClCompile Include="src\uvm\lmathlib.cpp" />
+    <ClCompile Include="src\uvm\lmem.cpp" />
+    <ClCompile Include="src\uvm\lnetlib.cpp" />
+    <ClCompile Include="src\uvm\loadlib.cpp" />
+    <ClCompile Include="src\uvm\lobject.cpp" />
+    <ClCompile Include="src\uvm\lopcodes.cpp" />
+    <ClCompile Include="src\uvm\loslib.cpp" />
+    <ClCompile Include="src\uvm\lparser.cpp" />
+    <ClCompile Include="src\uvm\lprefix.cpp" />
+    <ClCompile Include="src\uvm\lstate.cpp" />
+    <ClCompile Include="src\uvm\lstring.cpp" />
+    <ClCompile Include="src\uvm\lstrlib.cpp" />
+    <ClCompile Include="src\uvm\ltable.cpp" />
+    <ClCompile Include="src\uvm\ltablib.cpp" />
+    <ClCompile Include="src\uvm\ltimelib.cpp" />
+    <ClCompile Include="src\uvm\ltm.cpp" />
+    <ClCompile Include="src\uvm\lundump.cpp" />
+    <ClCompile Include="src\uvm\lutf8lib.cpp" />
+    <ClCompile Include="src\uvm\lvm.cpp" />
+    <ClCompile Include="src\uvm\lzio.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\uvm\exceptions.h" />
+    <ClInclude Include="include\uvm\uvm_api.h" />
+    <ClInclude Include="include\uvm\uvm_api_types.h" />
+    <ClInclude Include="include\uvm\uvm_common.h" />
+    <ClInclude Include="include\uvm\uvm_compat.h" />
+    <ClInclude Include="include\uvm\uvm_lib.h" />
+    <ClInclude Include="include\uvm\uvm_lutil.h" />
+    <ClInclude Include="include\uvm\uvm_storage.h" />
+    <ClInclude Include="include\uvm\uvm_tokenparser.h" />
+    <ClInclude Include="include\uvm\lapi.h" />
+    <ClInclude Include="include\uvm\lauxlib.h" />
+    <ClInclude Include="include\uvm\lcode.h" />
+    <ClInclude Include="include\uvm\lctype.h" />
+    <ClInclude Include="include\uvm\ldebug.h" />
+    <ClInclude Include="include\uvm\ldo.h" />
+    <ClInclude Include="include\uvm\lfunc.h" />
+    <ClInclude Include="include\uvm\lgc.h" />
+    <ClInclude Include="include\uvm\lhashmap.h" />
+    <ClInclude Include="include\uvm\llex.h" />
+    <ClInclude Include="include\uvm\llimits.h" />
+    <ClInclude Include="include\uvm\lmem.h" />
+    <ClInclude Include="include\uvm\lnetlib.h" />
+    <ClInclude Include="include\uvm\lobject.h" />
+    <ClInclude Include="include\uvm\lopcodes.h" />
+    <ClInclude Include="include\uvm\lparser.h" />
+    <ClInclude Include="include\uvm\lprefix.h" />
+    <ClInclude Include="include\uvm\lstate.h" />
+    <ClInclude Include="include\uvm\lstring.h" />
+    <ClInclude Include="include\uvm\ltable.h" />
+    <ClInclude Include="include\uvm\ltm.h" />
+    <ClInclude Include="include\uvm\lua.h" />
+    <ClInclude Include="include\uvm\lua.hpp" />
+    <ClInclude Include="include\uvm\luaconf.h" />
+    <ClInclude Include="include\uvm\lualib.h" />
+    <ClInclude Include="include\uvm\lundump.h" />
+    <ClInclude Include="include\uvm\lvm.h" />
+    <ClInclude Include="include\uvm\lzio.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{5BDB377F-63A6-494C-8E0B-E6EC7EAEA081}</ProjectGuid>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>E:\projects\fc\include;E:\projects\boost_1.55.x64;..\uvm\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>E:\projects\boost_1.55.x64\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libboost_iostreams-vc120-mt-gd-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Link>
+      <AdditionalDependencies>libboost_iostreams-vc120-mt-1_55.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>E:\projects\boost_1.55.x64\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\uvm\include;E:\projects\fc\include;E:\projects\boost_1.55.x64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
