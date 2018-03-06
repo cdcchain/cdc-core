@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 {
     try
     {
-        cdcchain::client::ClientPtr client = std::make_shared<cdcchain::client::Client>("alp_client");
+        cdcchain::client::ClientPtr client = std::make_shared<cdcchain::client::Client>("cdc_client");
         client->configure_from_command_line(argc, argv);
         client->start().wait();
     }
