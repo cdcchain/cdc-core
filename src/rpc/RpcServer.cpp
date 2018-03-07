@@ -214,7 +214,7 @@ namespace cdcchain {
                                 //fc_ilog( fc::logger::get("rpc"), "Unauthorized ${path}, username: ${user}", ("path",r.path)("user",username));
                                 // WARNING: logging RPC calls can capture passwords and private keys
                                 //      elog( "\n\n\n Unauthorized ${path}, username: ${user}  password ${password}", ("path",r.path)("user",username)("password", password));
-                                s.add_header("WWW-Authenticate", "Basic realm=\"ubcore wallet\"");
+                                s.add_header("WWW-Authenticate", "Basic realm=\"cdcchain wallet\"");
                                 std::string message = "Unauthorized";
 
                                 s.set_status(fc::http::reply::NotAuthorized);

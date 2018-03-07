@@ -7519,7 +7519,7 @@ namespace cdcchain {
 				(fc::json::from_string("\"\"").as<std::string>()) :
 				parameters[0].as<std::string>();
 
-			vector<cdcchain::consensus::SandboxAccountInfo> result = get_client()->simulator_list_my_addresses(account_name);
+			vector<cdcchain::consensus::SimulatorAccountInfo> result = get_client()->simulator_list_my_addresses(account_name);
 			return fc::variant(result);
 		}
 
@@ -7536,7 +7536,7 @@ namespace cdcchain {
 				(fc::json::from_string("\"\"").as<std::string>()) :
 				parameters["account_name"].as<std::string>();
 
-			vector<cdcchain::consensus::SandboxAccountInfo> result = get_client()->simulator_list_my_addresses(account_name);
+			vector<cdcchain::consensus::SimulatorAccountInfo> result = get_client()->simulator_list_my_addresses(account_name);
 			return fc::variant(result);
 		}
 
@@ -10785,13 +10785,13 @@ namespace cdcchain {
             {
                 // register method blockchain_btc_address_convert
                 cdcchain::api::MethodData blockchain_btc_address_convert_method_metadata{ "blockchain_btc_address_convert", nullptr,
-                    /* description */ "Convert bitcoin address file to ubcore address file.",
+                    /* description */ "Convert bitcoin address file to cdcchain address file.",
                     /* returns */ "void",
                     /* params: */{
                         {"path", "string", cdcchain::api::required_positional, fc::ovariant()}
                           },
                     /* prerequisites */ (cdcchain::api::MethodPrerequisites) 0,
-                    /* detailed description */ "Convert bitcoin address file to ubcore address file.\n\nParameters:\n  path (string, required): The bitcoin address file path.\n\nReturns:\n  void\n",
+                    /* detailed description */ "Convert bitcoin address file to cdcchain address file.\n\nParameters:\n  path (string, required): The bitcoin address file path.\n\nReturns:\n  void\n",
                     /* aliases */ {}, true};
                 store_method_metadata(blockchain_btc_address_convert_method_metadata);
             }

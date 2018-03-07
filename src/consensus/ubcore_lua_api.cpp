@@ -41,7 +41,7 @@ namespace cdcchain {
             static std::string get_file_name_str_from_contract_module_name(std::string name)
             {
                 std::stringstream ss;
-                ss << "ubcore_contract_" << name;
+                ss << "cdcchain_contract_" << name;
                 return ss.str();
             }
 
@@ -467,7 +467,7 @@ namespace cdcchain {
             bool UvmChainApi::register_storage(lua_State *L, const char *contract_name, const char *name)
             {
                 // TODO
-                printf("registered storage %s[%s] to ubcore\n", contract_name, name);
+                printf("registered storage %s[%s] to cdcchain\n", contract_name, name);
                 return true;
             }
 

@@ -252,7 +252,7 @@ namespace cdcchain {
             std::vector<cdcchain::consensus::Asset> simulator_contract_register_testing(const std::string& owner, const fc::path& codefile) override;
             std::vector<cdcchain::consensus::Asset> simulator_contract_call_testing(const std::string& contract, const std::string& caller_name, const std::string& function_name, const std::string& params) override;
             std::vector<cdcchain::consensus::Asset> simulator_transfer_to_contract_testing(double amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_name, const std::string& to_contract) override;
-            vector<cdcchain::consensus::SandboxAccountInfo> simulator_list_my_addresses(const std::string& account_name = fc::json::from_string("\"\"").as<std::string>()) override;
+            vector<cdcchain::consensus::SimulatorAccountInfo> simulator_list_my_addresses(const std::string& account_name = fc::json::from_string("\"\"").as<std::string>()) override;
             std::string get_contract_registered_in_transaction(const cdcchain::consensus::TransactionIdType& trx_id) override;
             cdcchain::consensus::TransactionIdType get_transaction_id_contract_registered(const std::string& contract_id) override;
             cdcchain::consensus::CodePrintAble contract_get_info_from_gpc_file(const fc::path& file) override;

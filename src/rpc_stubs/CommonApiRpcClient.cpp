@@ -1096,10 +1096,10 @@ cdcchain::consensus::ContractCreatorEntry CommonApiRpcClient::wallet_get_account
             fc::variant result = get_json_connection()->async_call("simulator_transfer_to_contract_testing", std::vector<fc::variant>{fc::variant(amount_to_transfer), fc::variant(asset_symbol), fc::variant(from_account_name), fc::variant(to_contract)}).wait();
             return result.as<std::vector<cdcchain::consensus::Asset>>();
         }
-        vector<cdcchain::consensus::SandboxAccountInfo> CommonApiRpcClient::simulator_list_my_addresses(const std::string& account_name /* = fc::json::from_string("\"\"").as<std::string>() */)
+        vector<cdcchain::consensus::SimulatorAccountInfo> CommonApiRpcClient::simulator_list_my_addresses(const std::string& account_name /* = fc::json::from_string("\"\"").as<std::string>() */)
         {
             fc::variant result = get_json_connection()->async_call("simulator_list_my_addresses", std::vector<fc::variant>{fc::variant(account_name)}).wait();
-            return result.as<vector<cdcchain::consensus::SandboxAccountInfo>>();
+            return result.as<vector<cdcchain::consensus::SimulatorAccountInfo>>();
         }
         std::string CommonApiRpcClient::get_contract_registered_in_transaction(const cdcchain::consensus::TransactionIdType& trx_id)
         {

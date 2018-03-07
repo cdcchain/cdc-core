@@ -6769,7 +6769,7 @@ cdcchain::consensus::ContractCreatorEntry CommonApiClient::wallet_get_account_co
             FC_RETHROW_EXCEPTIONS(warn, "")
         }
 
-        vector<cdcchain::consensus::SandboxAccountInfo> CommonApiClient::simulator_list_my_addresses(const std::string& account_name /* = fc::json::from_string("\"\"").as<std::string>() */)
+        vector<cdcchain::consensus::SimulatorAccountInfo> CommonApiClient::simulator_list_my_addresses(const std::string& account_name /* = fc::json::from_string("\"\"").as<std::string>() */)
         {
             ilog("received RPC call: simulator_list_my_addresses(${account_name})", ("account_name", account_name));
             cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
@@ -6789,7 +6789,7 @@ cdcchain::consensus::ContractCreatorEntry CommonApiClient::wallet_get_account_co
             } execution_time_logger;
             try
             {
-                vector<cdcchain::consensus::SandboxAccountInfo> result =             get_impl()->simulator_list_my_addresses(account_name);
+                vector<cdcchain::consensus::SimulatorAccountInfo> result =             get_impl()->simulator_list_my_addresses(account_name);
                 if( call_id != 0 )
                     glog->log_call_finished( call_id, this, "simulator_list_my_addresses", args, fc::variant(result) );
 

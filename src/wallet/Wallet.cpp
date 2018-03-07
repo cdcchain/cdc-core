@@ -5013,7 +5013,7 @@ namespace cdcchain {
         {
             try {
                 FC_ASSERT(is_open(), "Wallet not open!");
-                my->_wallet_db.set_property(last_scanned_block_number_for_ubcore, fc::variant(block_num));
+                my->_wallet_db.set_property(last_scanned_block_number_for_cdcchain, fc::variant(block_num));
             } FC_CAPTURE_AND_RETHROW()
         }
         uint32_t Wallet::get_last_scanned_block_number()const
@@ -5036,7 +5036,7 @@ namespace cdcchain {
                 FC_ASSERT(is_open(), "Wallet not open!");
                 try
                 {
-                    return my->_wallet_db.get_property(last_scanned_block_number_for_ubcore).as<uint32_t>();
+                    return my->_wallet_db.get_property(last_scanned_block_number_for_cdcchain).as<uint32_t>();
                 }
                 catch (...)
                 {

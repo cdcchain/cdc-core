@@ -3,4 +3,4 @@
 
 #pragma once
 
-#define CUSTOM_URL_SCHEME "ubcore"
+#define CUSTOM_URL_SCHEME "cdcchain"

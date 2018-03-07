@@ -6,7 +6,7 @@
 namespace cdcchain {
     namespace consensus {
 
-		struct SandboxAccountInfo
+		struct SimulatorAccountInfo
 		{
 			AccountIdType                   id = 0;
 			std::string						name;
@@ -200,7 +200,7 @@ namespace cdcchain {
 			unordered_set<ShopReceiptIdType>                                  _shopreceipt_id_remove;
 
             vector<EventOperation> event_vector;
-			vector<cdcchain::consensus::SandboxAccountInfo>                     _vec_wallet_accounts;
+			vector<cdcchain::consensus::SimulatorAccountInfo>                     _vec_wallet_accounts;
 
         private:
             // Not serialized
@@ -683,4 +683,4 @@ FC_REFLECT(cdcchain::consensus::PendingChainState,
 	(_vec_wallet_accounts)
     )
 
-	FC_REFLECT(cdcchain::consensus::SandboxAccountInfo, (id)(name)(delegate_info)(owner_address)(registration_date)(last_update)(owner_key))
+	FC_REFLECT(cdcchain::consensus::SimulatorAccountInfo, (id)(name)(delegate_info)(owner_address)(registration_date)(last_update)(owner_key))

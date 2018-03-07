@@ -42,7 +42,7 @@ namespace cdcchain {
             transaction_expiration_sec,
             transaction_min_imessage_soft_length,
             transaction_min_imessage_fee_coe,
-            last_scanned_block_number_for_ubcore
+            last_scanned_block_number_for_cdcchain
         };
 
         struct WalletProperty
@@ -367,7 +367,7 @@ FC_REFLECT_ENUM(cdcchain::wallet::WalletEntryTypeEnum,
     (transaction_expiration_sec)
     (transaction_min_imessage_soft_length)
     (transaction_min_imessage_fee_coe)
-(last_scanned_block_number_for_ubcore)
+(last_scanned_block_number_for_cdcchain)
     )
 
     FC_REFLECT(cdcchain::wallet::WalletProperty,

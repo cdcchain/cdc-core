@@ -2977,7 +2977,7 @@ namespace cdcchain {
 
             for (auto iter = vec_account_entry.begin(); iter != vec_account_entry.end(); ++iter)
             {
-                SandboxAccountInfo tmp;
+                SimulatorAccountInfo tmp;
                 AccountEntry  entry = (AccountEntry)(*iter);
 
                 tmp.id = entry.id;

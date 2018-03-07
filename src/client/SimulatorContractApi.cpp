@@ -425,7 +425,7 @@ namespace cdcchain
                 } FC_CAPTURE_AND_RETHROW()
             }
 
-            std::vector<SandboxAccountInfo> ClientImpl::simulator_list_my_addresses(const string& account_name)
+            std::vector<SimulatorAccountInfo> ClientImpl::simulator_list_my_addresses(const string& account_name)
             {
                 try
                 {
@@ -434,7 +434,7 @@ namespace cdcchain
 
                     // set the state for simulator
                     PendingChainStatePtr simulator_state = _chain_db->get_simulator_pending_state();
-                    vector<SandboxAccountInfo> result;
+                    vector<SimulatorAccountInfo> result;
 
                     for (auto iter = simulator_state->_vec_wallet_accounts.begin(); iter != simulator_state->_vec_wallet_accounts.end(); ++iter)
                     {

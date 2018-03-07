@@ -1979,7 +1979,7 @@ namespace cdcchain {
              *
              * @return simulator_account_info_list
              */
-            virtual vector<cdcchain::consensus::SandboxAccountInfo> simulator_list_my_addresses(const std::string& account_name = fc::json::from_string("\"\"").as<std::string>()) = 0;
+            virtual vector<cdcchain::consensus::SimulatorAccountInfo> simulator_list_my_addresses(const std::string& account_name = fc::json::from_string("\"\"").as<std::string>()) = 0;
             /**
              * get id of contract registered in specific transaction.
              *

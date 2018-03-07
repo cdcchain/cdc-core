@@ -179,8 +179,8 @@ namespace cdcchain {
             NodeIdType        node_id;
             uint32_t         core_protocol_version;
             std::string      user_agent;
-            fc::optional<std::string> ubcore_git_revision_sha;
-            fc::optional<fc::time_point_sec> ubcore_git_revision_unix_timestamp;
+            fc::optional<std::string> cdcchain_git_revision_sha;
+            fc::optional<fc::time_point_sec> cdcchain_git_revision_unix_timestamp;
             fc::optional<std::string> fc_git_revision_sha;
             fc::optional<fc::time_point_sec> fc_git_revision_unix_timestamp;
             fc::optional<std::string> platform;
