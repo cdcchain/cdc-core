@@ -70,17 +70,17 @@ using uvm::lua::api::global_uvm_chain_api;
 
 
 /*
-** LUA_CSCDCSEP is the character that replaces dots in submodule names
+** LUA_CSUBSEP is the character that replaces dots in submodule names
 ** when searching for a C loader.
-** LUA_LSCDCSEP is the character that replaces dots in submodule names
+** LUA_LSUBSEP is the character that replaces dots in submodule names
 ** when searching for a Lua loader.
 */
-#if !defined(LUA_CSCDCSEP)
-#define LUA_CSCDCSEP		LUA_DIRSEP
+#if !defined(LUA_CSUBSEP)
+#define LUA_CSUBSEP		LUA_DIRSEP
 #endif
 
-#if !defined(LUA_LSCDCSEP)
-#define LUA_LSCDCSEP		LUA_DIRSEP
+#if !defined(LUA_LSUBSEP)
+#define LUA_LSUBSEP		LUA_DIRSEP
 #endif
 
 

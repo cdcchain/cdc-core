@@ -519,7 +519,7 @@ static const char *getfuncname(lua_State *L, CallInfo *ci, const char **name) {
     case UOP_SETTABUP: case UOP_SETTABLE:
         tm = TM_NEWINDEX;
         break;
-    case UOP_ADD: case UOP_SCDC: case UOP_MUL: case UOP_MOD:
+    case UOP_ADD: case UOP_SUB: case UOP_MUL: case UOP_MOD:
     case UOP_POW: case UOP_DIV: case UOP_IDIV: case UOP_BAND:
     case UOP_BOR: case UOP_BXOR: case UOP_SHL: case UOP_SHR: {
         int offset = cast_int(GET_OPCODE(i)) - cast_int(UOP_ADD);  /* ORDER OP */

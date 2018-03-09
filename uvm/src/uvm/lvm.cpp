@@ -712,7 +712,7 @@ void luaV_finishOp(lua_State *L) {
     Instruction inst = *(ci->u.l.savedpc - 1);  /* interrupted instruction */
     OpCode op = GET_OPCODE(inst);
     switch (op) {  /* finish its execution */
-    case UOP_ADD: case UOP_SCDC: case UOP_MUL: case UOP_DIV: case UOP_IDIV:
+    case UOP_ADD: case UOP_SUB: case UOP_MUL: case UOP_DIV: case UOP_IDIV:
     case UOP_BAND: case UOP_BOR: case UOP_BXOR: case UOP_SHL: case UOP_SHR:
     case UOP_MOD: case UOP_POW:
     case UOP_UNM: case UOP_BNOT: case UOP_LEN:
@@ -1062,7 +1062,7 @@ newframe:  /* reentry point when frame changes (call/return) */
                 }
                 vmbreak;
             }
-            vmcase(UOP_SCDC) {
+            vmcase(UOP_SUB) {
                 TValue *rb = RKB(i);
                 TValue *rc = RKC(i);
                 lua_Number nb; lua_Number nc;
@@ -1075,7 +1075,7 @@ newframe:  /* reentry point when frame changes (call/return) */
                 }
                 else {
                   global_uvm_chain_api->throw_exception(L, UVM_API_LVM_ERROR, "- can only accept numbers");
-                    Protect(luaT_trybinTM(L, rb, rc, ra, TM_SCDC));
+                    Protect(luaT_trybinTM(L, rb, rc, ra, TM_SUB));
                 }
                 vmbreak;
             }

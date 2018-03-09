@@ -54,7 +54,7 @@ namespace uvm
 
             static const char *globalvar_whitelist[] = {
                 "print", "pprint", "table", "string", "time", "math", "json", "type", "require", "Array", "Stream",
-                "import_contract_from_address", "import_contract", "emit", "is_valid_address", "is_valid_contract_address",
+                "import_contract_from_address", "import_contract", "emit", "is_valid_address", "is_valid_contract_address", "get_prev_call_frame_contract_address",
                 "uvm", "storage", "exit", "self", "debugger", "exit_debugger",
                 "caller", "caller_address",
                 "contract_transfer", "contract_transfer_to", "transfer_from_contract_to_address",
@@ -169,6 +169,36 @@ namespace uvm
                 return 1;
             }
 
+			std::string get_prev_call_frame_contract_id(lua_State *L)
+			{
+				auto contract_id_stack = get_using_contract_id_stack(L, true);
+				if (!contract_id_stack || contract_id_stack->size()<2)
+					return "";
+				auto top = contract_id_stack->top();
+				contract_id_stack->pop();
+				auto prev = contract_id_stack->top();
+				contract_id_stack->push(top);
+				return prev;
+			}
+
+			const char *get_prev_call_frame_contract_id_in_api(lua_State *L)
+			{
+				const auto &contract_id = get_prev_call_frame_contract_id(L);
+				auto contract_id_str = malloc_and_copy_string(L, contract_id.c_str());
+				return contract_id_str;
+			}
+
+			static int get_prev_call_frame_contract_address_lua_api(lua_State *L)
+			{
+				auto prev_contract_id = get_prev_call_frame_contract_id_in_api(L);
+				if (!prev_contract_id || strlen(prev_contract_id)< 1)
+				{
+					lua_pushnil(L);
+					return 1;
+				}
+				lua_pushstring(L, prev_contract_id);
+				return 1;
+			}
 			static int get_system_asset_symbol(lua_State *L)
 			{
 				const char *system_asset_symbol = uvm::lua::api::global_uvm_chain_api->get_system_asset_symbol(L);
@@ -899,6 +929,7 @@ end
                     add_global_c_function(L, "emit", emit_uvm_event);
 					add_global_c_function(L, "is_valid_address", is_valid_address);
 					add_global_c_function(L, "is_valid_contract_address", is_valid_contract_address);
+					add_global_c_function(L, "get_prev_call_frame_contract_address", get_prev_call_frame_contract_address_lua_api);
 					add_global_c_function(L, "get_system_asset_symbol", get_system_asset_symbol);
 					add_global_c_function(L, "get_system_asset_precision", get_system_asset_precision);
                 }

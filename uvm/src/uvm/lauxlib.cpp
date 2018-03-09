@@ -455,16 +455,16 @@ LUALIB_API lua_Integer luaL_optinteger(lua_State *L, int arg,
 */
 
 /* userdata to box arbitrary data */
-typedef struct CDCox {
+typedef struct UBox {
     void *box;
     size_t bsize;
-} CDCox;
+} UBox;
 
 
 static void *resizebox(lua_State *L, int idx, size_t newsize) {
     void *ud;
     lua_Alloc allocf = lua_getallocf(L, &ud);
-    CDCox *box = (CDCox *)lua_touserdata(L, idx);
+    UBox *box = (UBox *)lua_touserdata(L, idx);
     void *temp = allocf(ud, box->box, box->bsize, newsize);
     if (temp == nullptr && newsize > 0) {  /* allocation error? */
         resizebox(L, idx, 0);  /* free buffer */
@@ -483,7 +483,7 @@ static int boxgc(lua_State *L) {
 
 
 static void *newbox(lua_State *L, size_t newsize) {
-    CDCox *box = (CDCox *)lua_newuserdata(L, sizeof(CDCox));
+    UBox *box = (UBox *)lua_newuserdata(L, sizeof(UBox));
     box->box = nullptr;
     box->bsize = 0;
     if (luaL_newmetatable(L, "LUABOX")) {  /* creating metatable? */

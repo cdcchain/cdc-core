@@ -866,7 +866,7 @@ void luaK_infix(FuncState *fs, BinOpr op, expdesc *v) {
         luaK_exp2nextreg(fs, v);  /* operand must be on the 'stack' */
         break;
     }
-    case OPR_ADD: case OPR_SCDC:
+    case OPR_ADD: case OPR_SUB:
     case OPR_MUL: case OPR_DIV: case OPR_IDIV:
     case OPR_MOD: case OPR_POW:
     case OPR_BAND: case OPR_BOR: case OPR_BXOR:
@@ -913,7 +913,7 @@ void luaK_posfix(FuncState *fs, BinOpr op,
         }
         break;
     }
-    case OPR_ADD: case OPR_SCDC: case OPR_MUL: case OPR_DIV:
+    case OPR_ADD: case OPR_SUB: case OPR_MUL: case OPR_DIV:
     case OPR_IDIV: case OPR_MOD: case OPR_POW:
     case OPR_BAND: case OPR_BOR: case OPR_BXOR:
     case OPR_SHL: case OPR_SHR: {

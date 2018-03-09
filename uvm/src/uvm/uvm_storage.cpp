@@ -89,7 +89,7 @@ static struct UvmStorageValue get_last_storage_changed_value(lua_State *L, const
 	return value;
 }
 
-static std::string get_contract_id_string_in_storage_Evidence(lua_State *L)
+static std::string get_contract_id_string_in_storage_operation(lua_State *L)
 {
 	return uvm::lua::lib::get_current_using_contract_id(L);
 }
@@ -546,7 +546,7 @@ namespace uvm {
 		{
 			uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
 
-			const auto &code_contract_id = get_contract_id_string_in_storage_Evidence(L);
+			const auto &code_contract_id = get_contract_id_string_in_storage_operation(L);
 			if (code_contract_id != contract_id)
 			{
 				global_uvm_chain_api->throw_exception(L, UVM_API_SIMPLE_ERROR, "contract can only access its own storage directly");
@@ -600,7 +600,7 @@ namespace uvm {
 		int uvmlib_set_storage_impl(lua_State *L,
 			const char *contract_id, const char *name, int value_index)
 		{
-			const auto &code_contract_id = get_contract_id_string_in_storage_Evidence(L);
+			const auto &code_contract_id = get_contract_id_string_in_storage_operation(L);
 			if (code_contract_id != contract_id && code_contract_id != contract_id)
 			{
 				global_uvm_chain_api->throw_exception(L, UVM_API_SIMPLE_ERROR, "contract can only access its own storage directly");

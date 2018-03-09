@@ -23,7 +23,7 @@ typedef enum {
     TM_LEN,
     TM_EQ,  /* last tag method with fast access */
     TM_ADD,
-    TM_SCDC,
+    TM_SUB,
     TM_MUL,
     TM_MOD,
     TM_POW,

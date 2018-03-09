@@ -113,8 +113,8 @@
 
 /* predefined options for LUA_FLOAT_TYPE */
 #define LUA_FLOAT_FLOAT		1
-#define LUA_FLOAT_DOCDCLE	2
-#define LUA_FLOAT_LONGDOCDCLE	3
+#define LUA_FLOAT_DOUBLE	2
+#define LUA_FLOAT_LONGDOUBLE	3
 
 #if defined(LUA_32BITS)		/* { */
 /*
@@ -132,14 +132,14 @@
 ** largest types available for C89 ('long' and 'double')
 */
 #define LUA_INT_TYPE	LUA_INT_LONG
-#define LUA_FLOAT_TYPE	LUA_FLOAT_DOCDCLE
+#define LUA_FLOAT_TYPE	LUA_FLOAT_DOUBLE
 
 #endif				/* } */
 
 
 // force use long as lua int
 #define LUA_INT_TYPE	LUA_INT_LONGLONG
-#define LUA_FLOAT_TYPE	LUA_FLOAT_DOCDCLE
+#define LUA_FLOAT_TYPE	LUA_FLOAT_DOUBLE
 
 #define LUA_COMPAT_APIINTCASTS
 
@@ -151,7 +151,7 @@
 #endif
 
 #if !defined(LUA_FLOAT_TYPE)
-#define LUA_FLOAT_TYPE	LUA_FLOAT_DOCDCLE
+#define LUA_FLOAT_TYPE	LUA_FLOAT_DOUBLE
 #endif
 
 /* }================================================================== */
@@ -466,7 +466,7 @@ LUA_CDIR"loadall.dll;" ".\\?.dll"
 #define lua_str2number(s,p)	strtof((s), (p))
 
 
-#elif LUA_FLOAT_TYPE == LUA_FLOAT_LONGDOCDCLE	/* }{ long double */
+#elif LUA_FLOAT_TYPE == LUA_FLOAT_LONGDOUBLE	/* }{ long double */
 
 #define LUA_NUMBER	long double
 
@@ -481,7 +481,7 @@ LUA_CDIR"loadall.dll;" ".\\?.dll"
 
 #define lua_str2number(s,p)	strtold((s), (p))
 
-#elif LUA_FLOAT_TYPE == LUA_FLOAT_DOCDCLE	/* }{ double */
+#elif LUA_FLOAT_TYPE == LUA_FLOAT_DOUBLE	/* }{ double */
 
 #define LUA_NUMBER	double
 
@@ -744,7 +744,7 @@ LUA_CDIR"loadall.dll;" ".\\?.dll"
 ** smaller buffer would force a memory allocation for each call to
 ** 'string.format'.)
 */
-#if defined(LUA_FLOAT_LONGDOCDCLE)
+#if defined(LUA_FLOAT_LONGDOUBLE)
 #define LUAL_BUFFERSIZE		8192
 #else
 #define LUAL_BUFFERSIZE   ((int)(0x80 * sizeof(void*) * sizeof(lua_Integer)))

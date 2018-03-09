@@ -32,7 +32,7 @@ LUAI_DDEF const char *const luaP_opnames[UNUM_OPCODES + 1] = {
     "NEWTABLE",
     "SELF",
     "ADD",
-    "SCDC",
+    "SUB",
     "MUL",
     "MOD",
     "POW",
@@ -87,7 +87,7 @@ LUAI_DDEF const lu_byte luaP_opmodes[UNUM_OPCODES] = {
     , opmode(0, 1, OpArgU, OpArgU, iABC)		/* UOP_NEWTABLE */
     , opmode(0, 1, OpArgR, OpArgK, iABC)		/* UOP_SELF */
     , opmode(0, 1, OpArgK, OpArgK, iABC)		/* UOP_ADD */
-    , opmode(0, 1, OpArgK, OpArgK, iABC)		/* UOP_SCDC */
+    , opmode(0, 1, OpArgK, OpArgK, iABC)		/* UOP_SUB */
     , opmode(0, 1, OpArgK, OpArgK, iABC)		/* UOP_MUL */
     , opmode(0, 1, OpArgK, OpArgK, iABC)		/* UOP_MOD */
     , opmode(0, 1, OpArgK, OpArgK, iABC)		/* UOP_POW */

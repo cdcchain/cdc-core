@@ -129,7 +129,7 @@ void luaT_trybinTM(lua_State *L, const TValue *p1, const TValue *p2,
             if (tonumber(p1, &dummy) && tonumber(p2, &dummy))
                 luaG_tointerror(L, p1, p2);
             else
-                luaG_opinterror(L, p1, p2, "perform bitwise Evidence on");
+                luaG_opinterror(L, p1, p2, "perform bitwise operation on");
         }
                      /* calls never return, but to avoid warnings: *//* FALLTHROUGH */
         default:

@@ -84,7 +84,7 @@ static lua_Integer intarith(lua_State *L, int op, lua_Integer v1,
     lua_Integer v2) {
     switch (op) {
     case LUA_OPADD: return intop(+, v1, v2);
-    case LUA_OPSCDC:return intop(-, v1, v2);
+    case LUA_OPSUB:return intop(-, v1, v2);
     case LUA_OPMUL:return intop(*, v1, v2);
     case LUA_OPMOD: return luaV_mod(L, v1, v2);
     case LUA_OPIDIV: return luaV_div(L, v1, v2);
@@ -104,7 +104,7 @@ static lua_Number numarith(lua_State *L, int op, lua_Number v1,
     lua_Number v2) {
     switch (op) {
     case LUA_OPADD: return luai_numadd(L, v1, v2);
-    case LUA_OPSCDC: return luai_numsub(L, v1, v2);
+    case LUA_OPSUB: return luai_numsub(L, v1, v2);
     case LUA_OPMUL: return luai_nummul(L, v1, v2);
     case LUA_OPDIV: return luai_numdiv(L, v1, v2);
     case LUA_OPPOW: return luai_numpow(L, v1, v2);

@@ -198,7 +198,7 @@ LUA_API const void     *(lua_topointer)(lua_State *L, int idx);
 */
 
 #define LUA_OPADD	0	/* ORDER TM, ORDER OP */
-#define LUA_OPSCDC	1
+#define LUA_OPSUB	1
 #define LUA_OPMUL	2
 #define LUA_OPMOD	3
 #define LUA_OPPOW	4

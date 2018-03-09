@@ -185,7 +185,7 @@ typedef enum {
 	UOP_SELF,/*	A B C	R(A+1) := R(B); R(A) := R(B)[RK(C)]		*/
 
 	UOP_ADD,/*	A B C	R(A) := RK(B) + RK(C)				*/
-    UOP_SCDC,/*	A B C	R(A) := RK(B) - RK(C)				*/
+    UOP_SUB,/*	A B C	R(A) := RK(B) - RK(C)				*/
 	UOP_MUL,/*	A B C	R(A) := RK(B) * RK(C)				*/
 	UOP_MOD,/*	A B C	R(A) := RK(B) % RK(C)				*/
 	UOP_POW,/*	A B C	R(A) := RK(B) ^ RK(C)				*/
