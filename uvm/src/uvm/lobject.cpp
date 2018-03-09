@@ -141,7 +141,7 @@ void luaO_arith(lua_State *L, int op, const TValue *p1, const TValue *p2,
         }
         else break;  /* go to the end */
     }
-    default: {  /* other Evidences */
+    default: {  /* other operations */
         lua_Number n1; lua_Number n2;
         if (ttisinteger(p1) && ttisinteger(p2)) {
             setivalue(res, intarith(L, op, ivalue(p1), ivalue(p2)));
@@ -154,7 +154,7 @@ void luaO_arith(lua_State *L, int op, const TValue *p1, const TValue *p2,
         else break;  /* go to the end */
     }
     }
-    /* could not perform raw Evidence; try metamethod */
+    /* could not perform raw operation; try metamethod */
     lua_assert(L != nullptr);  /* should not fail when folding (compile time) */
     luaT_trybinTM(L, p1, p2, res, lua_cast(TMS, (op - LUA_OPADD) + TM_ADD));
 }

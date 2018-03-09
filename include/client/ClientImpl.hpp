@@ -225,7 +225,6 @@ namespace cdcchain {
                     bool sync_mode);
 
                 bool on_new_transaction(const SignedTransaction& trx);
-				bool on_new_evidence(const Evidence&ev, const TransactionIdType& trx_id, uint32_t ev_index);
                 void blocks_too_old_monitor_task();
                 void cancel_blocks_too_old_monitor_task();
                 void set_client_debug_name(const string& name)

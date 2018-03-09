@@ -31,7 +31,6 @@ std::cin >> a;
 #include <consensus/Time.hpp>
 #include <consensus/transaction/TransactionEvaluationState.hpp>
 
-#include <consensus/evidence/ShopReceiptEvidence.hpp>
 #include <consensus/Checkpoints.hpp>
 
 #include<network/Exceptions.hpp>
@@ -757,27 +756,8 @@ namespace cdcchain {
                             FullBlock next_block = _chain_db->generate_block(*next_block_time, _delegate_config);
                             _wallet->sign_block(next_block);
 
-							FullBlock next_block_dump = next_block;
-							for (int i = 0; i < next_block.user_transactions.size(); ++i) 
-								for (int j = 0; j < next_block.user_transactions[i].evidences.size(); ++j)
-									next_block.user_transactions[i].evidences[j].data.clear();
-							EvidenceBlock next_envi_block(next_block_dump);
-								
-
                             on_new_block(next_block, next_block.id(), false);
                             _p2p_node->broadcast(BlockMessage(next_block));
-
-
-
-
-							for (int i = 0; i < next_block_dump.user_transactions.size(); ++i) {
-								SignedTransaction trx = next_block_dump.user_transactions[i];
-								for (int j = 0; j < trx.evidences.size(); ++j) {
-									Evidence ev = trx.evidences[j];
-									on_new_evidence(ev, trx.id(), j);
-									_p2p_node->broadcast(ShopReceiptMessage(ev, trx.id(), j));
-								}
-							}
 
                             ilog("Produced block #${n}!", ("n", next_block.block_num));
                         }
@@ -1020,33 +1000,6 @@ namespace cdcchain {
                 }
             }
 
-			bool ClientImpl::on_new_evidence(const Evidence& ev, const TransactionIdType& trx_id, uint32_t ev_index)
-			{
-				try {
-					if (!ev.check_ev_id(ev.ev_id))
-						return false;	
-
-					if (ev.type == EvidenceTypeEnum::shop_receipt_ev_type)
-					{
-						oShopReceiptEntry entry = _chain_db->get_shopreceipt_entry(ev.ev_id);
-						if (entry.valid())
-							return true;
-					}
-					else
-					{
-						return false;
-					}
-
-					_chain_db->push_evidence(ev, trx_id, ev_index);
-				}
-				catch (const fc::exception& e)
-				{
-					_exception_db.store(e);
-					throw;
-				}
-				return true;
-			}
-
             bool ClientImpl::on_new_transaction(const SignedTransaction& trx)
             {
                 try {
@@ -1165,16 +1118,6 @@ namespace cdcchain {
 								result &= on_new_transaction(trx);
 							}
 							return result;
-						}
-						case shopreceipt_message_type:
-						{
-							// 可以使用通用类型EvidenceMessage处理
-							EvidenceMessage ev_message_to_handle(message_to_handle.as<EvidenceMessage>());
-							if (!ev_message_to_handle.ev.check_ev_id(ev_message_to_handle.ev.ev_id))
-								return false;
-
-							ilog("CLIENT: just received evidence ${ev_id}", ("ev_id", ev_message_to_handle.ev.ev_id));
-							return on_new_evidence(ev_message_to_handle.ev, ev_message_to_handle.trx_id, ev_message_to_handle.ev_index);
 						}
                     }
 
@@ -1403,16 +1346,6 @@ namespace cdcchain {
                     if (iter != _pending_trxs.end())
                         trx_message_to_send.trx = iter->second;
                 }
-
-				if (id.item_type == shopreceipt_message_type)
-				{
-					oShopReceiptEntry entry = _chain_db->get_shopreceipt_entry(id.item_hash);
-					FC_ASSERT(entry.valid());
-					ShopReceiptEvidence ev(entry->brand_id, entry->merchant_id, entry->merchant_serial, entry->receipt_amount,
-						entry->merchandise, entry->receipt_time, entry->remark);
-					cdcchain::client::ShopReceiptMessage shopreceipt_message_to_send(ev, entry->from_trx_id, entry->ev_index);
-					return shopreceipt_message_to_send;
-				}
 
                 FC_THROW_EXCEPTION(fc::key_not_found_exception, "I don't have the item you're looking for");
             }

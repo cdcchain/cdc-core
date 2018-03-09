@@ -379,7 +379,7 @@ static int LEnum(const TValue *l, const TValue *r) {
 
 
 /*
-** Main Evidence less than; return 'l < r'.
+** Main operation less than; return 'l < r'.
 */
 int luaV_lessthan(lua_State *L, const TValue *l, const TValue *r) {
     int res;
@@ -406,7 +406,7 @@ int luaV_lessthan(lua_State *L, const TValue *l, const TValue *r) {
 
 
 /*
-** Main Evidence less than or equal to; return 'l <= r'. If it needs
+** Main operation less than or equal to; return 'l <= r'. If it needs
 ** a metamethod and there is no '__le', try '__lt', based on
 ** l <= r iff !(r < l) (assuming a total order). If the metamethod
 ** yields during this substitution, the continuation has to know
@@ -445,7 +445,7 @@ int luaV_lessequal(lua_State *L, const TValue *l, const TValue *r) {
 
 
 /*
-** Main Evidence for equality of Lua values; return 't1 == t2'.
+** Main operation for equality of Lua values; return 't1 == t2'.
 ** L == nullptr means raw equality (no metamethods)
 */
 int luaV_equalobj(lua_State *L, const TValue *t1, const TValue *t2) {
@@ -512,7 +512,7 @@ static void copy2buff(StkId top, int n, char *buff) {
 
 
 /*
-** Main Evidence for concatenation: concat 'total' values in the stack,
+** Main operation for concatenation: concat 'total' values in the stack,
 ** from 'L->top - total' up to 'L->top - 1'.
 */
 void luaV_concat(lua_State *L, int total) {
@@ -556,7 +556,7 @@ void luaV_concat(lua_State *L, int total) {
 
 
 /*
-** Main Evidence 'ra' = #rb'.
+** Main operation 'ra' = #rb'.
 */
 void luaV_objlen(lua_State *L, StkId ra, const TValue *rb) {
     const TValue *tm;
@@ -632,7 +632,7 @@ lua_Integer luaV_mod(lua_State *L, lua_Integer m, lua_Integer n) {
 #define NBITS	cast_int(sizeof(lua_Integer) * CHAR_BIT)
 
 /*
-** Shift left Evidence. (Shift right just negates 'y'.)
+** Shift left operation. (Shift right just negates 'y'.)
 */
 lua_Integer luaV_shiftl(lua_Integer x, lua_Integer y) {
     if (y < 0) {  /* shift right? */

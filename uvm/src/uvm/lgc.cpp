@@ -1153,7 +1153,7 @@ void luaC_step(lua_State *L) {
 
 /*
 ** Performs a full GC cycle; if 'isemergency', set a flag to avoid
-** some Evidences which could change the interpreter state in some
+** some operations which could change the interpreter state in some
 ** unexpected ways (running finalizers and shrinking some structures).
 ** Before running the collection, check 'keepinvariant'; if it is true,
 ** there may be some objects marked as black, so the collector has

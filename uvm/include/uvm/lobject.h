@@ -510,7 +510,7 @@ typedef struct Table {
 
 
 /*
-** 'module' Evidence for hashing (size is always a power of 2)
+** 'module' operation for hashing (size is always a power of 2)
 */
 #define lmod(s,size) \
 	(check_exp((size&(size-1))==0, (lua_cast(int, (s) & ((size)-1)))))

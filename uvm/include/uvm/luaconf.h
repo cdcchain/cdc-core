@@ -422,7 +422,7 @@ LUA_CDIR"loadall.dll;" ".\\?.dll"
 @@ LUA_NUMBER_FRMLEN is the length modifier for writing floats.
 @@ LUA_NUMBER_FMT is the format for writing floats.
 @@ lua_number2str converts a float to a string.
-@@ l_mathop allows the addition of an 'l' or 'f' to all math Evidences.
+@@ l_mathop allows the addition of an 'l' or 'f' to all math operations.
 @@ l_floor takes the floor of a float.
 @@ lua_str2number converts a decimal numeric string to a number.
 */

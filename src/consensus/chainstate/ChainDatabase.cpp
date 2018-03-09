@@ -192,8 +192,6 @@ namespace cdcchain {
                     _contract_to_trx_iddb.open(data_dir / "index/_contract_to_trx_iddb");
                     _trx_to_contract_iddb.open(data_dir / "index/_trx_to_contract_iddb");
 
-					_shopreceipt_id_to_entry.open(data_dir / "storage/_shopreceipt_id_to_entry");
-
                     _pending_trx_state = std::make_shared<PendingChainState>(self->shared_from_this());
 
                     clear_invalidation_of_future_blocks();
@@ -701,21 +699,6 @@ namespace cdcchain {
                     // fetch the fork data for block_id, mark it as included and
                 } FC_RETHROW_EXCEPTIONS(warn, "", ("block_id", block_id)("included", included))
             }
-
-			void ChainDatabaseImpl::undo_evidence(const BlockIdType& block_id)
-			{
-				try {
-					fc::optional<FullBlock> oblock = _block_id_to_full_block.fetch_optional(block_id);
-					FC_ASSERT(oblock.valid());
-					for (const auto& trx : oblock->user_transactions) {
-						for (const auto& ev : trx.evidences) {
-							if (ev.type == EvidenceTypeEnum::shop_receipt_ev_type) {
-								_shopreceipt_id_to_entry.remove(ev.ev_id);
-							}
-						}
-					}
-				} FC_RETHROW_EXCEPTIONS(warn, "", ("block_id", block_id))
-			}
 
             void ChainDatabaseImpl::switch_to_fork(const BlockIdType& block_id)
             {
@@ -1295,9 +1278,6 @@ namespace cdcchain {
 
                     auto previous_block_id = _head_block_header.previous;
 
-					// remove evidence db
-					undo_evidence(_head_block_id);
-
                     const auto undo_iter = _block_id_to_undo_state.unordered_find(_head_block_id);
                     FC_ASSERT(undo_iter != _block_id_to_undo_state.unordered_end(), "_block_id_to_undo_state is empty");
                     const auto& undo_state = undo_iter->second;
@@ -1487,7 +1467,6 @@ namespace cdcchain {
                             my->_trx_to_contract_iddb.toggle_leveldb(enabled);
                             my->_contract_to_trx_iddb.toggle_leveldb(enabled);
 
-							my->_shopreceipt_id_to_entry.toggle_leveldb(enabled);
                         };
 
 
@@ -1688,7 +1667,6 @@ namespace cdcchain {
                 my->_slot_timestamp_to_delegate.close();
                 my->_request_to_result_iddb.close();
 
-				my->_shopreceipt_id_to_entry.close();
             } FC_CAPTURE_AND_RETHROW()
         }
 
@@ -1828,15 +1806,6 @@ namespace cdcchain {
                     eval_state->trx = trx;
                     return eval_state;
                 }
-
-				// check evidence id
-				if (!trx.evidences.empty())
-				{
-					for (const auto& evidence : trx.evidences)
-					{
-						FC_ASSERT(evidence.check_ev_id(evidence.ev_id));
-					}
-				}
 
                 return trx_eval_state;
             } FC_CAPTURE_AND_RETHROW((trx))
@@ -2006,20 +1975,6 @@ namespace cdcchain {
          *
          *  Returns the block_fork_data of the new block, not necessarily the head block
          */
-
-		void ChainDatabase::push_evidence(const Evidence& ev, const TransactionIdType& trx_id, uint32_t ev_index) {
-			try {
-				PendingChainStatePtr pending_state = std::make_shared<PendingChainState>(shared_from_this());
-				TransactionEvaluationStatePtr trx_eval_state = std::make_shared<TransactionEvaluationState>(pending_state.get());
-
-				trx_eval_state->ev_from_trx = trx_id;
-				trx_eval_state->ev_index = ev_index;
-				trx_eval_state->evaluate_evidence(ev);
-				pending_state->apply_changes();
-
-			}FC_CAPTURE_AND_RETHROW((ev)(trx_id)(ev_index))
-		}
-
         BlockForkData ChainDatabase::push_block(const FullBlock& block_data)
         {
             try {
@@ -2447,24 +2402,6 @@ namespace cdcchain {
                                 }
                             }
 
-							// Check evidence id
-							if (!new_transaction.evidences.empty())
-							{
-								bool result_check = true;
-								for (const auto& ev : new_transaction.evidences)
-								{
-									result_check = ev.check_ev_id(ev.ev_id);
-									if (!result_check)
-										break;
-								}
-
-								if (!result_check)
-								{
-									wlog("Excluding transaction ${id} because of evidence check", ("id", new_transaction.id()));
-									continue;
-								}
-							}
-
                             // Validate transaction
                             auto origin_trx_state = std::make_shared<PendingChainState>(pending_state);
                             auto res_trx_state = std::make_shared<PendingChainState>(pending_state);
@@ -2580,9 +2517,7 @@ namespace cdcchain {
                 new_block.timestamp = block_timestamp;
 
 				DigestBlock digest_block = DigestBlock(new_block);
-				new_block.evidence_count = digest_block.user_evidence_ids.size();
                 new_block.transaction_digest = digest_block.calculate_transaction_digest();
-				new_block.evidence_digest = digest_block.calculate_evidence_digest();
 
 
                 // if( new_block.block_num < CDC_V0_7_0_FORK_BLOCK_NUM )
@@ -3840,10 +3775,6 @@ namespace cdcchain {
                 my->_contract_to_trx_iddb.export_to_json(next_path);
 				ulog("Dumped ${p}", ("p", next_path));
 
-				next_path = dir / "storage/_shopreceipt_id_to_entry";
-				my->_shopreceipt_id_to_entry.export_to_json(next_path);
-				ulog("Dumped ${p}", ("p", next_path));
-
             } FC_CAPTURE_AND_RETHROW((path))
         }
 
@@ -3999,24 +3930,6 @@ namespace cdcchain {
 		void ChainDatabase::contracttemplate_erase_from_hash_map(const std::string& hash)
 		{
 			my->_bytecode_hash_permitted.remove(hash);
-		}
-
-		oShopReceiptEntry  ChainDatabase::shopreceipt_lookup_by_id(const ShopReceiptIdType& id)const
-		{
-			const auto iter = my->_shopreceipt_id_to_entry.unordered_find(id);
-			if (iter != my->_shopreceipt_id_to_entry.unordered_end()) return iter->second;
-
-			return oShopReceiptEntry();
-		}
-
-		void ChainDatabase::shopreceipt_insert_into_id_map(const ShopReceiptIdType& id, const ShopReceiptEntry& info)
-		{
-			my->_shopreceipt_id_to_entry.store(id, info);
-		}
-
-		void ChainDatabase::shopreceipt_erase_from_id_map(const ShopReceiptIdType& id)
-		{
-			my->_shopreceipt_id_to_entry.remove(id);
 		}
 
     }

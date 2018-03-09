@@ -26,8 +26,6 @@ namespace cdcchain {
         typedef fc::ripemd160                      PublicKeyHashType;
         typedef fc::ripemd160                      SecretHashType;
         typedef fc::ripemd160                      OrderIdType;
-		typedef fc::ripemd160                      EvidenceIdType;
-		typedef fc::ripemd160                      ShopReceiptIdType;
         typedef Address                            ScriptIdType;
         typedef fc::sha256                         DigestType;
         typedef fc::ecc::compact_signature         SignatureType;

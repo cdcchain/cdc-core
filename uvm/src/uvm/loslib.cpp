@@ -176,7 +176,7 @@ static int os_clock(lua_State *L) {
 
 /*
 ** {======================================================
-** Time/Date Evidences
+** Time/Date operations
 ** { year=%Y, month=%m, day=%d, hour=%H, min=%M, sec=%S,
 **   wday=%w+1, yday=%j, isdst=? }
 ** =======================================================

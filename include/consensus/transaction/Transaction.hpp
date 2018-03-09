@@ -5,7 +5,6 @@
 #include <consensus/operation/StorageOperations.hpp>
 #include <consensus/operation/EventOperations.hpp>
 #include <consensus/operation/BalanceOperations.hpp>
-#include <consensus/evidence/Evidences.hpp>
 #include <consensus/slate/SlateEntry.hpp>
 #include <consensus/WithdrawTypes.hpp>
 #include <map>
@@ -48,7 +47,6 @@ namespace cdcchain {
             //string from_account;
             Asset cdc_inport_asset;
             vector<Operation>     operations;
-			vector<Evidence>      evidences;
             fc::enum_type<uint8_t, ResultTransactionType>    result_trx_type = ResultTransactionType::origin_transaction;    
             TransactionIdType     result_trx_id = TransactionIdType();
 
@@ -247,6 +245,6 @@ FC_REFLECT_ENUM(cdcchain::consensus::TransactionType,
 
     FC_REFLECT(cdcchain::consensus::CdcTrxidBalance, (cdc_account)(trx_id)(asset_trx)(block_num)(from_account)(create_time))
     FC_REFLECT(cdcchain::consensus::CdcBalanceEntry, (cdc_trxid_sort)(cdc_block_sort))
-    FC_REFLECT(cdcchain::consensus::Transaction, (expiration)(reserved)(cdc_account)(cdc_inport_asset)(operations)(evidences)(result_trx_type)(result_trx_id))
+    FC_REFLECT(cdcchain::consensus::Transaction, (expiration)(reserved)(cdc_account)(cdc_inport_asset)(operations)(result_trx_type)(result_trx_id))
     FC_REFLECT_DERIVED(cdcchain::consensus::SignedTransaction, (cdcchain::consensus::Transaction), (signatures))
     FC_REFLECT(cdcchain::consensus::TransactionLocation, (block_num)(trx_num))

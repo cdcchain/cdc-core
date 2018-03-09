@@ -40,8 +40,6 @@ namespace cdcchain {
 		FC_DECLARE_DERIVED_EXCEPTION(out_of_max_trx_size, cdcchain::consensus::blockchain_exception, 30030, "out of max trx size");
 		FC_DECLARE_DERIVED_EXCEPTION(multisig_account_does_not_exist_type, cdcchain::consensus::blockchain_exception, 30037, "multisig account does not exist");
 
-		FC_DECLARE_DERIVED_EXCEPTION(unsupported_chain_evidence, cdcchain::consensus::blockchain_exception, 30038, "unsupported chain evidence");
-
         FC_DECLARE_EXCEPTION(evaluation_error, 31000, "Evaluation Error");
         FC_DECLARE_DERIVED_EXCEPTION(negative_deposit, cdcchain::consensus::evaluation_error, 31001, "negative deposit");
         FC_DECLARE_DERIVED_EXCEPTION(not_a_delegate, cdcchain::consensus::evaluation_error, 31002, "not a delegate");

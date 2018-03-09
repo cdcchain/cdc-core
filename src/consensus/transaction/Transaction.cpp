@@ -21,10 +21,6 @@ namespace cdcchain {
 			trx.result_trx_type = origin_transaction;
 			trx.result_trx_id = TransactionIdType();
 
-			//evidence中的data成员不参与计算digest
-			for (int i = 0; i < trx.evidences.size(); ++i)
-				trx.evidences[i].data.clear();
-
             fc::sha256::encoder enc;
             fc::raw::pack(enc, trx);
             fc::raw::pack(enc, chain_id);
@@ -37,10 +33,6 @@ namespace cdcchain {
             SignedTransaction trx = *this;
             trx.result_trx_type = origin_transaction;
             trx.result_trx_id = TransactionIdType();
-
-			//evidence中的data成员不参与计算trx id
-			for (int i = 0; i < trx.evidences.size(); ++i)
-				trx.evidences[i].data.clear();
 
             fc::sha512::encoder enc;
             fc::raw::pack(enc, trx);

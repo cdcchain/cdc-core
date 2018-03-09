@@ -67,8 +67,6 @@ namespace cdcchain {
 			apply_entrys(prev_state, _contract_to_trx_id, _contract_to_trx_id_remove);
 			apply_entrys(prev_state, _contract_creater_entry, _contract_creater_remove);
 
-			apply_entrys(prev_state, _shopreceipt_id_to_entry, _shopreceipt_id_remove);
-
             /** do this last because it could have side effects on other entrys while
              * we manage the short index
              */
@@ -171,7 +169,6 @@ namespace cdcchain {
 			populate_undo_state(undo_state, prev_state, _contract_to_trx_id, _contract_to_trx_id_remove);
 			populate_undo_state(undo_state, prev_state, _contract_creater_entry, _contract_creater_remove);
 
-			//populate_undo_state(undo_state, prev_state, _shopreceipt_id_to_entry, _shopreceipt_id_remove);
         }
 
         /** load the state from a variant */
@@ -667,29 +664,6 @@ namespace cdcchain {
 		{
 			_bytecode_hash_permitted.erase(hash);
 			_bytecode_hash_remove.insert(hash);
-		}
-
-		oShopReceiptEntry  PendingChainState::shopreceipt_lookup_by_id(const ShopReceiptIdType& id)const
-		{
-			const auto iter = _shopreceipt_id_to_entry.find(id);
-			if (iter != _shopreceipt_id_to_entry.end()) return iter->second;
-			const ChainInterfacePtr prev_state = _prev_state.lock();
-			if (!prev_state) return oShopReceiptEntry();
-			const oShopReceiptEntry entry = prev_state->lookup<ShopReceiptEntry>(id);
-			if (entry.valid() && _shopreceipt_id_remove.count(id) == 0) return entry;
-			return oShopReceiptEntry();
-		}
-
-		void PendingChainState::shopreceipt_insert_into_id_map(const ShopReceiptIdType& id, const ShopReceiptEntry& info)
-		{
-			_shopreceipt_id_remove.erase(id);
-			_shopreceipt_id_to_entry[id] = info;
-		}
-
-		void PendingChainState::shopreceipt_erase_from_id_map(const ShopReceiptIdType& id)
-		{
-			_shopreceipt_id_to_entry.erase(id);
-			_shopreceipt_id_remove.insert(id);
 		}
 
     }

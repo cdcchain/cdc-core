@@ -743,27 +743,6 @@ namespace cdcchain {
 			} FC_CAPTURE_AND_RETHROW((entry))
 		}
 
-		oShopReceiptEntry    ChainInterface::get_shopreceipt_entry(const ShopReceiptIdType& id) const
-		{
-			try {
-				return lookup<ShopReceiptEntry>(id);
-			} FC_CAPTURE_AND_RETHROW((id))
-		}
-
-		void   ChainInterface::remove_shopreceipt_entry(const ShopReceiptIdType& id)
-		{
-			try {
-				return remove<ShopReceiptEntry>(id);
-			} FC_CAPTURE_AND_RETHROW((id))
-		}
-
-		void   ChainInterface::store_shopreceipt_entry(const ShopReceiptEntry& entry)
-		{
-			try {
-				store(entry.id, entry);
-			} FC_CAPTURE_AND_RETHROW((entry))
-		}
-
         // contract account -> common account (contract balance)
         SignedTransaction ChainInterface::transfer_asset_from_contract(
             ShareType real_amount_to_transfer,

@@ -195,10 +195,6 @@ namespace cdcchain {
 			unordered_map<ContractIdType, ContractTrxEntry>	_contract_to_trx_id;
 			unordered_set<ContractIdType>						_contract_to_trx_id_remove;
 
-			// not used
-			unordered_map<ShopReceiptIdType, ShopReceiptEntry>                _shopreceipt_id_to_entry;
-			unordered_set<ShopReceiptIdType>                                  _shopreceipt_id_remove;
-
             vector<EventOperation> event_vector;
 			vector<cdcchain::consensus::SimulatorAccountInfo>                     _vec_wallet_accounts;
 
@@ -634,11 +630,6 @@ namespace cdcchain {
 			virtual oContractTemplateEntry contracttemplate_lookup_by_hash(const std::string&)const;
 			virtual void contracttemplate_insert_into_hash_map(const std::string&, const ContractTemplateEntry&);
 			virtual void contracttemplate_erase_from_hash_map(const std::string&);
-
-			virtual oShopReceiptEntry shopreceipt_lookup_by_id(const ShopReceiptIdType&)const;
-			virtual void shopreceipt_insert_into_id_map(const ShopReceiptIdType&, const ShopReceiptEntry&);
-			virtual void shopreceipt_erase_from_id_map(const ShopReceiptIdType&);
-
         };
         typedef std::shared_ptr<PendingChainState> PendingChainStatePtr;
 
@@ -670,8 +661,6 @@ FC_REFLECT(cdcchain::consensus::PendingChainState,
     (_slot_timestamp_to_delegate)
 	(_bytecode_hash_permitted)
 	(_bytecode_hash_remove)
-	(_shopreceipt_id_to_entry)
-	(_shopreceipt_id_remove)
     (_contract_id_to_entry)
     (_contract_id_remove)
     (_contract_name_to_id)

@@ -4800,12 +4800,6 @@ namespace cdcchain {
                     hash_of_message_contents = transaction_message_to_broadcast.trx.id(); // for debugging
                     dlog("broadcasting trx: ${trx}", ("trx", transaction_message_to_broadcast));
                 }
-				else if (item_to_broadcast.msg_type == cdcchain::client::shopreceipt_message_type)
-				{
-					cdcchain::client::EvidenceMessage evidence_message_to_broadcast = item_to_broadcast.as<cdcchain::client::EvidenceMessage>();
-					hash_of_message_contents = evidence_message_to_broadcast.ev.ev_id;  // for debugging
-					dlog("broadcasting evidence: ${ev}", ("ev", evidence_message_to_broadcast));
-				}
 
                 MessageHashType hash_of_item_to_broadcast = item_to_broadcast.id();
 

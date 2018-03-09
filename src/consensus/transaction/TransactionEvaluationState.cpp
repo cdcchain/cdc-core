@@ -6,8 +6,6 @@
 #include <consensus/operation/AccountOperations.hpp>
 #include <consensus/operation/ContractOperations.hpp> 
 
-#include <consensus/evidence/EvidenceFactory.hpp>
-
 #include <consensus/block/ForkBlocks.hpp>
 #include "wallet/Wallet.hpp"
 
@@ -408,9 +406,6 @@ namespace cdcchain {
                         }
                     }
 
-					for (const auto& ev : trx_arg.evidences)
-						evaluate_evidence(ev);
-
 					int signum_to_charge = num_of_signature - CDC_BLOCKCHAIN_FREESIGNATURE_LIMIT;
 					if (signum_to_charge>=0)
 					{
@@ -559,13 +554,6 @@ namespace cdcchain {
                 OperationFactory::instance().evaluate(*this, op);
             } FC_CAPTURE_AND_RETHROW((op))
         }
-
-		void TransactionEvaluationState::evaluate_evidence(const Evidence& ev)
-		{
-			try {
-				EvidenceFactory::instance().evaluate(*this, ev);
-			} FC_CAPTURE_AND_RETHROW((ev))
-		}
 
         void TransactionEvaluationState::adjust_vote(const SlateIdType slate_id, const ShareType amount)
         {

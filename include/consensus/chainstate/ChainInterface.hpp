@@ -16,7 +16,6 @@
 #include <consensus/WithdrawTypes.hpp>
 #include <consensus/contract/ContractCreatorEntry.hpp>
 
-#include <consensus/shopreceipt/ShopReceiptEntry.hpp>
 
 namespace cdcchain {
     namespace consensus {
@@ -30,8 +29,7 @@ namespace cdcchain {
             public TransactionDbInterface,
             public SlotDbInterface,
             public  ContractDbInterface,
-			public ContractCreatorDBInterface,
-			public ShopReceiptDbInterface
+			public ContractCreatorDBInterface
         {
         public:
             virtual ~ChainInterface(){};
@@ -475,12 +473,6 @@ namespace cdcchain {
 			void                               remove_contract_template_entry(const std::string& hash);
 
 			void                               store_contract_template_entry(const ContractTemplateEntry& entry);
-
-			oShopReceiptEntry                  get_shopreceipt_entry(const ShopReceiptIdType& id) const;
-
-			void                               remove_shopreceipt_entry(const ShopReceiptIdType& id);
-
-			void                               store_shopreceipt_entry(const ShopReceiptEntry& entry);
 
             virtual BlockIdType               get_block_id(uint32_t block_num)const = 0;
             /**

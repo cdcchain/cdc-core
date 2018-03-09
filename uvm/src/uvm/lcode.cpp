@@ -762,13 +762,13 @@ static int validop(int op, TValue *v1, TValue *v2) {
 
 
 /*
-** Try to "constant-fold" an Evidence; return 1 iff successful
+** Try to "constant-fold" an operation; return 1 iff successful
 */
 static int constfolding(FuncState *fs, int op, expdesc *e1, expdesc *e2) {
     TValue v1, v2, res;
     if (!tonumeral(e1, &v1) || !tonumeral(e2, &v2) || !validop(op, &v1, &v2))
         return 0;  /* non-numeric operands or not safe to fold */
-    luaO_arith(fs->ls->L, op, &v1, &v2, &res);  /* does Evidence */
+    luaO_arith(fs->ls->L, op, &v1, &v2, &res);  /* does operation */
     if (ttisinteger(&res)) {
         e1->k = VKINT;
         e1->u.ival = ivalue(&res);
@@ -786,9 +786,9 @@ static int constfolding(FuncState *fs, int op, expdesc *e1, expdesc *e2) {
 
 /*
 ** Code for binary and unary expressions that "produce values"
-** (arithmetic Evidences, bitwise Evidences, concat, length). First
+** (arithmetic operations, bitwise operations, concat, length). First
 ** try to do constant folding (only for numeric [arithmetic and
-** bitwise] Evidences, which is what 'lua_arith' accepts).
+** bitwise] operations, which is what 'lua_arith' accepts).
 ** Expression to produce final result will be encoded in 'e1'.
 */
 static void codeexpval(FuncState *fs, OpCode op,
@@ -816,7 +816,7 @@ static void codeexpval(FuncState *fs, OpCode op,
             freeexp(fs, e1);
         }
         e1->u.info = luaK_codeABC(fs, op, 0, o1, o2);  /* generate opcode */
-        e1->k = VRELOCABLE;  /* all those Evidences are relocatable */
+        e1->k = VRELOCABLE;  /* all those operations are relocatable */
         luaK_fixline(fs, line);
     }
 }

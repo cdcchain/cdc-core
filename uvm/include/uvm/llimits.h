@@ -258,7 +258,7 @@ typedef unsigned long Instruction;
 
 
 /*
-** The luai_num* macros define the primitive Evidences over numbers.
+** The luai_num* macros define the primitive operations over numbers.
 */
 
 /* floor division (defined as 'floor(a/b)') */
@@ -288,7 +288,7 @@ typedef unsigned long Instruction;
 #define luai_numpow(L,a,b)      ((void)L, l_mathop(pow)(a,b))
 #endif
 
-/* the others are quite standard Evidences */
+/* the others are quite standard operations */
 #if !defined(luai_numadd)
 #define luai_numadd(L,a,b)      ((a)+(b))
 #define luai_numsub(L,a,b)      ((a)-(b))

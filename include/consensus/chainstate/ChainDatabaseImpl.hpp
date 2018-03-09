@@ -167,7 +167,6 @@ namespace cdcchain {
                 */
                 void                                        mark_included(const BlockIdType& id, bool state);
 
-				void                                        undo_evidence(const BlockIdType& block_id);
 
                 /**  fetch_blocks_at_number
                 * fetch ids of block at specified number
@@ -384,12 +383,6 @@ namespace cdcchain {
 				cdcchain::db::fast_level_map<TransactionIdType, ContractinTrxEntry>		  _trx_to_contract_iddb;
 				cdcchain::db::fast_level_map<ContractIdType,ContractTrxEntry>		  _contract_to_trx_iddb;
 				cdcchain::db::fast_level_map<string, ContractCreatorEntry> _contract_fee_collector_db;
-
-				// shop receipt db
-				cdcchain::db::fast_level_map<ShopReceiptIdType, ShopReceiptEntry>           _shopreceipt_id_to_entry;
-				cdcchain::db::fast_level_map<uint32_t, uint32_t>							_block_num_to_evidence_count;
-				cdcchain::db::fast_level_map<EvidenceIdType, Evidence>						_evidence_id_to_entry;
-				cdcchain::db::fast_level_map<BlockIdType, EvidenceBlock>                    _evidence_block_id_to_block;
 
                 // simulator contract related
                 PendingChainStatePtr	_simulator_pending_state = nullptr;

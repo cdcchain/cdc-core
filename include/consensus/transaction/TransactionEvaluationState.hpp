@@ -35,7 +35,6 @@ namespace cdcchain {
             bool transaction_entry_analy(const SignedTransaction& trx_arg, std::vector<BalanceEntry>& all_balances, std::vector<AccountEntry>& all_account);
 			SignedTransaction simulator_evaluate(const SignedTransaction &trx_arg, bool& ignore_check_required_fee);
             void evaluate_operation(const Operation& op);
-			void evaluate_evidence(const Evidence& ev);
             bool verify_authority(const MultisigMetaInfo& siginfo);
 
             /** perform any final operations based upon the current state of
@@ -154,10 +153,6 @@ namespace cdcchain {
 			string				contract_address;
             // for event
             vector<EventOperation>							event_vector;
-
-			// for evidence
-			TransactionIdType								ev_from_trx;
-			uint32_t										ev_index;
 
 			//for on destroy operation
 			ShareType                                      _contract_balance_remain;

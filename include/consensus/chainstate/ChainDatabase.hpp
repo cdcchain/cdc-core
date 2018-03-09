@@ -608,7 +608,6 @@ namespace cdcchain {
             *
             * @return BlockForkData
             */
-			void push_evidence(const Evidence& ev, const TransactionIdType& trx_id, uint32_t ev_index);
 
             BlockForkData push_block(const FullBlock& block_data);
 
@@ -1304,10 +1303,6 @@ namespace cdcchain {
 			virtual oContractTemplateEntry contracttemplate_lookup_by_hash(const std::string&)const;
 			virtual void contracttemplate_insert_into_hash_map(const std::string&, const ContractTemplateEntry&);
 			virtual void contracttemplate_erase_from_hash_map(const std::string&);
-
-			virtual oShopReceiptEntry shopreceipt_lookup_by_id(const ShopReceiptIdType&)const;
-			virtual void shopreceipt_insert_into_id_map(const ShopReceiptIdType&, const ShopReceiptEntry&);
-			virtual void shopreceipt_erase_from_id_map(const ShopReceiptIdType&);
 
         public:
             bool generating_block;
