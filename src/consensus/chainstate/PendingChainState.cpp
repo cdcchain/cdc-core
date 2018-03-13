@@ -480,13 +480,22 @@ namespace cdcchain {
         oContractEntry  PendingChainState::contract_lookup_by_name(const ContractName& name)const
         {
             const auto iter = _contract_name_to_id.find(name);
-            if (iter != _contract_name_to_id.end()) return contract_lookup_by_id(iter->second);
+            if (iter != _contract_name_to_id.end()) return contract_lookup_by_id(iter->second.id);
             const ChainInterfacePtr prev_state = _prev_state.lock();
             if (!prev_state) return oContractEntry();
             const oContractEntry entry = prev_state->lookup<ContractEntry>(name);
             if (entry.valid() && _contract_id_remove.count(entry->id) == 0) return *entry;
             return oContractEntry();
         }
+		oContractIdEntry PendingChainState::contractid_lookup_by_name(const ContractName& name)const
+		{
+			const auto iter = _contract_name_to_id.find(name);
+			if (iter != _contract_name_to_id.end()) return  iter->second;
+			if (_contract_name_to_id_remove.count(name) > 0) return oContractIdEntry();
+			const ChainInterfacePtr prev_state = _prev_state.lock();
+			if (!prev_state) return oContractIdEntry();
+			return prev_state->lookup<ContractIdEntry>(name);
+		}
 
         oContractStorage PendingChainState::contractstorage_lookup_by_id(const ContractIdType& id)const
         {
@@ -494,7 +503,7 @@ namespace cdcchain {
             if (iter != _contract_id_to_storage.end()) return iter->second;
             const ChainInterfacePtr prev_state = _prev_state.lock();
             if (!prev_state) return oContractStorage();
-            const oContractStorage entry = prev_state->lookup<ContractStorageEntry>(id);
+            oContractStorage entry = prev_state->lookup<ContractStorageEntry>(id);
             if (entry.valid() && _contract_id_remove.count(id) == 0) return entry;
             return oContractStorage();
         }
@@ -505,10 +514,11 @@ namespace cdcchain {
             _contract_id_to_entry[id] = entry;
         }
 
-        void PendingChainState::contract_insert_into_name_map(const ContractName& name, const ContractIdType& id)
+        void PendingChainState::contractname_insert_into_id_map(const ContractName& name, const ContractIdEntry& id)
         {
             //_contract_id_remove.erase(id);
             _contract_name_to_id[name] = id;
+			_contract_name_to_id_remove.erase(name);
         }
 
         void PendingChainState::contractstorage_insert_into_id_map(const ContractIdType& id, const ContractStorageEntry& storage)
@@ -523,10 +533,11 @@ namespace cdcchain {
             _contract_id_remove.insert(id);
         }
 
-        void PendingChainState::contract_erase_from_name_map(const ContractName& name)
+        void PendingChainState::contractname_erase_from_id_map(const ContractName& name)
         {
             // ContractIdType id = _contract_name_to_id[name];
             _contract_name_to_id.erase(name);
+			_contract_name_to_id_remove.insert(name);
             //_contract_id_remove.insert(id);
         }
 		oResultTIdEntry PendingChainState::contract_lookup_resultid_by_reqestid(const TransactionIdType& req) const

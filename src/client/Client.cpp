@@ -81,6 +81,7 @@ std::cin >> a;
 #include <console/Locale.hpp>
 #include <consensus/api_extern.hpp>
 #include <uvm/uvm_api.h>
+#include <utilities/CharacterRecognition.hpp>
 
 #include <consensus/contract_engine/ContractEngineBuilder.hpp>
 
@@ -382,8 +383,15 @@ namespace cdcchain {
                 {
 #ifdef WIN32
                     datadir = fc::path(option_variables["data-dir"].as<string>());
-#else 
-                    datadir = fc::path(option_variables["data-dir"].as<string>().c_str());
+#elif __linux__
+					auto temp_data_dir = option_variables["data-dir"].as<string>();
+					if (cdcchain::utilities::isGBK(temp_data_dir.data()))
+					{
+						temp_data_dir = GBKToUTF8(temp_data_dir);
+					}
+                    datadir = fc::path(temp_data_dir.c_str());
+#else
+					datadir = fc::path(option_variables["data-dir"].as<string>());
 #endif
                 }
                 else

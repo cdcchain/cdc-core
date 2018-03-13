@@ -377,7 +377,7 @@ namespace cdcchain {
 				cdcchain::db::fast_level_map<std::string, ContractTemplateEntry>				_bytecode_hash_permitted;
                 cdcchain::db::fast_level_map<ContractIdType, ContractEntry>                  _contract_id_to_entry;
                 cdcchain::db::fast_level_map<ContractIdType, ContractStorageEntry>               _contract_id_to_storage;
-                cdcchain::db::fast_level_map<ContractName, ContractIdType>                  _contract_name_to_id;
+                cdcchain::db::fast_level_map<ContractName, ContractIdEntry>                  _contract_name_to_id;
 				cdcchain::db::fast_level_map<TransactionIdType, ResultTIdEntry>		  _request_to_result_iddb;
 				cdcchain::db::fast_level_map<TransactionIdType, RequestIdEntry>		  _result_to_request_iddb;
 				cdcchain::db::fast_level_map<TransactionIdType, ContractinTrxEntry>		  _trx_to_contract_iddb;

@@ -30,6 +30,7 @@
 #include <iostream>
 
 #include <consensus/api_extern.hpp>
+#include <utilities/CharacterRecognition.hpp>
 
 #ifdef HAVE_READLINE
 # include <readline/readline.h>
@@ -649,7 +650,19 @@ namespace cdcchain {
                                     FC_THROW_EXCEPTION(fc::eof_exception, "EOF when parsing argument");
                             }
 #ifdef WIN32
-                            string encodeline = GBKToUTF8(result);
+							string encodeline;
+							if (cdcchain::utilities::isGBK(result.data()))
+							{
+								encodeline = GBKToUTF8(result);
+							}
+                            //string encodeline = GBKToUTF8(result);
+#elif __linux__
+                            //string encodeline = result;
+							string encodeline;
+							if (cdcchain::utilities::isGBK(result.data()))
+							{
+								encodeline = GBKToUTF8(result);
+							}
 #else 
                             string encodeline = result;
 #endif
