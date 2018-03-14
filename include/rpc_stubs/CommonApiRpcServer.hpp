@@ -12,7 +12,7 @@
 //          overwritten by the build process.  If you need to change what is
 //          generated here, you should either modify the input json files
 //          (network_api.json, wallet_api.json, etc) or modify the code
-//          generator (ubcore_api_generator.cpp) itself
+//          generator (cdcchain_api_generator.cpp) itself
 //
 #pragma once
 #include <api/ApiMetadata.hpp>
@@ -183,10 +183,6 @@ namespace cdcchain {
             fc::variant delegate_blacklist_add_operation_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
             fc::variant delegate_blacklist_remove_operation_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
             fc::variant delegate_blacklist_remove_operation_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
-            fc::variant wallet_get_account_contract_fee_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
-            fc::variant wallet_get_account_contract_fee_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
-            fc::variant wallet_get_contract_fee_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
-            fc::variant wallet_get_contract_fee_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
             fc::variant wallet_get_info_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
             fc::variant wallet_get_info_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
             fc::variant wallet_open_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);

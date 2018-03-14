@@ -64,7 +64,7 @@ namespace cdcchain {
         }
 
     }
-} // namespace ubcore
+} // namespace cdcchain
 
 namespace fc
 {

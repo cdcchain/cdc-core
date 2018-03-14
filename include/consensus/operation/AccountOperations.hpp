@@ -80,16 +80,6 @@ namespace cdcchain {
 
             void evaluate(TransactionEvaluationState& eval_state)const;
         };
-		struct GetContractFeeOperation {
-			static const OperationTypeEnum type;
-			GetContractFeeOperation():amount(0){}
-			GetContractFeeOperation(ShareType amount_to_withdraw,string address)
-				:amount(amount_to_withdraw), account_address(address) {}
-
-			void evaluate(TransactionEvaluationState& eval_state)const;
-			ShareType                       amount;
-			string                  account_address;
-		};
 
     }
 } // cdcchain::consensus
@@ -98,4 +88,3 @@ FC_REFLECT(cdcchain::consensus::RegisterAccountOperation, (name)(public_data)(ow
 FC_REFLECT(cdcchain::consensus::UpdateAccountOperation, (account_id)(public_data)(active_key)(delegate_pay_rate))
 FC_REFLECT(cdcchain::consensus::WithdrawPayOperation, (amount)(account_id))
 FC_REFLECT(cdcchain::consensus::UpdateSigningKeyOperation, (account_id)(signing_key))
-FC_REFLECT(cdcchain::consensus::GetContractFeeOperation,(amount)(account_address))

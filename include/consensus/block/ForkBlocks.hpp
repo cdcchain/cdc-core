@@ -1,4 +1,4 @@
-/** @file ubcore/blockchain/fork_blocks.hpp
+/** @file cdcchain/blockchain/fork_blocks.hpp
  *  @brief Defines global block number constants for when hardforks take effect
  */
 

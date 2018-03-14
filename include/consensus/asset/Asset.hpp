@@ -133,8 +133,8 @@ namespace cdcchain {
         /**
          *  A price will reorder the asset types such that the
          *  asset type with the lower enum value is always the
-         *  denominator.  Therefore  ubcore/usd and  usd/ubcore will
-         *  always result in a price measured in usd/ubcore because
+         *  denominator.  Therefore  cdcchain/usd and  usd/cdcchain will
+         *  always result in a price measured in usd/cdcchain because
          *  bitasset_id_type::bit_shares < bitasset_id_type::bit_usd.
          */
         Price operator / (const Asset& a, const Asset& b);
@@ -145,8 +145,8 @@ namespace cdcchain {
          *  the price equation, return the number of the other asset type that
          *  could be exchanged at price p.
          *
-         *  ie:  p = 3 usd/ubcore & a = 4 ubcore then result = 12 usd
-         *  ie:  p = 3 usd/ubcore & a = 4 usd then result = 1.333 ubcore
+         *  ie:  p = 3 usd/cdcchain & a = 4 cdcchain then result = 12 usd
+         *  ie:  p = 3 usd/cdcchain & a = 4 usd then result = 1.333 cdcchain
          */
         Asset operator * (const Asset& a, const Price& p);
 

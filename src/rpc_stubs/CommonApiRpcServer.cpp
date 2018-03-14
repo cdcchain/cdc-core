@@ -12,7 +12,7 @@
 //          overwritten by the build process.  If you need to change what is
 //          generated here, you should either modify the input json files
 //          (network_api.json, wallet_api.json, etc) or modify the code
-//          generator (ubcore_api_generator.cpp) itself
+//          generator (cdcchain_api_generator.cpp) itself
 //
 #define DEFAULT_LOGGER "rpc"
 #include <rpc_stubs/CommonApiRpcServer.hpp>
@@ -26,7 +26,6 @@
 #include <consensus/block/Block.hpp>
 #include <consensus/block/BlockEntry.hpp>
 #include <consensus/chainstate/ChainDatabase.hpp>
-#include <consensus/contract/ContractCreatorEntry.hpp>
 #include <consensus/operation/Operations.hpp>
 #include <consensus/address/PtsAddress.hpp>
 #include <consensus/transaction/Transaction.hpp>
@@ -1890,67 +1889,9 @@ namespace cdcchain {
 			return fc::variant();
 		}
 
-		fc::variant CommonApiRpcServer::wallet_get_account_contract_fee_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
-		{
-			// check all of this method's prerequisites
-			verify_json_connection_is_authenticated(json_connection);
-			// done checking prerequisites
 
-			if (parameters.size() <= 0)
-				FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (creater)");
-			std::string creater = parameters[0].as<std::string>();
 
-			cdcchain::consensus::ContractCreatorEntry result = get_client()->wallet_get_account_contract_fee(creater);
-			return fc::variant(result);
-		}
 
-		fc::variant CommonApiRpcServer::wallet_get_account_contract_fee_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
-		{
-			// check all of this method's prerequisites
-			verify_json_connection_is_authenticated(json_connection);
-			// done checking prerequisites
-
-			if (!parameters.contains("creater"))
-				FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'creater'");
-			std::string creater = parameters["creater"].as<std::string>();
-
-			cdcchain::consensus::ContractCreatorEntry result = get_client()->wallet_get_account_contract_fee(creater);
-			return fc::variant(result);
-		}
-
-        fc::variant CommonApiRpcServer::wallet_get_contract_fee_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
-        {
-            // check all of this method's prerequisites
-            verify_json_connection_is_authenticated(json_connection);
-            // done checking prerequisites
-
-            if (parameters.size() <= 0)
-                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (address_name)");
-            std::string address_name = parameters[0].as<std::string>();
-            if (parameters.size() <= 1)
-                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 2 (amount)");
-            std::string amount = parameters[1].as<std::string>();
-
-            cdcchain::wallet::WalletTransactionEntry result = get_client()->wallet_get_contract_fee(address_name, amount);
-            return fc::variant(result);
-        }
-
-        fc::variant CommonApiRpcServer::wallet_get_contract_fee_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
-        {
-            // check all of this method's prerequisites
-            verify_json_connection_is_authenticated(json_connection);
-            // done checking prerequisites
-
-            if (!parameters.contains("address_name"))
-                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'address_name'");
-            std::string address_name = parameters["address_name"].as<std::string>();
-            if (!parameters.contains("amount"))
-                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'amount'");
-            std::string amount = parameters["amount"].as<std::string>();
-
-            cdcchain::wallet::WalletTransactionEntry result = get_client()->wallet_get_contract_fee(address_name, amount);
-            return fc::variant(result);
-        }
 
 		fc::variant CommonApiRpcServer::wallet_get_info_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
 		{
@@ -8721,21 +8662,7 @@ namespace cdcchain {
                 this, capture_con, _1);
             json_connection->add_named_param_method("delegate_blacklist_remove_operation", bound_named_method);
 
-           // register method wallet_get_account_contract_fee
-            bound_positional_method = boost::bind(&CommonApiRpcServer::wallet_get_account_contract_fee_positional,
-                this, capture_con, _1);
-            json_connection->add_method("wallet_get_account_contract_fee", bound_positional_method);
-            bound_named_method = boost::bind(&CommonApiRpcServer::wallet_get_account_contract_fee_named, 
-                this, capture_con, _1);
-            json_connection->add_named_param_method("wallet_get_account_contract_fee", bound_named_method);
 
-           // register method wallet_get_contract_fee
-            bound_positional_method = boost::bind(&CommonApiRpcServer::wallet_get_contract_fee_positional,
-                this, capture_con, _1);
-            json_connection->add_method("wallet_get_contract_fee", bound_positional_method);
-            bound_named_method = boost::bind(&CommonApiRpcServer::wallet_get_contract_fee_named, 
-                this, capture_con, _1);
-            json_connection->add_named_param_method("wallet_get_contract_fee", bound_named_method);
 
            // register method wallet_get_info
             bound_positional_method = boost::bind(&CommonApiRpcServer::wallet_get_info_positional,
@@ -11242,34 +11169,6 @@ namespace cdcchain {
                 store_method_metadata(delegate_blacklist_remove_operation_method_metadata);
             }
 
-            {
-                // register method wallet_get_account_contract_fee
-                cdcchain::api::MethodData wallet_get_account_contract_fee_method_metadata{ "wallet_get_account_contract_fee", nullptr,
-                    /* description */ "get account fee.",
-                    /* returns */ "contract_create_entry",
-                    /* params: */{
-                        {"creater", "string", cdcchain::api::required_positional, fc::ovariant()}
-                          },
-                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 1,
-                    /* detailed description */ "get account fee.\n\nParameters:\n  creater (string, required): contract creater id or name\n\nReturns:\n  contract_create_entry\n",
-                    /* aliases */ {}, false};
-                store_method_metadata(wallet_get_account_contract_fee_method_metadata);
-            }
-
-            {
-                // register method wallet_get_contract_fee
-                cdcchain::api::MethodData wallet_get_contract_fee_method_metadata{ "wallet_get_contract_fee", nullptr,
-                    /* description */ "Get contract fee.",
-                    /* returns */ "wallet_transaction_entry",
-                    /* params: */{
-                        {"address_name", "string", cdcchain::api::required_positional, fc::ovariant()},
-                        {"amount", "string", cdcchain::api::required_positional, fc::ovariant()}
-                          },
-                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 1,
-                    /* detailed description */ "Get contract fee.\n\nParameters:\n  address_name (string, required): Contract creater\n  amount (string, required): the account that should receive the funds\n\nReturns:\n  wallet_transaction_entry\n",
-                    /* aliases */ {}, false};
-                store_method_metadata(wallet_get_contract_fee_method_metadata);
-            }
 
             {
                 // register method wallet_get_info
@@ -13899,10 +13798,7 @@ namespace cdcchain {
                 return delegate_blacklist_add_operation_positional(nullptr, parameters);
             if (method_name == "delegate_blacklist_remove_operation")
                 return delegate_blacklist_remove_operation_positional(nullptr, parameters);
-            if (method_name == "wallet_get_account_contract_fee")
-                return wallet_get_account_contract_fee_positional(nullptr, parameters);
-            if (method_name == "wallet_get_contract_fee")
-                return wallet_get_contract_fee_positional(nullptr, parameters);
+            
             if (method_name == "wallet_get_info")
                 return wallet_get_info_positional(nullptr, parameters);
             if (method_name == "wallet_open")

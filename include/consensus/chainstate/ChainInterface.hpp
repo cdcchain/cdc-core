@@ -14,7 +14,6 @@
 #include <consensus/transaction/TransactionEntry.hpp>
 #include <consensus/Types.hpp>
 #include <consensus/WithdrawTypes.hpp>
-#include <consensus/contract/ContractCreatorEntry.hpp>
 
 
 namespace cdcchain {
@@ -28,8 +27,7 @@ namespace cdcchain {
             public BalanceDbInterface,
             public TransactionDbInterface,
             public SlotDbInterface,
-            public  ContractDbInterface,
-			public ContractCreatorDBInterface
+            public  ContractDbInterface
         {
         public:
             virtual ~ChainInterface(){};

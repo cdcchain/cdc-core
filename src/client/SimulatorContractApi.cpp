@@ -448,5 +448,5 @@ namespace cdcchain
             }
         }//namespace detail	
     }//namespace client
-}//namespace ubcore
+}//namespace cdcchain
 

@@ -1,5 +1,5 @@
 /**
- * lua module injector header in ubcore
+ * lua module injector header in cdcchain
  */
 
 #include "uvm/lprefix.h"
@@ -62,7 +62,7 @@ namespace cdcchain {
             }
 
             /**
-            * when exception happened, use this api to tell ubcore
+            * when exception happened, use this api to tell cdcchain
             * @param L the lua stack
             * @param code error code, 0 is OK, other is different error
             * @param error_format error info string, will be released by lua
@@ -119,7 +119,7 @@ namespace cdcchain {
             */
             int UvmChainApi::check_contract_api_instructions_over_limit(lua_State *L)
             {
-                return 0; // FIXME: need fill by ubcore api
+                return 0; // FIXME: need fill by cdcchain api
             }
 
             int UvmChainApi::get_stored_contract_info(lua_State *L, const char *name, std::shared_ptr<UvmContractInfo> contract_info_ret)
@@ -200,7 +200,7 @@ namespace cdcchain {
             bool UvmChainApi::check_contract_exist(lua_State *L, const char *name)
             {
                 /*
-                char *filename = lutil_concat_str4("ubcore_lua_modules", file_separator_str(), "ubcore_contract_", name);
+                char *filename = lutil_concat_str4("cdcchain_lua_modules", file_separator_str(), "cdcchain_contract_", name);
                 FILE *f = fopen(filename, "rb");
                 bool exist = false;
                 if (NULL != f)
@@ -251,14 +251,14 @@ namespace cdcchain {
                 return p_luamodule;
             }
             /**
-            * load contract lua byte stream from ubcore api
+            * load contract lua byte stream from cdcchain api
             */
             std::shared_ptr<UvmModuleByteStream> UvmChainApi::open_contract(lua_State *L, const char *name)
             {
                 // FXIME
                 /*
                 bool is_bytes = true;
-                char *filename = lutil_concat_str4("ubcore_lua_modules", file_separator_str(), "ubcore_contract_", name);
+                char *filename = lutil_concat_str4("cdcchain_lua_modules", file_separator_str(), "cdcchain_contract_", name);
                 FILE *f = fopen(filename, "rb");
                 if (NULL == f)
                 {
@@ -323,7 +323,7 @@ namespace cdcchain {
             }
 
             /**
-            * store contract lua module byte stream to ubcore api
+            * store contract lua module byte stream to cdcchain api
             */
             //need to delete
             /*

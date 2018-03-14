@@ -12,7 +12,7 @@
 //          overwritten by the build process.  If you need to change what is
 //          generated here, you should either modify the input json files
 //          (network_api.json, wallet_api.json, etc) or modify the code
-//          generator (ubcore_api_generator.cpp) itself
+//          generator (cdcchain_api_generator.cpp) itself
 //
 #pragma once
 
@@ -23,7 +23,6 @@
 #include <consensus/block/Block.hpp>
 #include <consensus/block/BlockEntry.hpp>
 #include <consensus/chainstate/ChainDatabase.hpp>
-#include <consensus/contract/ContractCreatorEntry.hpp>
 #include <consensus/operation/Operations.hpp>
 #include <consensus/address/PtsAddress.hpp>
 #include <consensus/transaction/Transaction.hpp>
@@ -358,7 +357,7 @@ namespace cdcchain {
              */
             virtual void blockchain_broadcast_transaction(const cdcchain::consensus::SignedTransaction& trx) = 0;
             /**
-             * Convert bitcoin address file to ubcore address file.
+             * Convert bitcoin address file to cdcchain address file.
              *
              * @param path The bitcoin address file path. (string, required)
              */
@@ -596,23 +595,6 @@ namespace cdcchain {
              * @param id operation to remove from blacklist (operation_type, required)
              */
             virtual void delegate_blacklist_remove_operation(const cdcchain::consensus::OperationTypeEnum& id) = 0;
-            /**
-             * get account fee.
-             *
-             * @param creater contract creater id or name (string, required)
-             *
-             * @return contract_create_entry
-             */
-            virtual cdcchain::consensus::ContractCreatorEntry wallet_get_account_contract_fee(const std::string& creater) = 0;
-            /**
-             * Get contract fee.
-             *
-             * @param address_name Contract creater (string, required)
-             * @param amount the account that should receive the funds (string, required)
-             *
-             * @return wallet_transaction_entry
-             */
-            virtual cdcchain::wallet::WalletTransactionEntry wallet_get_contract_fee(const std::string& address_name, const std::string& amount) = 0;
             /**
              * Extra information about the wallet.
              *

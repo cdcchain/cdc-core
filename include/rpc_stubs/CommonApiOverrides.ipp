@@ -87,8 +87,7 @@
             void delegate_blacklist_remove_transaction(const cdcchain::consensus::TransactionIdType& id) override;
             void delegate_blacklist_add_operation(const cdcchain::consensus::OperationTypeEnum& id) override;
             void delegate_blacklist_remove_operation(const cdcchain::consensus::OperationTypeEnum& id) override;
-            cdcchain::consensus::ContractCreatorEntry wallet_get_account_contract_fee(const std::string& creater) override;
-            cdcchain::wallet::WalletTransactionEntry wallet_get_contract_fee(const std::string& address_name, const std::string& amount) override;
+            
             fc::variant_object wallet_get_info() override;
             void wallet_open(const std::string& wallet_name) override;
             void wallet_create(const std::string& wallet_name, const std::string& new_passphrase, const std::string& brain_key = fc::json::from_string("\"\"").as<std::string>()) override;

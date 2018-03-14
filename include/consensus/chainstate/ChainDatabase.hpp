@@ -988,9 +988,7 @@ namespace cdcchain {
             * @return oAssetEntry
             */
             virtual oAssetEntry asset_lookup_by_symbol(const string&)const override;
-			virtual oContractCreatorEntry contractcreator_lookup_by_symbol(const string&)const override;
-			virtual void contractcreator_insert_into_map(const string&,const ContractCreatorEntry&)override;
-			virtual void contractcreator_erase_from_map(const string&)override;
+			
             /**  Store AssetEntry to db by asset_id
             *
             * @param  id  AssetIdType

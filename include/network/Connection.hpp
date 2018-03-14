@@ -67,4 +67,4 @@ namespace cdcchain {
 
 
     }
-} // ubcore:net
+} // cdcchain:net

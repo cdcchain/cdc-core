@@ -22,7 +22,7 @@ namespace cdcchain {
         typedef std::function<void(const fc::path& filename, const fc::http::server::response&)> HttpCallbackType;
         /**
         *  @class rpc_server
-        *  @brief provides a json-rpc interface to the ubcore client
+        *  @brief provides a json-rpc interface to the cdcchain client
         */
         class RpcServer
         {

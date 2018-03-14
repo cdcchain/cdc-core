@@ -119,7 +119,7 @@ namespace cdcchain {
             const unordered_map<Address, WalletKeyEntry>& get_keys()const { return keys; }
             const unordered_map<string, WalletContactEntry>& get_contacts()const { return contacts; }
 
-			//ubcore3.0 contracts related
+			//cdcchain3.0 contracts related
 			const unordered_map<Address, vector<WalletContractEntry>>& get_contracts() const { return contracts_of_wallet; }
 			const unordered_map<ContractIdType, WalletContractEntry>& get_id_contract_map() const { return id_to_entry_for_contract; }
 			void store_contract(const cdcchain::consensus::ContractEntry& blockchain_contract_entry);

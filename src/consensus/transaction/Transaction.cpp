@@ -161,10 +161,6 @@ namespace cdcchain {
             FC_ASSERT(amount > 0, "amount: ${amount}", ("amount", amount));
             operations.emplace_back(WithdrawPayOperation(amount, account));
         }
-		void Transaction::get_contract_fee(const string contract_creater, ShareType amount) {
-			FC_ASSERT(amount > 0, "amount: ${amount}", ("amount", amount));
-			operations.emplace_back(GetContractFeeOperation(amount,contract_creater));
-		}
 
         void Transaction::deposit(const Address& owner, const Asset& amount)
         {

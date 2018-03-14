@@ -39,7 +39,7 @@ std::cin >> a;
 #include <rpc/RpcClient.hpp>
 #include <rpc/RpcServer.hpp>
 
-//#include <ubcore/mail/server.hpp>
+//#include <cdcchain/mail/server.hpp>
 
 
 #include <fc/log/file_appender.hpp>

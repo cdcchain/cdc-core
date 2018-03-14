@@ -192,9 +192,6 @@ WalletTransactionEntry WalletImpl::scan_transaction(
             case withdraw_pay_op_type:
                 has_withdrawal |= scan_withdraw_pay(op.as<WithdrawPayOperation>(), *transaction_entry, total_fee, bNeedcreate);
                 break;
-			case on_get_contract_fee_operation:
-				has_withdrawal |= scan_contract_get_fee(op.as<GetContractFeeOperation>(), *transaction_entry, total_fee, bNeedcreate);
-				break;
 			case balances_withdraw_op_type:
 				has_withdrawal |= scan_withdraw_balances(op.as<BalancesWithdrawOperation>(), *transaction_entry, total_fee, withdraw_pub_key, bNeedcreate);
 				break;
@@ -737,73 +734,7 @@ bool cdcchain::wallet::detail::WalletImpl::scan_ondestroycontract_deposit(const 
 		}
 	} FC_CAPTURE_AND_RETHROW()
 }
-bool WalletImpl::scan_contract_get_fee(const GetContractFeeOperation& op, WalletTransactionEntry& trx_rec, Asset& total_fee, bool bNeedcreate) {
-	try {
-		const auto amount = Asset(op.amount); // Always base asset
 
-		if (amount.asset_id == total_fee.asset_id)
-			total_fee += amount;
-
-		const auto account_rec = _wallet_db.lookup_account(Address(op.account_address));
-		FC_ASSERT(account_rec.valid());
-		const auto key_rec = _wallet_db.lookup_key(account_rec->owner_key);
-		if (key_rec.valid() && key_rec->has_private_key()) /* If we own this account */
-		{
-			auto new_entry = true;
-			for (auto& entry : trx_rec.ledger_entries)
-			{
-				if (!entry.from_account.valid()) continue;
-				const auto a1 = self->get_account_for_address(*entry.from_account);
-				if (!a1.valid()) continue;
-				const auto a2 = self->get_account_for_address(key_rec->account_address);
-				if (!a2.valid()) continue;
-				if (a1->name != a2->name) continue;
-
-				// TODO: We should probably really have a map of asset ids to amounts per ledger entry
-				if (entry.amount.asset_id == amount.asset_id)
-				{
-					entry.amount += amount;
-					if (entry.memo.empty()) entry.memo = "Contract get fee";
-					new_entry = false;
-					break;
-				}
-				else if (entry.amount.amount == 0)
-				{
-					entry.amount = amount;
-					if (entry.memo.empty()) entry.memo = "Contract get fee";
-					new_entry = false;
-					break;
-				}
-			}
-			if (new_entry)
-			{
-				auto entry = LedgerEntry();
-				entry.from_account = key_rec->public_key;
-				entry.amount = amount;
-				entry.memo = "Contract get fee";
-				trx_rec.ledger_entries.push_back(entry);
-			}
-
-			return true;
-		}
-		else if (!bNeedcreate)
-		{
-			try {
-				if (account_rec.valid())
-				{
-					auto entry = LedgerEntry();
-					entry.from_account = account_rec->owner_key;
-					entry.to_account = account_rec->owner_key;
-					trx_rec.ledger_entries.push_back(entry);
-				}
-			}
-			catch (...)
-			{
-			}
-		}
-		return false;
-	} FC_CAPTURE_AND_RETHROW()
-}
 // TODO: Refactor scan_withdraw{_pay}; almost exactly the same
 bool WalletImpl::scan_withdraw_pay(const WithdrawPayOperation& op, WalletTransactionEntry& trx_rec, Asset& total_fee, bool bNeedcreate)
 {
@@ -2289,17 +2220,7 @@ PrettyTransaction		Wallet::to_pretty_trx(const cdcchain::consensus::TransactionE
             pretty_trx.trx_type = cdcchain::consensus::TransactionType::withdraw_pay_transaction;
 			break;
 		}
-		case on_get_contract_fee_operation: {
-			const auto get_contract_fee_op = op.as<GetContractFeeOperation>();
 
-			pretty_entry.from_account = "NETWORK";
-			pretty_entry.from_account_name = "NETWORK";
-			pretty_entry.memo = "contract owner " + get_contract_fee_op.account_address + "get_fee";
-			total_fee += Asset(get_contract_fee_op.amount);
-
-			pretty_trx.trx_type = cdcchain::consensus::TransactionType::get_contract_fee_transaction;
-			break;
-		}
 		default:
 			break;
 		}

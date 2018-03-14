@@ -38,7 +38,7 @@ namespace cdcchain {
                 bool                                             _dirty_accounts = true;
                 vector<PrivateKeyType>                         _stealth_private_keys;
 
-				// ubcore3.0 contract related
+				// cdcchain3.0 contract related
 				bool                                             _dirty_contracts = true;
 				unordered_map<ContractIdType, ContractEntry>   _contract_entrys;
 
@@ -167,7 +167,6 @@ namespace cdcchain {
 
                 bool scan_withdraw(const WithdrawOperation& op, WalletTransactionEntry& trx_rec, Asset& total_fee, PublicKeyType& from_pub_key, bool bNeedcreate);
                 bool scan_withdraw_pay(const WithdrawPayOperation& op, WalletTransactionEntry& trx_rec, Asset& total_fee, bool bNeedcreate);
-				bool scan_contract_get_fee(const GetContractFeeOperation& op, WalletTransactionEntry& trx_rec, Asset& total_fee, bool bNeedcreate);
 				bool scan_withdraw_balances(const BalancesWithdrawOperation& op, WalletTransactionEntry& trx_rec, Asset& total_fee, PublicKeyType key, bool bNeedcreate);
 				bool scan_withdraw_contract(const WithdrawContractOperation& op, WalletTransactionEntry& trx_rec, Asset& total_fee, PublicKeyType key, bool bNeedcreate);
 				bool scan_ondestroycontract_withdraw(const OnDestroyOperation& op, WalletTransactionEntry& trx_rec, Asset& total_fee, PublicKeyType key, bool bNeedcreate);

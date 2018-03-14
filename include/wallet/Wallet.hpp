@@ -801,7 +801,7 @@ namespace cdcchain {
             /**
             * Loads the private key into the specified account. Returns which account it was actually imported to.
             *
-            * @param wif_key A private key in ubcore wallet import format
+            * @param wif_key A private key in cdcchain wallet import format
             * @param account_name the name of the account the key should be imported into, if null then the key must belong to
             *                     an active account
             * @param create_account If true, the wallet will attempt to create a new account for the name provided rather
@@ -1114,8 +1114,6 @@ namespace cdcchain {
                 const string& withdraw_to_account_name,
                 bool sign
                 );
-			WalletTransactionEntry wallet_get_contract_fee(const std::string& address_name, const std::string& amount);
-			cdcchain::consensus::ContractCreatorEntry wallet_get_account_contract_fee(const string& creater);
             /**
             * Query delegate salary
             *

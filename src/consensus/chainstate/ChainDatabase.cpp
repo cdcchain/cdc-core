@@ -167,7 +167,6 @@ namespace cdcchain {
                     _contract_name_to_id.open(data_dir / "index/contract_name_to_id");
                     _result_to_request_iddb.open(data_dir / "index/_result_to_request_id");
                     _asset_id_to_entry.open(data_dir / "index/asset_id_to_entry");
-					_contract_fee_collector_db.open(data_dir / "index/_contract_fee_collector_db");
                     _asset_symbol_to_id.open(data_dir / "index/asset_symbol_to_id");
 
                     _slate_id_to_entry.open(data_dir / "index/slate_id_to_entry");
@@ -856,10 +855,10 @@ namespace cdcchain {
 
                     oAssetEntry base_asset_entry = pending_state->get_asset_entry(AssetIdType(0));
                     FC_ASSERT(base_asset_entry.valid(), "Invalid asset");
-					oAccountEntry maintenance_delegate_entry = self->get_account_entry("maintenance-account");
-					FC_ASSERT(maintenance_delegate_entry.valid(), "Invalid maintenance_account entry");
-					maintenance_delegate_entry = pending_state->get_account_entry(maintenance_delegate_entry->id);
-					FC_ASSERT(maintenance_delegate_entry.valid() && maintenance_delegate_entry->is_delegate() && maintenance_delegate_entry->delegate_info.valid(), "Invalid delegate");
+					//oAccountEntry maintenance_delegate_entry = self->get_account_entry("maintenance-account");
+					//FC_ASSERT(maintenance_delegate_entry.valid(), "Invalid maintenance_account entry");
+					//maintenance_delegate_entry = pending_state->get_account_entry(maintenance_delegate_entry->id);
+					//FC_ASSERT(maintenance_delegate_entry.valid() && maintenance_delegate_entry->is_delegate() && maintenance_delegate_entry->delegate_info.valid(), "Invalid delegate");
 
                     oAccountEntry delegate_entry = self->get_account_entry(Address(block_signee));
                     FC_ASSERT(delegate_entry.valid(), "Invalid account entry");
@@ -882,20 +881,20 @@ namespace cdcchain {
 
                     const ShareType accepted_paycheck = accepted_new_shares + accepted_collected_fees;
                     //const share_type accepted_paycheck = accepted_new_shares;
-					auto real_accept_pay_check = accepted_paycheck - accepted_paycheck / 2;
+					//auto real_accept_pay_check = accepted_paycheck - accepted_paycheck / 2;
                     ChainDatabaseImpl * temp = (ChainDatabaseImpl *)this;
-					temp->_block_per_account_reword_amount = real_accept_pay_check;
-					FC_ASSERT(real_accept_pay_check >= 0);
-					delegate_entry->delegate_info->votes_for += real_accept_pay_check;
-					delegate_entry->delegate_info->pay_balance += real_accept_pay_check;
-					delegate_entry->delegate_info->total_paid += real_accept_pay_check;
+					temp->_block_per_account_reword_amount = accepted_paycheck;
+					FC_ASSERT(accepted_paycheck >= 0);
+					delegate_entry->delegate_info->votes_for += accepted_paycheck;
+					delegate_entry->delegate_info->pay_balance += accepted_paycheck;
+					delegate_entry->delegate_info->total_paid += accepted_paycheck;
 
-					maintenance_delegate_entry->delegate_info->votes_for += accepted_paycheck/2;
-					maintenance_delegate_entry->delegate_info->pay_balance += accepted_paycheck/2;
-					maintenance_delegate_entry->delegate_info->total_paid += accepted_paycheck/2;
+					//maintenance_delegate_entry->delegate_info->votes_for += accepted_paycheck/2;
+					//maintenance_delegate_entry->delegate_info->pay_balance += accepted_paycheck/2;
+					//maintenance_delegate_entry->delegate_info->total_paid += accepted_paycheck/2;
 
                     pending_state->store_account_entry(*delegate_entry);
-					pending_state->store_account_entry(*maintenance_delegate_entry);
+					//pending_state->store_account_entry(*maintenance_delegate_entry);
                     pending_state->store_asset_entry(*base_asset_entry);
 
                     if (entry.valid())
@@ -1351,8 +1350,8 @@ namespace cdcchain {
         std::vector<AccountIdType> ChainDatabase::get_delegates_by_vote(uint32_t first, uint32_t count)const
         {
             try {
-				oAccountEntry maintenance_delegate_entry = my->self->get_account_entry("maintenance-account");
-				FC_ASSERT(maintenance_delegate_entry.valid(), "Invalid maintenance_account entry");
+				//oAccountEntry maintenance_delegate_entry = my->self->get_account_entry("maintenance-account");
+				//FC_ASSERT(maintenance_delegate_entry.valid(), "Invalid maintenance_account entry");
                 auto del_vote_itr = my->_delegate_votes.begin();
                 std::vector<AccountIdType> sorted_delegates;
                 if (count > my->_delegate_votes.size())
@@ -1362,9 +1361,9 @@ namespace cdcchain {
 				while (sorted_delegates.size() < count &&  del_vote_itr != my->_delegate_votes.end())
                 {
 					
-					if (pos >= first && del_vote_itr->delegate_id != maintenance_delegate_entry->id){
+					//if (pos >= first && del_vote_itr->delegate_id != maintenance_delegate_entry->id){
 						sorted_delegates.push_back(del_vote_itr->delegate_id);
-					}
+					//}
                     ++pos;
                     ++del_vote_itr;
                 }
@@ -1455,7 +1454,6 @@ namespace cdcchain {
                             my->_contract_name_to_id.toggle_leveldb(enabled);
                             my->_result_to_request_iddb.toggle_leveldb(enabled);
                             my->_asset_id_to_entry.toggle_leveldb(enabled);
-							my->_contract_fee_collector_db.toggle_leveldb(enabled);
 							
                             my->_asset_symbol_to_id.toggle_leveldb(enabled);
 
@@ -1650,7 +1648,6 @@ namespace cdcchain {
                 my->_contract_id_to_storage.close();
 
                 my->_asset_id_to_entry.close();
-				my->_contract_fee_collector_db.close();
                 my->_asset_symbol_to_id.close();
 
                 my->_slate_id_to_entry.close();
@@ -3354,29 +3351,7 @@ namespace cdcchain {
             if (iter != my->_asset_symbol_to_id.unordered_end()) return asset_lookup_by_id(iter->second);
             return oAssetEntry();
         }
-		oContractCreatorEntry ChainDatabase::contractcreator_lookup_by_symbol(const string& contract_creator)const {
-			const auto iter = my->_contract_fee_collector_db.unordered_find(contract_creator);
-			if (iter != my->_contract_fee_collector_db.unordered_end()) {
-				return iter->second;
-			}
-			return oContractCreatorEntry();
-		}
-		void ChainDatabase::contractcreator_insert_into_map(const string& contract_creator,const ContractCreatorEntry& fee) {
-			my->_contract_fee_collector_db.store(contract_creator, fee);
-// 			auto iter = contractcreator_lookup_by_symbol(contract_creator);
-// 			if (iter.valid()){
-
-// 				my->_contract_fee_collector_db.store(contract_creator, ContractCreatorEntry(contract_creator, Asset(fee.fee_collector + iter->fee_collector)));
-
-// 			}
-// 			else {
-// 				
-// 			}
 			
-		}
-		void ChainDatabase::contractcreator_erase_from_map(const string& contract_creator) {
-			my->_contract_fee_collector_db.remove(contract_creator);
-		}
         void ChainDatabase::asset_insert_into_id_map(const AssetIdType id, const AssetEntry& entry)
         {
             my->_asset_id_to_entry.store(id, entry);
@@ -3642,9 +3617,6 @@ namespace cdcchain {
                 next_path = dir / "_asset_id_to_entry.json";
                 my->_asset_id_to_entry.export_to_json(next_path);
                 ulog("Dumped ${p}", ("p", next_path));
-				next_path = dir / "_contract_fee_collector_db.json";
-				my->_contract_fee_collector_db.export_to_json(next_path);
-				ulog("Dumped ${p}", ("p", next_path));
                 next_path = dir / "_asset_symbol_to_id.json";
                 my->_asset_symbol_to_id.export_to_json(next_path);
                 ulog("Dumped ${p}", ("p", next_path));

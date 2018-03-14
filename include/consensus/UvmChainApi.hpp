@@ -49,7 +49,7 @@ namespace cdcchain
 
 
 				/**
-				* when exception happened, use this api to tell ubcore
+				* when exception happened, use this api to tell cdcchain
 				* @param L the lua stack
 				* @param code error code, 0 is OK, other is different error
 				* @param error_format error info string, will be released by lua
@@ -58,7 +58,7 @@ namespace cdcchain
 				virtual void throw_exception(lua_State *L, int code, const char *error_format, ...);
 
 				/**
-				* get contract info stored before from ubcore api
+				* get contract info stored before from cdcchain api
 				* @param name contract name
 				* @param contract_info_ret this api save the contract's api name array here if found, this var will be free by this api
 				* @return TRUE(1 or not 0) if success, FALSE(0) if failed
@@ -69,14 +69,14 @@ namespace cdcchain
 
 				virtual std::shared_ptr<UvmModuleByteStream> get_bytestream_from_code(lua_State *L, const uvm::blockchain::Code& code);
 				/**
-				* load contract lua byte stream from ubcore api
+				* load contract lua byte stream from cdcchain api
 				*/
 				virtual std::shared_ptr<UvmModuleByteStream> open_contract(lua_State *L, const char *name);
 
 				virtual std::shared_ptr<UvmModuleByteStream> open_contract_by_address(lua_State *L, const char *address);
 
 				/**
-				* get contract address/id from ubcore by contract name
+				* get contract address/id from cdcchain by contract name
 				*/
 				virtual void get_contract_address_by_name(lua_State *L, const char *name, char *address, size_t *address_size);
 
@@ -91,17 +91,17 @@ namespace cdcchain
 				virtual bool check_contract_exist_by_address(lua_State *L, const char *address);
 
 				/**
-				* store contract lua module byte stream to ubcore api
+				* store contract lua module byte stream to cdcchain api
 				*/
 				//int save_contract(lua_State *L, const char *name, UvmModuleByteStream *stream);
 
 				/**
-				* register new storage name of contract to ubcore
+				* register new storage name of contract to cdcchain
 				*/
 				virtual bool register_storage(lua_State *L, const char *contract_name, const char *name);
 
 				/**
-				* directly get storage value from ubcore
+				* directly get storage value from cdcchain
 				*/
 				//void free_contract_storage(lua_State *L, UvmStorageValue* storage);
 
@@ -110,7 +110,7 @@ namespace cdcchain
 				virtual UvmStorageValue get_storage_value_from_uvm_by_address(lua_State *L, const char *contract_address, std::string name);
 
 				/**
-				* after lua merge storage changes in lua_State, use the function to store the merged changes of storage to ubcore
+				* after lua merge storage changes in lua_State, use the function to store the merged changes of storage to cdcchain
 				*/
 				virtual bool commit_storage_changes_to_uvm(lua_State *L, AllContractsChangesMap &changes);
 

@@ -2145,64 +2145,6 @@ namespace cdcchain {
             FC_RETHROW_EXCEPTIONS(warn, "")
         }
 
-cdcchain::consensus::ContractCreatorEntry CommonApiClient::wallet_get_account_contract_fee(const std::string& creater)
-{
-  ilog("received RPC call: wallet_get_account_contract_fee(${creater})", ("creater", creater));
-  cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
-  uint64_t call_id = 0;
-  fc::variants args;
-  if( glog != NULL )
-  {
-    args.push_back( fc::variant(creater) );
-    call_id = glog->log_call_started( this, "wallet_get_account_contract_fee", args );
-  }
-
-  struct scope_exit
-  {
-    fc::time_point start_time;
-    scope_exit() : start_time(fc::time_point::now()) {}
-    ~scope_exit() { dlog("RPC call wallet_get_account_contract_fee finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
-  } execution_time_logger;
-  try
-  {
-    cdcchain::consensus::ContractCreatorEntry result = get_impl()->wallet_get_account_contract_fee(creater);
-    if( call_id != 0 )
-      glog->log_call_finished( call_id, this, "wallet_get_account_contract_fee", args, fc::variant(result) );
-
-    return result;
-  }
-  FC_RETHROW_EXCEPTIONS(warn, "")
-}
-
-        cdcchain::wallet::WalletTransactionEntry CommonApiClient::wallet_get_contract_fee(const std::string& address_name, const std::string& amount)
-        {
-            ilog("received RPC call: wallet_get_contract_fee(${address_name}, ${amount})", ("address_name", address_name)("amount", amount));
-            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
-            uint64_t call_id = 0;
-            fc::variants args;
-            if( glog != NULL )
-            {
-                args.push_back( fc::variant(address_name) );
-                args.push_back( fc::variant(amount) );
-                call_id = glog->log_call_started( this, "wallet_get_contract_fee", args );
-            }
-
-            struct scope_exit
-            {
-                fc::time_point start_time;
-                scope_exit() : start_time(fc::time_point::now()) {}
-                ~scope_exit() { dlog("RPC call wallet_get_contract_fee finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
-            } execution_time_logger;
-            try
-            {
-                cdcchain::wallet::WalletTransactionEntry result =             get_impl()->wallet_get_contract_fee(address_name, amount);
-                if( call_id != 0 )
-                    glog->log_call_finished( call_id, this, "wallet_get_contract_fee", args, fc::variant(result) );
-
-                return result;
-            }
-            FC_RETHROW_EXCEPTIONS(warn, "")
-        }
 
         fc::variant_object CommonApiClient::wallet_get_info()
         {

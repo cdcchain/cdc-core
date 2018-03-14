@@ -26,8 +26,7 @@ namespace cdcchain {
             transfer_contract_transaction = 11,
             contract_upgrade_transaction = 12,
             contract_destroy_transaction = 13,
-            contract_call_transaction = 14,
-			get_contract_fee_transaction = 15
+            contract_call_transaction = 14
         };
 
         enum ResultTransactionType
@@ -61,7 +60,6 @@ namespace cdcchain {
             void withdraw_from_contract(const BalanceIdType& account, ShareType amount, const ContractIdType& contract_id);
 
             void withdraw_pay(const AccountIdType account, ShareType amount);
-			void get_contract_fee(const string contract_creater, ShareType amount);
 			void deposit(const Address& addr, const Asset& amount);
 
 
@@ -234,7 +232,6 @@ FC_REFLECT_ENUM(cdcchain::consensus::TransactionType,
     (contract_upgrade_transaction)
     (contract_destroy_transaction)
     (contract_call_transaction)
-	(get_contract_fee_transaction)
     )
 
     FC_REFLECT_ENUM(cdcchain::consensus::ResultTransactionType,

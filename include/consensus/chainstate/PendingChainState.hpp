@@ -161,8 +161,6 @@ namespace cdcchain {
 
             unordered_map<AssetIdType, AssetEntry>                         _asset_id_to_entry;
             unordered_set<AssetIdType>                                       _asset_id_remove;
-			unordered_map<string, ContractCreatorEntry>						_contract_creater_entry;
-			unordered_set<string>											_contract_creater_remove;
             unordered_map<string, AssetIdType>                               _asset_symbol_to_id;
 
             unordered_map<SlateIdType, SlateEntry>                         _slate_id_to_entry;
@@ -261,9 +259,6 @@ namespace cdcchain {
             *
             * @return void
             */
-			virtual oContractCreatorEntry contractcreator_lookup_by_symbol(const string&)const override;
-			virtual void contractcreator_insert_into_map(const string&, const ContractCreatorEntry&) override;
-			virtual void contractcreator_erase_from_map(const string&)override;
             virtual void account_insert_into_id_map(const AccountIdType, const AccountEntry&)override;
 
             /**  Insert pair(account_name, account_id) into _account_name_to_id
@@ -649,8 +644,6 @@ FC_REFLECT(cdcchain::consensus::PendingChainState,
     (_account_address_to_id)
     (_asset_id_to_entry)
     (_asset_id_remove)
-	(_contract_creater_entry)
-	(_contract_creater_remove)
     (_asset_symbol_to_id)
     (_slate_id_to_entry)
     (_slate_id_remove)

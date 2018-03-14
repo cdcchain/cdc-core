@@ -12,7 +12,7 @@
 //          overwritten by the build process.  If you need to change what is
 //          generated here, you should either modify the input json files
 //          (network_api.json, wallet_api.json, etc) or modify the code
-//          generator (ubcore_api_generator.cpp) itself
+//          generator (cdcchain_api_generator.cpp) itself
 //
 #define DEFAULT_LOGGER "rpc"
 #include <rpc_stubs/CommonApiRpcClient.hpp>
@@ -366,16 +366,8 @@ namespace cdcchain {
         {
             fc::variant result = get_json_connection()->async_call("delegate_blacklist_remove_operation", std::vector<fc::variant>{fc::variant(id)}).wait();
         }
-cdcchain::consensus::ContractCreatorEntry CommonApiRpcClient::wallet_get_account_contract_fee(const std::string& creater)
-{
-  fc::variant result = get_json_connection()->async_call("wallet_get_account_contract_fee", std::vector<fc::variant>{fc::variant(creater)}).wait();
-  return result.as<cdcchain::consensus::ContractCreatorEntry>();
-        }
-        cdcchain::wallet::WalletTransactionEntry CommonApiRpcClient::wallet_get_contract_fee(const std::string& address_name, const std::string& amount)
-        {
-            fc::variant result = get_json_connection()->async_call("wallet_get_contract_fee", std::vector<fc::variant>{fc::variant(address_name), fc::variant(amount)}).wait();
-            return result.as<cdcchain::wallet::WalletTransactionEntry>();
-        }
+
+        
         fc::variant_object CommonApiRpcClient::wallet_get_info()
         {
             fc::variant result = get_json_connection()->async_call("wallet_get_info", std::vector<fc::variant>{}).wait();

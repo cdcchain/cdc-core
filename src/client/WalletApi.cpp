@@ -1705,19 +1705,6 @@ namespace cdcchain {
                 auto salary = _wallet->query_delegate_salarys();
                 return salary;
             }
-			WalletTransactionEntry ClientImpl::wallet_get_contract_fee(const std::string& address_name, const std::string& amount) {
-				if (_chain_db->get_is_in_simulator())
-					FC_THROW_EXCEPTION(simulator_command_forbidden, "in simulator, this command is forbidden, you cannot call it!");
-				auto entry = _wallet->wallet_get_contract_fee(address_name, amount);
-				_wallet->cache_transaction(entry);
-				network_broadcast_transaction(entry.trx);
-				return entry;
-			}
-			cdcchain::consensus::ContractCreatorEntry ClientImpl::wallet_get_account_contract_fee(const std::string& creater) {
-				if (_chain_db->get_is_in_simulator())
-					FC_THROW_EXCEPTION(simulator_command_forbidden, "in simulator, this command is forbidden, you cannot call it!");
-				return _wallet->wallet_get_account_contract_fee(creater);
-			}
             WalletTransactionEntry ClientImpl::wallet_delegate_withdraw_pay(const string& delegate_name,
                 const string& to_account_name,
                 const string& amount_to_withdraw)

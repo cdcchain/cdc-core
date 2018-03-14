@@ -65,7 +65,6 @@ namespace cdcchain {
 			apply_entrys(prev_state, _result_id_to_request_id, _res_to_req_to_remove);
 			apply_entrys(prev_state, _trx_to_contract_id, _trx_to_contract_id_remove);
 			apply_entrys(prev_state, _contract_to_trx_id, _contract_to_trx_id_remove);
-			apply_entrys(prev_state, _contract_creater_entry, _contract_creater_remove);
 
             /** do this last because it could have side effects on other entrys while
              * we manage the short index
@@ -167,8 +166,6 @@ namespace cdcchain {
 			populate_undo_state(undo_state, prev_state, _result_id_to_request_id, _res_to_req_to_remove);
 			populate_undo_state(undo_state, prev_state, _trx_to_contract_id,_trx_to_contract_id_remove);
 			populate_undo_state(undo_state, prev_state, _contract_to_trx_id, _contract_to_trx_id_remove);
-			populate_undo_state(undo_state, prev_state, _contract_creater_entry, _contract_creater_remove);
-
         }
 
         /** load the state from a variant */
@@ -239,31 +236,7 @@ namespace cdcchain {
             if (entry.valid() && _account_id_remove.count(entry->id) == 0) return *entry;
             return oAccountEntry();
         }
-		oContractCreatorEntry PendingChainState::contractcreator_lookup_by_symbol(const string& creater)const {
-			const auto iter = _contract_creater_entry.find(creater);
-			if (iter != _contract_creater_entry.end()) {
-				return _contract_creater_entry.at(iter->first);
-			}
-			const ChainInterfacePtr prev_state = _prev_state.lock();
-			if (!prev_state) return oContractCreatorEntry();
-			return prev_state->lookup<ContractCreatorEntry>(creater);
-		}
-		void PendingChainState::contractcreator_insert_into_map(const string& creater, const ContractCreatorEntry& fee){
-			_contract_creater_remove.erase(creater);
-			_contract_creater_entry[creater] = fee;
-// 			const auto iter = _contract_creater_entry.find(creater);
-// 			if (iter != _contract_creater_entry.end()) {
-// 				auto amount = _contract_creater_entry.at(iter->first).fee_collector+ fee.fee_collector;
-// 				_contract_creater_entry.at(iter->first) = ContractCreatorEntry(creater, amount);
-// 			}
-// 			else {
-// 				_contract_creater_entry[creater] = fee;
-// 			}
-		}
-		void PendingChainState::contractcreator_erase_from_map(const string& creater) {
-			_contract_creater_entry.erase(creater);
-			_contract_creater_remove.insert(creater);
-		}
+		
         void PendingChainState::account_insert_into_id_map(const AccountIdType id, const AccountEntry& entry)
         {
             _account_id_remove.erase(id);

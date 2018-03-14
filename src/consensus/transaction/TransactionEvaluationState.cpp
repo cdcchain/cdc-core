@@ -93,9 +93,9 @@ namespace cdcchain {
                 auto fee_itr = balance.find(0);
 				if (fee_itr != balance.end()) {
 					xts_fees += Asset(fee_itr->second, 0);
-					if (!contract_address.empty()) {
-						xts_fees += contract_asset;
-					}
+					//if (!contract_address.empty()) {
+					//xts_fees += contract_asset;
+					//}
 				}
                 auto max_fee_itr = _max_fee.find(0);
                 if (max_fee_itr != _max_fee.end())
@@ -192,13 +192,7 @@ namespace cdcchain {
                         return false;
                     all_account.push_back(*account);
                 }
-				else if (op.type.value == on_get_contract_fee_operation) {
-					auto get_contact_fee = op.as<GetContractFeeOperation>();
-					oAccountEntry account = _current_state->get_account_entry(get_contact_fee.account_address);
-					if (!account.valid())
-						return false;
-					all_account.push_back(*account);
-				}
+				
                 else if (op.type.value == contract_register_op_type || op.type.value == contract_call_op_type || op.type.value == transfer_contract_op_type
                     || op.type.value == contract_upgrade_op_type || op.type.value == contract_destroy_op_type)
                 {
@@ -411,7 +405,7 @@ namespace cdcchain {
 					{
 						required_fees.amount += signum_to_charge*CDC_BLOCKCHAIN_EXTRA_SIGNATURE_FEE;
 					}
-					ShareType fee_to_minus;
+					/*ShareType fee_to_minus;
 					if (!contract_address.empty()){
 						ShareType fee_balance = ShareType(balance[0] * 7 / 10);
 						fee_to_minus = fee_balance;
@@ -423,16 +417,16 @@ namespace cdcchain {
 						}
 						_current_state->store(Address(contract->owner).AddressToString(), ContractCreatorEntry(Address(contract->owner).AddressToString(), Asset(fee_balance)));
 						balance[0] -= fee_to_minus;
-					}
+					}*/
                     if (!ignore_check_required_fee)
                     {
                         post_evaluate();
-						if (!contract_address.empty()){
+						/*if (!contract_address.empty()){
 							validate_required_fee(Asset(fee_to_minus, 0));
 						}
-						else {
+						else {*/
 							validate_required_fee();
-						}
+						//}
                         update_delegate_votes();
                     }
                     trx = result_trx;

@@ -96,4 +96,4 @@ namespace cdcchain {
             }
         }
     }
-} // namespace ubcore;:db
+} // namespace cdcchain;:db

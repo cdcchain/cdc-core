@@ -169,20 +169,7 @@ namespace cdcchain {
                 eval_state._current_state->store_account_entry(*account);
             } FC_CAPTURE_AND_RETHROW((*this))
         }
-		void GetContractFeeOperation::evaluate(TransactionEvaluationState& eval_state)const {
-			try {
-				if (this->amount <= 0)
-					FC_CAPTURE_AND_THROW(negative_withdraw, (amount));
-				oContractCreatorEntry contact_fee_collect = eval_state._current_state->lookup<ContractCreatorEntry>(this->account_address);
-				if (!contact_fee_collect.valid())
-					FC_CAPTURE_AND_THROW(insufficient_funds, (this->account_address));
-				if (contact_fee_collect->fee_collector.amount < this->amount)
-					FC_CAPTURE_AND_THROW(insufficient_funds, (contact_fee_collect->fee_collector.amount)(this->amount));
-				eval_state.add_balance(Asset(this->amount, 0));
-				ShareType contract_fee = contact_fee_collect->fee_collector.amount - this->amount;
-				eval_state._current_state->store<ContractCreatorEntry>(this->account_address, ContractCreatorEntry(this->account_address, Asset(contract_fee)));
-			} FC_CAPTURE_AND_RETHROW((*this))
-		}
+		
         void UpdateSigningKeyOperation::evaluate(TransactionEvaluationState& eval_state)const
         {
             try {

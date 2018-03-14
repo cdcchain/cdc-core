@@ -43,7 +43,7 @@ namespace cdcchain {
 		const OperationTypeEnum OnDestroyOperation::type = on_destroy_op_type;
 		const OperationTypeEnum OnUpgradeOperation::type = on_upgrade_op_type;
         const OperationTypeEnum OnCallSuccessOperation::type = on_call_success_op_type;
-		const OperationTypeEnum GetContractFeeOperation::type = on_get_contract_fee_operation;
+		
         static bool first_chain = []()->bool{
             cdcchain::consensus::OperationFactory::instance().register_operation<WithdrawOperation>();
             cdcchain::consensus::OperationFactory::instance().register_operation<DepositOperation>();
@@ -74,7 +74,6 @@ namespace cdcchain {
 			cdcchain::consensus::OperationFactory::instance().register_operation<OnDestroyOperation>();
 			cdcchain::consensus::OperationFactory::instance().register_operation<OnUpgradeOperation>();
 			cdcchain::consensus::OperationFactory::instance().register_operation<OnCallSuccessOperation>();
-			cdcchain::consensus::OperationFactory::instance().register_operation<GetContractFeeOperation>();
 
             return true;
         }();

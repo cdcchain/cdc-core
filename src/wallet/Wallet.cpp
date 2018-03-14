@@ -2828,62 +2828,8 @@ namespace cdcchain {
             }
             return Salary_Map;
         }
-		cdcchain::consensus::ContractCreatorEntry Wallet::wallet_get_account_contract_fee(const string& creater) {
-			try {
 
-				FC_ASSERT(is_open(), "Wallet not open!");
-				FC_ASSERT(is_unlocked(), "Wallet not unlock!");
-				const auto account_entry = my->_wallet_db.lookup_account(creater);
-				auto creater = my->_blockchain->lookup<ContractCreatorEntry>(account_entry->owner_address().AddressToString());
-				FC_ASSERT(creater.valid());
-				return *creater;
-			}FC_CAPTURE_AND_RETHROW((creater))
-		}
-		WalletTransactionEntry Wallet::wallet_get_contract_fee(const std::string& address_name, const std::string& amount) {
-			try{
-				FC_ASSERT(is_open(), "Wallet not open!");
-				FC_ASSERT(is_unlocked(), "Wallet not unlock!");
-				auto asset_rec = my->_blockchain->get_asset_entry(AssetIdType(0));
-				auto ipos = amount.find(".");
-				if (ipos != string::npos)
-				{
-					string str = amount.substr(ipos + 1);
-					int64_t precision_input = static_cast<int64_t>(pow(10, str.size()));
-					FC_ASSERT((static_cast<uint64_t>(precision_input) <= asset_rec->precision), "Precision is not correct");
-				}
-				double dAmountToWithdraw = std::stod(amount);
-				ShareType amount_to_withdraw((ShareType)(floor(dAmountToWithdraw * asset_rec->precision + 0.5)));
-				const auto account_entry = my->_wallet_db.lookup_account(address_name);
-				FC_ASSERT(account_entry.valid(), "account can not found");
-				auto creater = my->_blockchain->lookup<ContractCreatorEntry>(account_entry->owner_address().AddressToString());
-				FC_ASSERT(creater.valid());
-				auto required_fees = get_transaction_fee();
-				FC_ASSERT(creater->fee_collector.amount >= (amount_to_withdraw + required_fees.amount), "Contract fee is not enough to get");
 
-				SignedTransaction trx;
-				unordered_set<Address> required_signatures;
-				const string memo_message = "Contract get fee";
-				required_signatures.insert(account_entry->owner_key);
-				trx.expiration = cdcchain::consensus::now() + get_transaction_expiration();
-				trx.get_contract_fee(account_entry->owner_address().AddressToString(), amount_to_withdraw + required_fees.amount);
-				trx.deposit(account_entry->owner_address(), Asset(amount_to_withdraw, 0));
-				my->sign_transaction(trx, required_signatures);
-
-				auto entry = LedgerEntry();
-				entry.from_account = account_entry->owner_key;
-				entry.amount = Asset(amount_to_withdraw, 0);
-				entry.memo = memo_message;
-
-				entry.to_account = account_entry->owner_key;
-
-				auto trans_entry = WalletTransactionEntry();
-				trans_entry.ledger_entries.push_back(entry);
-				trans_entry.fee = required_fees;
-				trans_entry.extra_addresses.push_back(account_entry->owner_address());
-				trans_entry.trx = trx;
-				return trans_entry;
-			}FC_CAPTURE_AND_RETHROW((address_name)(amount))
-		}
 
         WalletTransactionEntry Wallet::withdraw_delegate_pay(
             const string& delegate_name,
