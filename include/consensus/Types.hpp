@@ -26,6 +26,7 @@ namespace cdcchain {
         typedef fc::ripemd160                      PublicKeyHashType;
         typedef fc::ripemd160                      SecretHashType;
         typedef fc::ripemd160                      OrderIdType;
+		typedef fc::ripemd160                      ProposalIdType;
         typedef Address                            ScriptIdType;
         typedef fc::sha256                         DigestType;
         typedef fc::ecc::compact_signature         SignatureType;
@@ -43,7 +44,7 @@ namespace cdcchain {
         //type define for contract
         typedef std::string						  ContractName;
         typedef Address							  ContractIdType;
-        typedef unsigned char                      ContractChar;
+        typedef unsigned char                     ContractChar;
 
         using std::string;
         using std::function;

@@ -194,6 +194,12 @@ namespace cdcchain {
 			unordered_map<ContractIdType, ContractTrxEntry>	_contract_to_trx_id;
 			unordered_set<ContractIdType>						_contract_to_trx_id_remove;
 
+			unordered_map<ProposalIdType, ProposalEntry>                      _proposal_id_to_entry;
+			unordered_set<ProposalIdType>                                     _proposal_id_remove;
+			unordered_map<Address, RoleEntry>						          _role_addr_to_entry;
+			unordered_set<Address>                                            _role_addr_remove;
+
+
             vector<EventOperation> event_vector;
 			vector<cdcchain::consensus::SimulatorAccountInfo>                     _vec_wallet_accounts;
 
@@ -628,6 +634,14 @@ namespace cdcchain {
 			virtual oContractTemplateEntry contracttemplate_lookup_by_hash(const std::string&)const;
 			virtual void contracttemplate_insert_into_hash_map(const std::string&, const ContractTemplateEntry&);
 			virtual void contracttemplate_erase_from_hash_map(const std::string&);
+
+			virtual  oProposalEntry  proposal_lookup_by_id(const ProposalIdType&)const;
+			virtual void proposal_insert_into_id_map(const ProposalIdType&, const ProposalEntry&);
+			virtual void proposal_erase_from_id_map(const ProposalIdType&);
+
+			virtual  oRoleEntry  role_lookup_by_addr(const Address&)const;
+			virtual void role_insert_into_addr_map(const Address&, const RoleEntry&);
+			virtual void role_erase_from_addr_map(const Address&);
         };
         typedef std::shared_ptr<PendingChainState> PendingChainStatePtr;
 
@@ -665,6 +679,10 @@ FC_REFLECT(cdcchain::consensus::PendingChainState,
 	(_req_to_res_to_remove)
 	(_result_id_to_request_id)
 	(_res_to_req_to_remove)
+	(_proposal_id_to_entry)
+	(_proposal_id_remove)
+	(_role_addr_to_entry)
+	(_role_addr_remove)
 	(_vec_wallet_accounts)
     )
 

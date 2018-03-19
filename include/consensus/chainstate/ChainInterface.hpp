@@ -7,8 +7,9 @@
 
 #include <consensus/Condition.hpp>
 #include <consensus/contract/ContractEntry.hpp>
-
+#include <consensus/proposal/ProposalEntry.hpp>
 #include <consensus/property/PropertyEntry.hpp>
+#include <consensus/role/RoleEntry.hpp>
 #include <consensus/slate/SlateEntry.hpp>
 #include <consensus/slot/SlotEntry.hpp>
 #include <consensus/transaction/TransactionEntry.hpp>
@@ -27,7 +28,9 @@ namespace cdcchain {
             public BalanceDbInterface,
             public TransactionDbInterface,
             public SlotDbInterface,
-            public  ContractDbInterface
+            public ContractDbInterface,
+			public ProposalDbInterface,
+			public RoleDbInterface
         {
         public:
             virtual ~ChainInterface(){};

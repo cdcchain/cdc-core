@@ -191,6 +191,9 @@ namespace cdcchain {
                     _contract_to_trx_iddb.open(data_dir / "index/_contract_to_trx_iddb");
                     _trx_to_contract_iddb.open(data_dir / "index/_trx_to_contract_iddb");
 
+					_proposal_id_to_entry.open(data_dir / "index/proposal_id_to_entry");
+					_role_addr_to_entry.open(data_dir / "index/role_addr_to_entry");
+
                     _pending_trx_state = std::make_shared<PendingChainState>(self->shared_from_this());
 
                     clear_invalidation_of_future_blocks();
@@ -1465,6 +1468,9 @@ namespace cdcchain {
                             my->_trx_to_contract_iddb.toggle_leveldb(enabled);
                             my->_contract_to_trx_iddb.toggle_leveldb(enabled);
 
+							my->_proposal_id_to_entry.toggle_leveldb(enabled);
+							my->_role_addr_to_entry.toggle_leveldb(enabled);
+
                         };
 
 
@@ -1663,6 +1669,9 @@ namespace cdcchain {
                 my->_slot_index_to_entry.close();
                 my->_slot_timestamp_to_delegate.close();
                 my->_request_to_result_iddb.close();
+				
+				my->_proposal_id_to_entry.close();
+				my->_role_addr_to_entry.close();
 
             } FC_CAPTURE_AND_RETHROW()
         }
@@ -3747,6 +3756,14 @@ namespace cdcchain {
                 my->_contract_to_trx_iddb.export_to_json(next_path);
 				ulog("Dumped ${p}", ("p", next_path));
 
+				next_path = dir / "_proposal_id_to_entry.json";
+				my->_proposal_id_to_entry.export_to_json(next_path);
+				ulog("Dumped ${p}", ("p", next_path));
+
+				next_path = dir / "_role_addr_to_entry.json";
+				my->_role_addr_to_entry.export_to_json(next_path);
+				ulog("Dumped ${p}", ("p", next_path));
+
             } FC_CAPTURE_AND_RETHROW((path))
         }
 
@@ -3922,5 +3939,40 @@ namespace cdcchain {
 			my->_bytecode_hash_permitted.remove(hash);
 		}
 
+		oProposalEntry  ChainDatabase::proposal_lookup_by_id(const ProposalIdType& id)const
+		{
+			auto it = my->_proposal_id_to_entry.unordered_find(id);
+			if (it != my->_proposal_id_to_entry.unordered_end())
+				return it->second;
+			return oProposalEntry();
+		}
+
+		void ChainDatabase::proposal_insert_into_id_map(const ProposalIdType& id, const ProposalEntry& entry)
+		{
+			my->_proposal_id_to_entry.store(id, entry);
+		}
+
+		void ChainDatabase::proposal_erase_from_id_map(const ProposalIdType& id)
+		{
+			my->_proposal_id_to_entry.remove(id);
+		}
+
+		oRoleEntry  ChainDatabase::role_lookup_by_addr(const Address& addr)const
+		{
+			auto it = my->_role_addr_to_entry.unordered_find(addr);
+			if (it != my->_role_addr_to_entry.unordered_end())
+				return it->second;
+			return oRoleEntry();
+		}
+
+		void ChainDatabase::role_insert_into_addr_map(const Address& addr, const RoleEntry& entry)
+		{
+			my->_role_addr_to_entry.store(addr, entry);
+		}
+
+		void ChainDatabase::role_erase_from_addr_map(const Address& addr)
+		{
+			my->_role_addr_to_entry.remove(addr);
+		}
     }
 } // cdcchain::consensus

@@ -1308,6 +1308,14 @@ namespace cdcchain {
 			virtual void contracttemplate_insert_into_hash_map(const std::string&, const ContractTemplateEntry&);
 			virtual void contracttemplate_erase_from_hash_map(const std::string&);
 
+			virtual  oProposalEntry  proposal_lookup_by_id(const ProposalIdType&)const;
+			virtual void proposal_insert_into_id_map(const ProposalIdType&, const ProposalEntry&);
+			virtual void proposal_erase_from_id_map(const ProposalIdType&);
+
+			virtual  oRoleEntry  role_lookup_by_addr(const Address&)const;
+			virtual void role_insert_into_addr_map(const Address&, const RoleEntry&);
+			virtual void role_erase_from_addr_map(const Address&);
+
         public:
             bool generating_block;
 

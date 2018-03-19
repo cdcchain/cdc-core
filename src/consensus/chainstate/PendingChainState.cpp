@@ -66,6 +66,9 @@ namespace cdcchain {
 			apply_entrys(prev_state, _trx_to_contract_id, _trx_to_contract_id_remove);
 			apply_entrys(prev_state, _contract_to_trx_id, _contract_to_trx_id_remove);
 
+			apply_entrys(prev_state, _proposal_id_to_entry, _proposal_id_remove);
+			apply_entrys(prev_state, _role_addr_to_entry, _role_addr_remove);
+
             /** do this last because it could have side effects on other entrys while
              * we manage the short index
              */
@@ -166,6 +169,9 @@ namespace cdcchain {
 			populate_undo_state(undo_state, prev_state, _result_id_to_request_id, _res_to_req_to_remove);
 			populate_undo_state(undo_state, prev_state, _trx_to_contract_id,_trx_to_contract_id_remove);
 			populate_undo_state(undo_state, prev_state, _contract_to_trx_id, _contract_to_trx_id_remove);
+
+			populate_undo_state(undo_state, prev_state, _proposal_id_to_entry, _proposal_id_remove);
+			populate_undo_state(undo_state, prev_state, _role_addr_to_entry, _role_addr_remove);
         }
 
         /** load the state from a variant */
@@ -648,6 +654,56 @@ namespace cdcchain {
 		{
 			_bytecode_hash_permitted.erase(hash);
 			_bytecode_hash_remove.insert(hash);
+		}
+
+		oProposalEntry  PendingChainState::proposal_lookup_by_id(const ProposalIdType& id)const
+		{
+			auto it = _proposal_id_to_entry.find(id);
+			if (it != _proposal_id_to_entry.end())
+				return it->second;
+			if (_proposal_id_remove.count(id) > 0)
+				return oProposalEntry();
+			const ChainInterfacePtr prev_state = _prev_state.lock();
+			if (!prev_state)
+				return oProposalEntry();
+			return prev_state->lookup<ProposalEntry>(id);
+		}
+
+		void PendingChainState::proposal_insert_into_id_map(const ProposalIdType& id, const ProposalEntry& entry)
+		{
+			_proposal_id_remove.erase(id);
+			_proposal_id_to_entry[id] = entry;
+		}
+
+		void PendingChainState::proposal_erase_from_id_map(const ProposalIdType& id)
+		{
+			_proposal_id_to_entry.erase(id);
+			_proposal_id_remove.insert(id);
+		}
+
+		oRoleEntry  PendingChainState::role_lookup_by_addr(const Address& addr)const
+		{
+			auto it = _role_addr_to_entry.find(addr);
+			if (it != _role_addr_to_entry.end())
+				return it->second;
+			if (_role_addr_remove.count(addr) > 0)
+				return oRoleEntry();
+			const ChainInterfacePtr prev_state = _prev_state.lock();
+			if (!prev_state)
+				return oRoleEntry();
+			return prev_state->lookup<RoleEntry>(addr);
+		}
+
+		void PendingChainState::role_insert_into_addr_map(const Address& addr, const RoleEntry& entry)
+		{
+			_role_addr_remove.erase(addr);
+			_role_addr_to_entry[addr] = entry;
+		}
+
+		void PendingChainState::role_erase_from_addr_map(const Address& addr)
+		{
+			_role_addr_to_entry.erase(addr);
+			_role_addr_remove.insert(addr);
 		}
 
     }

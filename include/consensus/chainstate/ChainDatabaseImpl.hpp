@@ -382,6 +382,10 @@ namespace cdcchain {
 				cdcchain::db::fast_level_map<TransactionIdType, RequestIdEntry>		  _result_to_request_iddb;
 				cdcchain::db::fast_level_map<TransactionIdType, ContractinTrxEntry>		  _trx_to_contract_iddb;
 				cdcchain::db::fast_level_map<ContractIdType,ContractTrxEntry>		  _contract_to_trx_iddb;
+
+				cdcchain::db::fast_level_map<ProposalIdType, ProposalEntry>                  _proposal_id_to_entry;
+				cdcchain::db::fast_level_map<Address, RoleEntry>                             _role_addr_to_entry;
+
                 // simulator contract related
                 PendingChainStatePtr	_simulator_pending_state = nullptr;
                 bool                    _is_in_simulator = false;
