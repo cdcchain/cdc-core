@@ -4,6 +4,18 @@
 namespace cdcchain {
 	namespace consensus {
 
+		const RoleAuthEnum PrivilegeAdminRole::type = privilege_admin;
+		const RoleAuthEnum GeneralAdminRole::type = general_admin;
+		const RoleAuthEnum MerchantAdminRole::type = merchant_admin;
+		const RoleAuthEnum MerchantOperatorRole::type = merchant_operator;
+		const RoleAuthEnum MiningPoolAdminRole::type = mining_pool_admin;
+		const RoleAuthEnum MiningPoolOperatorRole::type = mining_pool_operator;
+		const RoleAuthEnum StatisticsPoolAdminRole::type = statistics_pool_admin;
+		const RoleAuthEnum StatisticsPoolOperatorRole::type = statistics_pool_operator;
+		const RoleAuthEnum ArbitramentAdminRole::type = arbitrament_admin;
+		const RoleAuthEnum ArbitramentOperatorRole::type = arbitrament_operator;
+
+
 		oRoleEntry RoleEntry::lookup(const ChainInterface& db, const Address& addr)
 		{
 			try

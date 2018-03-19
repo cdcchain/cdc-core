@@ -6,7 +6,8 @@ namespace cdcchain {
 	namespace consensus {
 
 		enum ProposalTypeEnum {
-			apply_for_privilege_admin = 1
+			apply_for_privilege_admin = 1,
+			revoke_privilege_admin = 2
 		};
 
 		//front declaration for typedef
@@ -64,6 +65,13 @@ namespace cdcchain {
 			int delegate_vote_need;
 		};
 
+		struct RevokePrivilegeAdmin {
+			static const ProposalTypeEnum type;
+
+			cdcchain::consensus::Address privilege_admin;
+			int delegate_vote_need;
+		};
+
 		class ProposalDbInterface
 		{
 			friend struct ProposalEntry;
@@ -78,11 +86,22 @@ namespace cdcchain {
 
 FC_REFLECT_ENUM(cdcchain::consensus::ProposalTypeEnum,
 (apply_for_privilege_admin)
+(revoke_privilege_admin)
 )
 
 FC_REFLECT(cdcchain::consensus::ProposalCondition,
 (proposal_type)
 (proposal_data)
+)
+
+FC_REFLECT(cdcchain::consensus::ApplyForPrivilegeAdmin,
+(candidate)
+(delegate_vote_need)
+)
+
+FC_REFLECT(cdcchain::consensus::RevokePrivilegeAdmin,
+(privilege_admin)
+(delegate_vote_need)
 )
 
 FC_REFLECT(cdcchain::consensus::ProposalEntry,
