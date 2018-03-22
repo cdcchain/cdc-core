@@ -48,8 +48,8 @@ namespace cdcchain {
 			template<typename RoleAuthType>
 			RoleAuthType as()const
 			{
-				FC_ASSERT(type == RoleAuthType::type, "", ("role_type", type)("RoleAuthType", RoleAuthType::type));
-				return fc::raw::unpack<RoleAuthType>(data);
+				FC_ASSERT(role_type == RoleAuthType::type, "", ("role_type", role_type)("RoleAuthType", RoleAuthType::type));
+				return fc::raw::unpack<RoleAuthType>(role_data);
 			}
 		};
 

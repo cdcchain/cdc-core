@@ -663,6 +663,48 @@ namespace cdcchain {
             } FC_CAPTURE_AND_RETHROW((entry))
         }
 
+		oProposalEntry ChainInterface::get_proposal_entry(const ProposalIdType& id) const
+		{
+			try {
+				return lookup<ProposalEntry>(id);
+			} FC_CAPTURE_AND_RETHROW((id))
+		}
+
+		void ChainInterface::remove_proposal_entry(const ProposalIdType& id)
+		{
+			try {
+				return remove<ProposalEntry>(id);
+			} FC_CAPTURE_AND_RETHROW((id))
+		}
+
+		void ChainInterface::store_proposal_entry(const ProposalEntry& entry)
+		{
+			try {
+				store(entry.id(), entry);
+			} FC_CAPTURE_AND_RETHROW((entry))
+		}
+
+		oRoleEntry ChainInterface::get_role_entry(const Address& addr) const
+		{
+			try {
+				return lookup<RoleEntry>(addr);
+			} FC_CAPTURE_AND_RETHROW((addr))
+		}
+
+		void ChainInterface::remove_role_entry(const Address& addr)
+		{
+			try {
+				return remove<RoleEntry>(addr);
+			} FC_CAPTURE_AND_RETHROW((addr))
+		}
+
+		void ChainInterface::store_role_entry(const RoleEntry& entry)
+		{
+			try {
+				store(entry.user_address, entry);
+			} FC_CAPTURE_AND_RETHROW((entry))
+		}
+
         bool ChainInterface::is_destroyed_contract(const ContractState state) const
         {
             if (state == ContractState::deleted)

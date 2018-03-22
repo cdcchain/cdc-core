@@ -184,6 +184,16 @@ namespace cdcchain {
         FC_DECLARE_DERIVED_EXCEPTION(simulator_command_forbidden, cdcchain::consensus::simulator_error, 36002, "in simulator, you can not use this command!");
         FC_DECLARE_DERIVED_EXCEPTION(simulator_reclose, cdcchain::consensus::simulator_error, 36003, "you have closed the simulator already!");
 
+		FC_DECLARE_EXCEPTION(proposal_error, 37000, "Proposal Error");
+		FC_DECLARE_DERIVED_EXCEPTION(duplicate_approver, cdcchain::consensus::proposal_error, 37001, "you have already approve the proposal at some time in the past");
+		FC_DECLARE_DERIVED_EXCEPTION(proposal_has_finished, cdcchain::consensus::proposal_error, 37002, "this proposal has been finished");
+
+
+		FC_DECLARE_EXCEPTION(role_error, 38000, "Proposal Error");
+		FC_DECLARE_DERIVED_EXCEPTION(is_privilege_admin, cdcchain::consensus::role_error, 38001, "candidate has already been a privilege admin");
+		FC_DECLARE_DERIVED_EXCEPTION(is_not_privilege_admin, cdcchain::consensus::role_error, 38002, "this address is not a privilege admin");
+		FC_DECLARE_DERIVED_EXCEPTION(invalid_proposal_type, cdcchain::consensus::role_error, 38003, "this proposal type is not support right now");
+
         /*
         非异常定义，一些利用异常方式的状态处理 
         */

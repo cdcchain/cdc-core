@@ -11,8 +11,14 @@ namespace cdcchain {
 		{
 		}
 
-		ProposalEntry::ProposalEntry(const ProposalIdType& id):proposal_id(id)
+		ProposalIdType ProposalEntry::id()const
 		{
+			fc::sha512::encoder enc;
+			fc::raw::pack(enc, proposal_condition);
+			fc::raw::pack(enc, proposal_from);
+			fc::raw::pack(enc, start_time);
+			fc::raw::pack(enc, expected_end_time);
+			return fc::ripemd160::hash(enc.result());
 		}
 
 		oProposalEntry ProposalEntry::lookup(const ChainInterface& db, const ProposalIdType& id)

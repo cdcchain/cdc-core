@@ -32,8 +32,8 @@ namespace cdcchain {
 			template<typename ProposalType>
 			ProposalType as()const
 			{
-				FC_ASSERT(type == ProposalType::type, "", ("proposal_type", type)("ProposalType", ProposalType::type));
-				return fc::raw::unpack<ProposalType>(data);
+				FC_ASSERT(proposal_type == ProposalType::type, "", ("proposal_type", proposal_type)("ProposalType", ProposalType::type));
+				return fc::raw::unpack<ProposalType>(proposal_data);
 			}
 		};
 
@@ -41,17 +41,18 @@ namespace cdcchain {
 		typedef fc::optional<ProposalEntry> oProposalEntry;
 
 		struct ProposalEntry {
-			ProposalIdType proposal_id;
 			ProposalCondition proposal_condition;
 			cdcchain::consensus::Address proposal_from;
-			bool has_finished = false;
 			fc::time_point_sec start_time;
 			fc::time_point_sec expected_end_time;
-			fc::time_point_sec finish_time;
 			std::set<cdcchain::consensus::Address> proposal_voter;
 
 			ProposalEntry();
-			ProposalEntry(const ProposalIdType& id);
+			ProposalEntry(const ProposalCondition& cond, const Address& from_addr, const fc::time_point_sec& _start_time,
+				const fc::time_point_sec& _expected_end_time): proposal_condition(cond), proposal_from(from_addr),
+				start_time(_start_time), expected_end_time(_expected_end_time){}
+
+			ProposalIdType id()const;
 
 			static oProposalEntry lookup(const ChainInterface&, const ProposalIdType&);
 			static void store(ChainInterface&, const ProposalIdType&, const ProposalEntry&);
@@ -61,12 +62,18 @@ namespace cdcchain {
 		struct ApplyForPrivilegeAdmin {
 			static const ProposalTypeEnum type;
 
+			ApplyForPrivilegeAdmin(){}
+			ApplyForPrivilegeAdmin(const Address& addr, int vote_need): candidate(addr), delegate_vote_need(vote_need){}
+
 			cdcchain::consensus::Address candidate;
 			int delegate_vote_need;
 		};
 
 		struct RevokePrivilegeAdmin {
 			static const ProposalTypeEnum type;
+
+			RevokePrivilegeAdmin(){}
+			RevokePrivilegeAdmin(const Address& addr, int vote_need): privilege_admin(addr), delegate_vote_need(vote_need){}
 
 			cdcchain::consensus::Address privilege_admin;
 			int delegate_vote_need;
@@ -105,12 +112,9 @@ FC_REFLECT(cdcchain::consensus::RevokePrivilegeAdmin,
 )
 
 FC_REFLECT(cdcchain::consensus::ProposalEntry,
-(proposal_id)
 (proposal_condition)
 (proposal_from)
-(has_finished)
 (start_time)
 (expected_end_time)
-(finish_time)
 (proposal_voter)
 )

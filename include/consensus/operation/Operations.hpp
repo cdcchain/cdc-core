@@ -80,7 +80,12 @@ namespace cdcchain {
 			on_upgrade_op_type = 109,
 
             // contract call success
-			on_call_success_op_type = 110
+			on_call_success_op_type = 110,
+
+			// proposal
+			proposal_for_privilege_op_type = 120,
+			proposal_revoke_privilege_op_type = 121,
+			proposal_approve_op_type = 122
         };
 
         /**
@@ -169,6 +174,9 @@ FC_REFLECT_ENUM(cdcchain::consensus::OperationTypeEnum,
 	(on_destroy_op_type)
 	(on_upgrade_op_type)
     (on_call_success_op_type)
+	(proposal_for_privilege_op_type)
+	(proposal_revoke_privilege_op_type)
+	(proposal_approve_op_type)
     )
 
     FC_REFLECT(cdcchain::consensus::Operation, (type)(data))
