@@ -193,6 +193,9 @@ namespace cdcchain {
 		FC_DECLARE_DERIVED_EXCEPTION(is_privilege_admin, cdcchain::consensus::role_error, 38001, "candidate has already been a privilege admin");
 		FC_DECLARE_DERIVED_EXCEPTION(is_not_privilege_admin, cdcchain::consensus::role_error, 38002, "this address is not a privilege admin");
 		FC_DECLARE_DERIVED_EXCEPTION(invalid_proposal_type, cdcchain::consensus::role_error, 38003, "this proposal type is not support right now");
+		FC_DECLARE_DERIVED_EXCEPTION(is_general_admin, cdcchain::consensus::role_error, 38004, "candidate has already been a general admin");
+		FC_DECLARE_DERIVED_EXCEPTION(is_not_general_admin, cdcchain::consensus::role_error, 38005, "this address is not a general admin");
+
 
         /*
         非异常定义，一些利用异常方式的状态处理 

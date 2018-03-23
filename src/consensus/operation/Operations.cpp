@@ -10,6 +10,7 @@
 #include <consensus/operation/StorageOperations.hpp>
 #include <consensus/operation/EventOperations.hpp>
 #include <consensus/operation/ProposalOperations.hpp>
+#include <consensus/operation/GeneralAdminOperations.hpp>
 #include <fc/io/raw_variant.hpp>
 #include <fc/reflect/variant.hpp>
 
@@ -47,6 +48,8 @@ namespace cdcchain {
 		const OperationTypeEnum ProposalForPrivilegeOperation::type = proposal_for_privilege_op_type;
 		const OperationTypeEnum ProposalRevokePrivilegeOperation::type = proposal_revoke_privilege_op_type;
 		const OperationTypeEnum ProposalApproveOperation::type = proposal_approve_op_type;
+		const OperationTypeEnum AppointGeneralAdminOperation::type = appoint_general_admin_op_type;
+		const OperationTypeEnum RevokeGeneralAdminOperation::type = revoke_general_admin_op_type;
 		
         static bool first_chain = []()->bool{
             cdcchain::consensus::OperationFactory::instance().register_operation<WithdrawOperation>();
@@ -81,6 +84,8 @@ namespace cdcchain {
 			cdcchain::consensus::OperationFactory::instance().register_operation<ProposalForPrivilegeOperation>();
 			cdcchain::consensus::OperationFactory::instance().register_operation<ProposalRevokePrivilegeOperation>();
 			cdcchain::consensus::OperationFactory::instance().register_operation<ProposalApproveOperation>();
+			cdcchain::consensus::OperationFactory::instance().register_operation<AppointGeneralAdminOperation>();
+			cdcchain::consensus::OperationFactory::instance().register_operation<RevokeGeneralAdminOperation>();
 
             return true;
         }();

@@ -85,7 +85,11 @@ namespace cdcchain {
 			// proposal
 			proposal_for_privilege_op_type = 120,
 			proposal_revoke_privilege_op_type = 121,
-			proposal_approve_op_type = 122
+			proposal_approve_op_type = 122,
+
+			// general admin
+			appoint_general_admin_op_type = 130,
+			revoke_general_admin_op_type = 131
         };
 
         /**
@@ -177,6 +181,8 @@ FC_REFLECT_ENUM(cdcchain::consensus::OperationTypeEnum,
 	(proposal_for_privilege_op_type)
 	(proposal_revoke_privilege_op_type)
 	(proposal_approve_op_type)
+	(appoint_general_admin_op_type)
+	(revoke_general_admin_op_type)
     )
 
     FC_REFLECT(cdcchain::consensus::Operation, (type)(data))
