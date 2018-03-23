@@ -155,7 +155,7 @@ namespace cdcchain
                 if (eval_state._current_state->get_contract_entry(name).valid())
                     FC_CAPTURE_AND_THROW(contract_name_in_use, (name));
 
-                //检查是否包含合约所有者的签名
+                //����Ƿ������Լ�����ߵ�ǩ��
                 if (!eval_state.check_signature(entry->owner))
                     FC_CAPTURE_AND_THROW(missing_signature, ("Upgrading contract need owner's signature"));
 
@@ -350,7 +350,7 @@ namespace cdcchain
                 if (NOT eval_state._current_state->is_temporary_contract(entry->level))
                     FC_CAPTURE_AND_THROW(permanent_contract, (id));
 
-                //检查是否包含合约所有者的签名
+                //����Ƿ������Լ�����ߵ�ǩ��
                 if (!eval_state.check_signature(entry->owner))
                     FC_CAPTURE_AND_THROW(missing_signature, ("destroy contract need owner's signature"));
 
@@ -546,7 +546,7 @@ namespace cdcchain
                     contract_balance_entry->balance = 0;
                     eval_state._current_state->store_balance_entry(*contract_balance_entry);
 
-                    //将合约中的余额还到合约所有者的账户�?
+                    //����Լ�е�������Լ�����ߵ��˻�
                     WithdrawWithSignature withdraw = WithdrawWithSignature(Address(entry->owner));
                     WithdrawCondition cond = WithdrawCondition(withdraw, 0, 0, WithdrawBalanceTypes::withdraw_common_type);
                     BalanceIdType destroyer_balance_id = cond.get_address();
@@ -611,13 +611,13 @@ namespace cdcchain
             if (eval_state.evaluate_contract_result)
                 FC_CAPTURE_AND_THROW(in_result_of_execute, ("RegisterContractOperation can only in origin transaction"));
 
-            //检查contract_id是否有重�?
+            //���contract_id�Ƿ����ظ�
             if (eval_state._current_state->get_contract_entry(get_contract_id()).valid())
                 FC_CAPTURE_AND_THROW(contract_address_in_use, ("contract address already in use"));
-            //检查是否包含合约所有者的签名
+            //����Ƿ������Լ�����ߵ�ǩ��
             if (!eval_state.check_signature(owner))
                 FC_CAPTURE_AND_THROW(missing_signature, ("Registering contract need owner's signature"));
-            //检查余�?
+            //������
 			auto account_entry = eval_state._current_state->get_account_entry(Address(owner));
 			/*
 			if (!account_entry.valid())
@@ -689,7 +689,7 @@ namespace cdcchain
 				}
 			}*/
 
-            //记录合约注册�?
+            //��¼��Լע����
             eval_state.contract_operator = owner;
 
             eval_state.required_fees = transaction_fee + eval_state._current_state->get_contract_register_fee(this->contract_code);
@@ -739,7 +739,7 @@ namespace cdcchain
                         map<BalanceIdType, ShareType> withdraw_map;
                         withdraw_enough_balances(balances, required, withdraw_map);
                         eval_state.p_result_trx.operations.push_back(BalancesWithdrawOperation(withdraw_map));
-                        eval_state.p_result_trx.operations.push_back(DepositContractOperation(get_contract_id(), eval_state._current_state->get_default_margin(), deposit_contract_margin));//todo 保证金存�?
+                        eval_state.p_result_trx.operations.push_back(DepositContractOperation(get_contract_id(), eval_state._current_state->get_default_margin(), deposit_contract_margin));//todo ��֤�����
                     }
                 }
                 catch (contract_run_out_of_money& e)
@@ -806,22 +806,22 @@ namespace cdcchain
                 if (NOT has_call_method)
                     FC_CAPTURE_AND_THROW(method_not_exist, (method));
 
-                //验证合约调用者必须是发起合约调用交易的人
+                //��֤��Լ�����߱����Ƿ����Լ���ý��׵���
                 Address caller_address = Address(caller);
                 if (!eval_state.check_signature(caller_address))
                     FC_CAPTURE_AND_THROW(missing_signature, (caller_address));
 
-                //记录合约调用�?
+                //��¼��Լ������
                 eval_state.contract_operator = caller;
 
-                //验证balance相关
+                //��֤balance���
                 ShareType all_amount = 0;
                 ShareType required = 0;
 
                 if (!eval_state.evaluate_contract_testing)
                 {
                     all_amount = check_balances(eval_state, balances, Address(this->caller));
-                    //实际扣费
+                    //ʵ�ʿ۷�
                     required = get_amount_sum(costlimit.amount, transaction_fee.amount);
                     if (all_amount < required)
                         FC_CAPTURE_AND_THROW(insufficient_funds, ("no enough balance"));
@@ -838,11 +838,11 @@ namespace cdcchain
                     try
                     {
                         /*
-                        先生成结果交易，再执行代码，使得每个正常执行的合约代码都会生成一个结果交�?
+                        �����ɽ�����ף���ִ�д��룬ʹ��ÿ������ִ�еĺ�Լ���붼������һ���������
                         */
-                        FC_ASSERT(eval_state.p_result_trx.operations.size() == 0);//一个合约调用交易只能有一个合约调用op,因此在此op之前一定不会有结果交易
+                        FC_ASSERT(eval_state.p_result_trx.operations.size() == 0);//һ����Լ���ý���ֻ����һ����Լ����op,����ڴ�op֮ǰһ�������н������
                         eval_state.p_result_trx.push_transaction(eval_state.trx);
-                        //事先放入一个标示合约调用成功的OP
+                        //���ȷ���һ����ʾ��Լ���óɹ���OP
                         eval_state.p_result_trx.operations.emplace_back(Operation(OnCallSuccessOperation()));
                         eval_state.p_result_trx.expiration = eval_state.trx.expiration;
 
@@ -878,18 +878,18 @@ namespace cdcchain
 						eval_state.exec_cost = eval_state._current_state->get_amount(engine->gas_used());
                         if (left > 0)
                         {
-                            //合约调用初始化费用没有花�?
-                            //实际扣费调整
+                            //��Լ���ó�ʼ������û�л���
+                            //ʵ�ʿ۷ѵ���
                             auto refund = eval_state._current_state->get_amount(limit) - eval_state._current_state->get_amount(engine->gas_used());
                             required = required - refund.amount;
                         }
                     }
                     catch (contract_run_out_of_money& e)
                     {
-                        //根据异常类型进行处理，如是费用耗尽，则认为交易成功，追加一个费用耗尽的扣�?
-                        //其他异常则认为是当前交易验证失败
-                        //在gas耗尽时，将entry删除即可，继续走其他op,不用另作处理
-                        //保留原始交易OP，清除所有结果交�?
+                        //�����쳣���ͽ��д��������Ƿ��úľ�������Ϊ���׳ɹ���׷��һ�����úľ��Ŀ۷�
+                        //�����쳣����Ϊ�ǵ�ǰ������֤ʧ��
+                        //��gas�ľ�ʱ����entryɾ�����ɣ�����������op,������������
+                        //����ԭʼ����OP��������н������
                         if (!eval_state.evaluate_contract_testing)
                         {
                             if (eval_state.throw_exec_exception)
@@ -922,7 +922,7 @@ namespace cdcchain
                     {
                         std::map <BalanceIdType, ShareType> withdraw_map;
                         withdraw_enough_balances(balances, required, withdraw_map);
-                        //构建扣费BalanceWithdraw OP
+                        //�����۷�BalanceWithdraw OP
                         eval_state.p_result_trx.push_balances_withdraw_operation(BalancesWithdrawOperation(withdraw_map));
                     }
                 }
@@ -982,7 +982,7 @@ namespace cdcchain
                 else
                     FC_ASSERT(costlimit.amount >= 0, "not enough costlimit");
 
-                //记录转账�?
+                //��¼ת����
                 eval_state.contract_operator = from;
 
                 if (!eval_state.evaluate_contract_testing)
@@ -1023,9 +1023,9 @@ namespace cdcchain
                         try
                         {
                             /*
-                            先生成结果交易，再执行代码，使得每个正常执行的合约代码都会生成一个结果交�?
+                            �����ɽ�����ף���ִ�д��룬ʹ��ÿ������ִ�еĺ�Լ���붼������һ���������
                             */
-                            FC_ASSERT(eval_state.p_result_trx.operations.size() == 0);//一个交易中只能有一个有触发,因此此时不应该会有结果交�?
+                            FC_ASSERT(eval_state.p_result_trx.operations.size() == 0);//һ��������ֻ����һ���д���,��˴�ʱ��Ӧ�û��н������
 
                             eval_state.p_result_trx.push_transaction(eval_state.trx);
 
@@ -1062,7 +1062,7 @@ namespace cdcchain
                             */
 							try
 							{
-								engine->execute_contract_api_by_address(contract_id.AddressToString(AddressType::contract_address).c_str(), CON_ON_DEPOSIT_INTERFACE, transfer_str.c_str(), nullptr);//to do:与lua部分适配 
+								engine->execute_contract_api_by_address(contract_id.AddressToString(AddressType::contract_address).c_str(), CON_ON_DEPOSIT_INTERFACE, transfer_str.c_str(), nullptr);//to do:��lua�������� 
 							}
 							catch (uvm::core::UvmException &e)
 							{
