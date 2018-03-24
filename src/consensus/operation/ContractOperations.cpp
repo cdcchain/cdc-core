@@ -636,6 +636,23 @@ namespace cdcchain
 			}
 			}
 			*/
+
+			// 判断合约创建者角色 是否为管理员
+			oRoleEntry role_entry = eval_state._current_state->get_role_entry(Address(owner));
+			if (!role_entry.valid())
+				FC_CAPTURE_AND_THROW(is_not_general_admin, ("contract creator is not a general admin"));
+
+			bool is_general_admin = false;
+			for (const auto& role_cond : role_entry->role_cond_vec) {
+				if (role_cond.role_type == RoleAuthEnum::general_admin) {
+					is_general_admin = true;
+					break;
+				}
+			}
+
+			if (NOT is_general_admin)
+				FC_CAPTURE_AND_THROW(is_not_general_admin, ("contract creator is not a general admin"));
+
             ShareType all_amount = 0;
             ShareType required = 0;
             ShareType register_fee = 0;

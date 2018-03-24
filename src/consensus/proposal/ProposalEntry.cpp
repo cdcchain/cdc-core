@@ -7,10 +7,6 @@ namespace cdcchain {
 		const ProposalTypeEnum ApplyForPrivilegeAdmin::type = apply_for_privilege_admin;
 		const ProposalTypeEnum RevokePrivilegeAdmin::type = revoke_privilege_admin;
 
-		ProposalEntry::ProposalEntry()
-		{
-		}
-
 		ProposalIdType ProposalEntry::id()const
 		{
 			fc::sha512::encoder enc;

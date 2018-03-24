@@ -68,6 +68,7 @@ namespace cdcchain {
 
 			apply_entrys(prev_state, _proposal_id_to_entry, _proposal_id_remove);
 			apply_entrys(prev_state, _role_addr_to_entry, _role_addr_remove);
+			apply_entrys(prev_state, _cdcdata_id_to_entry, _cdcdata_id_remove);
 
             /** do this last because it could have side effects on other entrys while
              * we manage the short index
@@ -172,6 +173,7 @@ namespace cdcchain {
 
 			populate_undo_state(undo_state, prev_state, _proposal_id_to_entry, _proposal_id_remove);
 			populate_undo_state(undo_state, prev_state, _role_addr_to_entry, _role_addr_remove);
+			populate_undo_state(undo_state, prev_state, _cdcdata_id_to_entry, _cdcdata_id_remove);
         }
 
         /** load the state from a variant */
@@ -704,6 +706,31 @@ namespace cdcchain {
 		{
 			_role_addr_to_entry.erase(addr);
 			_role_addr_remove.insert(addr);
+		}
+
+		oCdcDataEntry  PendingChainState::cdcdata_lookup_by_id(const CdcDataDigestIdType& id)const
+		{
+			auto it = _cdcdata_id_to_entry.find(id);
+			if (it != _cdcdata_id_to_entry.end())
+				return it->second;
+			if (_cdcdata_id_remove.count(id) > 0)
+				return oCdcDataEntry();
+			const ChainInterfacePtr prev_state = _prev_state.lock();
+			if (!prev_state)
+				return oCdcDataEntry();
+			return prev_state->lookup<CdcDataEntry>(id);
+		}
+
+		void PendingChainState::cdcdata_insert_into_id_map(const CdcDataDigestIdType& id, const CdcDataEntry& entry)
+		{
+			_cdcdata_id_remove.erase(id);
+			_cdcdata_id_to_entry[id] = entry;
+		}
+
+		void PendingChainState::cdcdata_erase_from_id_map(const CdcDataDigestIdType& id)
+		{
+			_cdcdata_id_to_entry.erase(id);
+			_cdcdata_id_remove.insert(id);
 		}
 
     }

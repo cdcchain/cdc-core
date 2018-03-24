@@ -1316,6 +1316,10 @@ namespace cdcchain {
 			virtual void role_insert_into_addr_map(const Address&, const RoleEntry&);
 			virtual void role_erase_from_addr_map(const Address&);
 
+			virtual  oCdcDataEntry  cdcdata_lookup_by_id(const CdcDataDigestIdType&)const;
+			virtual void cdcdata_insert_into_id_map(const CdcDataDigestIdType&, const CdcDataEntry&);
+			virtual void cdcdata_erase_from_id_map(const CdcDataDigestIdType&);
+
         public:
             bool generating_block;
 

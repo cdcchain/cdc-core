@@ -198,6 +198,8 @@ namespace cdcchain {
 			unordered_set<ProposalIdType>                                     _proposal_id_remove;
 			unordered_map<Address, RoleEntry>						          _role_addr_to_entry;
 			unordered_set<Address>                                            _role_addr_remove;
+			unordered_map<CdcDataDigestIdType, CdcDataEntry>                  _cdcdata_id_to_entry;
+			unordered_set<CdcDataDigestIdType>                                _cdcdata_id_remove;
 
 
             vector<EventOperation> event_vector;
@@ -642,6 +644,10 @@ namespace cdcchain {
 			virtual  oRoleEntry  role_lookup_by_addr(const Address&)const;
 			virtual void role_insert_into_addr_map(const Address&, const RoleEntry&);
 			virtual void role_erase_from_addr_map(const Address&);
+
+			virtual  oCdcDataEntry  cdcdata_lookup_by_id(const CdcDataDigestIdType&)const;
+			virtual void cdcdata_insert_into_id_map(const CdcDataDigestIdType&, const CdcDataEntry&);
+			virtual void cdcdata_erase_from_id_map(const CdcDataDigestIdType&);
         };
         typedef std::shared_ptr<PendingChainState> PendingChainStatePtr;
 
@@ -683,6 +689,8 @@ FC_REFLECT(cdcchain::consensus::PendingChainState,
 	(_proposal_id_remove)
 	(_role_addr_to_entry)
 	(_role_addr_remove)
+	(_cdcdata_id_to_entry)
+	(_cdcdata_id_remove)
 	(_vec_wallet_accounts)
     )
 

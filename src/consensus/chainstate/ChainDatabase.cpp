@@ -193,6 +193,7 @@ namespace cdcchain {
 
 					_proposal_id_to_entry.open(data_dir / "index/proposal_id_to_entry");
 					_role_addr_to_entry.open(data_dir / "index/role_addr_to_entry");
+					_cdcdata_id_to_entry.open(data_dir / "index/cdcdata_id_to_entry");
 
                     _pending_trx_state = std::make_shared<PendingChainState>(self->shared_from_this());
 
@@ -756,12 +757,17 @@ namespace cdcchain {
 
                         FC_ASSERT(trx.data_size() <= CDC_BLOCKCHAIN_MAX_TRX_SIZE, "trx size is out of the max trx size range");
 
+						/*
                         trx_eval_state->skipexec = !(self->generating_block);
                         if (trx_eval_state->skipexec)
                             trx_eval_state->skipexec = !self->get_node_vm_enabled();
 
                         if (trx.result_trx_type == ResultTransactionType::incomplete_result_transaction)
                             trx_eval_state->skipexec = false;
+						*/
+
+						// 总是需要执行解释器
+						trx_eval_state->skipexec = false;
 
 						trx_eval_state->is_delegate = self->generating_block;
                         trx_eval_state->evaluate(trx);
@@ -1470,6 +1476,7 @@ namespace cdcchain {
 
 							my->_proposal_id_to_entry.toggle_leveldb(enabled);
 							my->_role_addr_to_entry.toggle_leveldb(enabled);
+							my->_cdcdata_id_to_entry.toggle_leveldb(enabled);
 
                         };
 
@@ -1672,6 +1679,7 @@ namespace cdcchain {
 				
 				my->_proposal_id_to_entry.close();
 				my->_role_addr_to_entry.close();
+				my->_cdcdata_id_to_entry.close();
 
             } FC_CAPTURE_AND_RETHROW()
         }
@@ -1749,6 +1757,8 @@ namespace cdcchain {
 
                 trx_eval_state->skipexec = !generating_block; //to check ! evaluate_transaction,基本只在store pending的时候被调用，此时如果是代理就需要执行代码，不是则不用执行
 				trx_eval_state->is_delegate = generating_block;
+
+				/*
                 //如果普通节点打开了VM开关
                 if (trx_eval_state->skipexec)
                     trx_eval_state->skipexec = !get_node_vm_enabled();
@@ -1756,6 +1766,10 @@ namespace cdcchain {
                 //钱包创建交易首次本地验证，执行一次解释器
                 if (trx_eval_state->skipexec && contract_vm_exec)
                     trx_eval_state->skipexec = !contract_vm_exec;
+				*/
+				
+				// 总是需要执行解释器
+				trx_eval_state->skipexec = false;
 
                 if (trx_eval_state->origin_trx_basic_verify(trx) == false)
                     FC_CAPTURE_AND_THROW(illegal_transaction, (trx));
@@ -3764,6 +3778,10 @@ namespace cdcchain {
 				my->_role_addr_to_entry.export_to_json(next_path);
 				ulog("Dumped ${p}", ("p", next_path));
 
+				next_path = dir / "_cdcdata_id_to_entry.json";
+				my->_cdcdata_id_to_entry.export_to_json(next_path);
+				ulog("Dumped ${p}", ("p", next_path));
+
             } FC_CAPTURE_AND_RETHROW((path))
         }
 
@@ -3974,5 +3992,24 @@ namespace cdcchain {
 		{
 			my->_role_addr_to_entry.remove(addr);
 		}
+
+		oCdcDataEntry  ChainDatabase::cdcdata_lookup_by_id(const CdcDataDigestIdType& id)const
+		{
+			auto it = my->_cdcdata_id_to_entry.unordered_find(id);
+			if (it != my->_cdcdata_id_to_entry.unordered_end())
+				return it->second;
+			return oCdcDataEntry();
+		}
+
+		void ChainDatabase::cdcdata_insert_into_id_map(const CdcDataDigestIdType& id, const CdcDataEntry& entry)
+		{
+			my->_cdcdata_id_to_entry.store(id, entry);
+		}
+
+		void ChainDatabase::cdcdata_erase_from_id_map(const CdcDataDigestIdType& id)
+		{
+			my->_cdcdata_id_to_entry.remove(id);
+		}
+
     }
 } // cdcchain::consensus

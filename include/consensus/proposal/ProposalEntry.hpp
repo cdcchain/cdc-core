@@ -47,7 +47,7 @@ namespace cdcchain {
 			fc::time_point_sec expected_end_time;
 			std::set<cdcchain::consensus::Address> proposal_voter;
 
-			ProposalEntry();
+			ProposalEntry(){}
 			ProposalEntry(const ProposalCondition& cond, const Address& from_addr, const fc::time_point_sec& _start_time,
 				const fc::time_point_sec& _expected_end_time): proposal_condition(cond), proposal_from(from_addr),
 				start_time(_start_time), expected_end_time(_expected_end_time){}

@@ -41,6 +41,8 @@ namespace cdcchain {
         typedef int64_t                            ImessageIdType;
         typedef int64_t                            ImessageLengthIdType;
 
+		typedef fc::sha256                         CdcDataDigestIdType;
+
         //type define for contract
         typedef std::string						  ContractName;
         typedef Address							  ContractIdType;
