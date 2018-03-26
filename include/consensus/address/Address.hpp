@@ -54,7 +54,7 @@ namespace cdcchain {
 			Address(const WithdrawCondition& condition, const AddressType& address_type = AddressType::cdc_address);
 			Address(const fc::ripemd160& ripe, const AddressType& address_type = AddressType::cdc_address);
 			Address(const PublicKeyType& pubkey, const AddressType& address_type = AddressType::cdc_address);
-			//Address(const PublicKeyType& pubkey, const fc::ripemd160& trxid);//���ں�Լ��ַ
+			//Address(const PublicKeyType& pubkey, const fc::ripemd160& trxid);
 
 			/**
 			* Validate address

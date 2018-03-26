@@ -209,6 +209,8 @@ namespace cdcchain {
             // Not serialized
             std::weak_ptr<ChainInterface>                                     _prev_state;
 
+			virtual ChainInterface*			   get_chain_database_ptr()const override;
+
             /**
             * According id lookup property
             *

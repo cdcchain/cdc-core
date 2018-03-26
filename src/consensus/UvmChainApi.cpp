@@ -917,6 +917,276 @@ namespace cdcchain {
 				return CDC_BLOCKCHAIN_PRECISION;
 			}
 
-        }
-    }
+
+			// for CDC role
+			// get
+			std::vector<std::string> get_privilege_admin(lua_State *L)
+			{
+				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
+				try {
+					cdcchain::consensus::TransactionEvaluationState* eval_state_ptr =
+						(cdcchain::consensus::TransactionEvaluationState*)
+						(uvm::lua::lib::get_lua_state_value(L, "evaluate_state").pointer_value);
+
+					if (!eval_state_ptr || !eval_state_ptr->_current_state)
+						FC_CAPTURE_AND_THROW(lua_executor_internal_error, (""));
+
+					cdcchain::consensus::ChainDatabase* chain_database_ptr = 
+						(cdcchain::consensus::ChainDatabase*)eval_state_ptr->_current_state->get_chain_database_ptr();
+
+					if (!chain_database_ptr)
+						FC_CAPTURE_AND_THROW(lua_executor_internal_error, (""));
+
+					std::set<Address> privilege_admin_set = chain_database_ptr->get_roles_address_by_filter(RoleAuthEnum::privilege_admin);
+
+					std::vector<std::string> privilege_admin_vec;
+					for (auto& addr : privilege_admin_set)
+						privilege_admin_vec.push_back(addr.AddressToString(AddressType::cdc_address));
+
+					return privilege_admin_vec;
+				}
+				catch (fc::exception e)
+				{
+					L->force_stopping = true;
+					L->exit_code = LUA_API_INTERNAL_ERROR;
+					return std::vector<std::string>();
+				}
+			}
+			std::vector<std::string> get_general_admin(lua_State *L)
+			{
+				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
+				try {
+					cdcchain::consensus::TransactionEvaluationState* eval_state_ptr =
+						(cdcchain::consensus::TransactionEvaluationState*)
+						(uvm::lua::lib::get_lua_state_value(L, "evaluate_state").pointer_value);
+
+					if (!eval_state_ptr || !eval_state_ptr->_current_state)
+						FC_CAPTURE_AND_THROW(lua_executor_internal_error, (""));
+
+					cdcchain::consensus::ChainDatabase* chain_database_ptr =
+						(cdcchain::consensus::ChainDatabase*)eval_state_ptr->_current_state->get_chain_database_ptr();
+
+					if (!chain_database_ptr)
+						FC_CAPTURE_AND_THROW(lua_executor_internal_error, (""));
+
+					std::set<Address> general_admin_set = chain_database_ptr->get_roles_address_by_filter(RoleAuthEnum::general_admin);
+
+					std::vector<std::string> general_admin_vec;
+					for (auto& addr : general_admin_set)
+						general_admin_vec.push_back(addr.AddressToString(AddressType::cdc_address));
+
+					return general_admin_vec;
+				}
+				catch (fc::exception e)
+				{
+					L->force_stopping = true;
+					L->exit_code = LUA_API_INTERNAL_ERROR;
+					return std::vector<std::string>();
+				}
+			}
+
+			std::vector<std::string> get_mining_pool_admin(lua_State *L)
+			{
+				return std::vector<std::string>();
+			}
+			std::vector<std::string> get_statistics_pool_admin(lua_State *L)
+			{
+				return std::vector<std::string>();
+			}
+			std::vector<std::string> get_merchant_admin(lua_State *L)
+			{
+				return std::vector<std::string>();
+			}
+			std::vector<std::string> get_arbitrament_admin(lua_State *L)
+			{
+				return std::vector<std::string>();
+			}
+
+			std::vector<std::string> get_mining_pool_operator(lua_State *L)
+			{
+				return std::vector<std::string>();
+			}
+			std::vector<std::string> get_statistics_pool_operator(lua_State *L)
+			{
+				return std::vector<std::string>();
+			}
+			std::vector<std::string> get_merchant_operator(lua_State *L)
+			{
+				return std::vector<std::string>();
+			}
+			std::vector<std::string> get_arbitrament_operator(lua_State *L)
+			{
+				return std::vector<std::string>();
+			}
+
+			// verify
+			int32_t verify_privilege_admin(lua_State *L, const char* verify_address)
+			{
+				return 0;
+			}
+			int32_t verify_general_admin(lua_State *L, const char* verify_address)
+			{
+				return 0;
+			}
+			int32_t verify_mining_pool_admin(lua_State *L, const char* verify_address)
+			{
+				return 0;
+			}
+			int32_t verify_statistics_pool_admin(lua_State *L, const char* verify_address)
+			{
+				return 0;
+			}
+			int32_t verify_merchant_admin(lua_State *L, const char* verify_address)
+			{
+				return 0;
+			}
+			int32_t verify_arbitrament_admin(lua_State *L, const char* verify_address)
+			{
+				return 0;
+			}
+
+			int32_t verify_mining_pool_operator(lua_State *L, const char* verify_address)
+			{
+				return 0;
+			}
+			int32_t verify_statistics_pool_operator(lua_State *L, const char* verify_address)
+			{
+				return 0;
+			}
+			int32_t verify_merchant_operator(lua_State *L, const char* verify_address)
+			{
+				return 0;
+			}
+			int32_t verify_arbitrament_operator(lua_State *L, const char* verify_address)
+			{
+				return 0;
+			}
+
+			// appoint
+			int32_t appoint_mining_pool_admin(lua_State *L, const char* pool_admin)
+			{
+				return 0;
+			}
+			int32_t appoint_statistics_pool_admin(lua_State *L, const char* pool_admin)
+			{
+				return 0;
+			}
+			int32_t appoint_merchant_admin(lua_State *L, const char* merchant_admin)
+			{
+				return 0;
+			}
+			int32_t appoint_arbitrament_admin(lua_State *L, const char* arbitrament_admin)
+			{
+				return 0;
+			}
+
+			int32_t appoint_mining_pool_operator(lua_State *L, const char* pool_operator)
+			{
+				return 0;
+			}
+			int32_t appoint_statistics_pool_operator(lua_State *L, const char* pool_operator)
+			{
+				return 0;
+			}
+			int32_t appoint_merchant_operator(lua_State *L, const char* merchant_operator)
+			{
+				return 0;
+			}
+			int32_t appoint_arbitrament_operator(lua_State *L, const char* arbitrament_operator)
+			{
+				return 0;
+			}
+
+			// revoke
+			int32_t revoke_mining_pool_admin(lua_State *L, const char* pool_admin)
+			{
+				return 0;
+			}
+			int32_t revoke_statistics_pool_admin(lua_State *L, const char* pool_admin)
+			{
+				return 0;
+			}
+			int32_t revoke_merchant_admin(lua_State *L, const char* merchant_admin)
+			{
+				return 0;
+			}
+			int32_t revoke_arbitrament_admin(lua_State *L, const char* arbitrament_admin)
+			{
+				return 0;
+			}
+
+			int32_t revoke_mining_pool_operator(lua_State *L, const char* pool_operator)
+			{
+				return 0;
+			}
+			int32_t revoke_statistics_pool_operator(lua_State *L, const char* pool_operator)
+			{
+				return 0;
+			}
+			int32_t revoke_merchant_operator(lua_State *L, const char* merchant_operator)
+			{
+				return 0;
+			}
+			int32_t revoke_arbitrament_operator(lua_State *L, const char* arbitrament_operator)
+			{
+				return 0;
+			}
+
+			// for CDC data
+			// checkin
+			int32_t checkin_user_receipt_hash(lua_State *L, const char* user_receipt_hash)
+			{
+				return 0;
+			}
+			int32_t checkin_mining_result_hash(lua_State *L, const char* mining_result_hash)
+			{
+				return 0;
+			}
+			int32_t checkin_ad_putting_feedback_hash(lua_State *L, const char* ad_putting_feedback_hash)
+			{
+				return 0;
+			}
+			int32_t checkin_ad_putting_result_hash(lua_State *L, const char* ad_putting_result_hash)
+			{
+				return 0;
+			}
+
+			// verify
+			int32_t verify_user_receipt_hash(lua_State *L, const char* user_receipt_hash)
+			{
+				return 0;
+			}
+			int32_t verify_mining_result_hash(lua_State *L, const char* mining_result_hash)
+			{
+				return 0;
+			}
+			int32_t verify_ad_putting_feedback_hash(lua_State *L, const char* ad_putting_feedback_hash)
+			{
+				return 0;
+			}
+			int32_t verify_ad_putting_result_hash(lua_State *L, const char* ad_putting_result_hash)
+			{
+				return 0;
+			}
+
+			// abolish
+			int32_t abolish_user_receipt_hash(lua_State *L, const char* user_receipt_hash)
+			{
+				return 0;
+			}
+			int32_t abolish_mining_result_hash(lua_State *L, const char* mining_result_hash)
+			{
+				return 0;
+			}
+			int32_t abolish_ad_putting_feedback_hash(lua_State *L, const char* ad_putting_feedback_hash)
+			{
+				return 0;
+			}
+			int32_t abolish_ad_putting_result_hash(lua_State *L, const char* ad_putting_result_hash)
+			{
+				return 0;
+			}
+
+		}
+	}
 }

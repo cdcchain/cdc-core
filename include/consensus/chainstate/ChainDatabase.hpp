@@ -853,9 +853,14 @@ namespace cdcchain {
 			*/
 			vector<ContractIdType> get_all_contract_entries() const;
 
+			// for CDC
+			std::set<Address> get_roles_address_by_filter(RoleAuthEnum role_type, const ContractIdType& from_contract = ContractIdType()) const;
+
         private:
             unique_ptr<detail::ChainDatabaseImpl> my;
             uint32_t m_fork_num_before;
+
+			virtual ChainInterface*			   get_chain_database_ptr()const override;
 
             /**  Get property by id from db
             *

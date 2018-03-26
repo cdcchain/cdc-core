@@ -39,6 +39,8 @@ namespace cdcchain {
 
             virtual fc::time_point_sec now()const = 0;
 
+			virtual ChainInterface*			   get_chain_database_ptr()const;
+
             /**  is_valid_account_name
             * Determine  whether a string is a valid account name
             * @param  name  name to be checked

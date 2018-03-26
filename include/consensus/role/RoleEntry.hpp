@@ -29,43 +29,6 @@ namespace cdcchain {
 
 		class ChainInterface;
 
-		struct RoleCondition {
-			fc::enum_type<fc::unsigned_int, RoleAuthEnum> role_type;
-			std::vector<char> role_data;
-
-			RoleCondition() {}
-
-			RoleCondition(const RoleCondition& cond) : role_type(cond.role_type),
-				role_data(cond.role_data) {}
-
-			template<typename RoleAuthType>
-			RoleCondition(const RoleAuthType& t)
-			{
-				role_type = RoleAuthType::type;
-				role_data = fc::raw::pack(t);
-			}
-
-			template<typename RoleAuthType>
-			RoleAuthType as()const
-			{
-				FC_ASSERT(role_type == RoleAuthType::type, "", ("role_type", role_type)("RoleAuthType", RoleAuthType::type));
-				return fc::raw::unpack<RoleAuthType>(role_data);
-			}
-		};
-
-		struct RoleEntry;
-		typedef fc::optional<RoleEntry> oRoleEntry;
-
-		struct RoleEntry {
-			cdcchain::consensus::Address user_address;
-			vector<RoleCondition> role_cond_vec;
-			fc::time_point_sec update_time;
-
-			static oRoleEntry lookup(const ChainInterface&, const Address&);
-			static void store(ChainInterface&, const Address&, const RoleEntry&);
-			static void remove(ChainInterface&, const Address&);
-		};
-
 		struct  PrivilegeAdminRole {
 			static const RoleAuthEnum type;
 			fc::time_point_sec gain_auth_time;
@@ -122,6 +85,67 @@ namespace cdcchain {
 			static const RoleAuthEnum type;
 			fc::time_point_sec gain_auth_time;
 			ContractIdType from_arbitrament;
+		};
+
+		struct RoleCondition {
+			fc::enum_type<fc::unsigned_int, RoleAuthEnum> role_type;
+			std::vector<char> role_data;
+
+			RoleCondition() {}
+
+			RoleCondition(const RoleCondition& cond) : role_type(cond.role_type),
+				role_data(cond.role_data) {}
+
+			template<typename RoleAuthType>
+			RoleCondition(const RoleAuthType& t)
+			{
+				role_type = RoleAuthType::type;
+				role_data = fc::raw::pack(t);
+			}
+
+			template<typename RoleAuthType>
+			RoleAuthType as()const
+			{
+				FC_ASSERT(role_type == RoleAuthType::type, "", ("role_type", role_type)("RoleAuthType", RoleAuthType::type));
+				return fc::raw::unpack<RoleAuthType>(role_data);
+			}
+
+			ContractIdType get_role_from_contract()const
+			{
+				if (role_type == privilege_admin || role_type == general_admin)
+					return ContractIdType();
+				else if (role_type == merchant_admin)
+					return fc::raw::unpack<MerchantAdminRole>(role_data).from_merchant;
+				else if (role_type == merchant_operator)
+					return fc::raw::unpack<MerchantOperatorRole>(role_data).from_merchant;
+				else if (role_type == mining_pool_admin)
+					return fc::raw::unpack<MiningPoolAdminRole>(role_data).from_pool;
+				else if (role_type == mining_pool_operator)
+					return fc::raw::unpack<MiningPoolOperatorRole>(role_data).from_pool;
+				else if (role_type == statistics_pool_admin)
+					return fc::raw::unpack<StatisticsPoolAdminRole>(role_data).from_pool;
+				else if (role_type == statistics_pool_operator)
+					return fc::raw::unpack<StatisticsPoolOperatorRole>(role_data).from_pool;
+				else if (role_type == arbitrament_admin)
+					return fc::raw::unpack<ArbitramentAdminRole>(role_data).from_arbitrament;
+				else if (role_type == arbitrament_operator)
+					return fc::raw::unpack<ArbitramentOperatorRole>(role_data).from_arbitrament;
+				else
+					return ContractIdType();
+			}
+		};
+
+		struct RoleEntry;
+		typedef fc::optional<RoleEntry> oRoleEntry;
+
+		struct RoleEntry {
+			cdcchain::consensus::Address user_address;
+			vector<RoleCondition> role_cond_vec;
+			fc::time_point_sec update_time;
+
+			static oRoleEntry lookup(const ChainInterface&, const Address&);
+			static void store(ChainInterface&, const Address&, const RoleEntry&);
+			static void remove(ChainInterface&, const Address&);
 		};
 
 		class RoleDbInterface

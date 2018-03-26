@@ -3283,6 +3283,11 @@ namespace cdcchain {
             } FC_CAPTURE_AND_RETHROW((addr))
         }
 
+		ChainInterface*	ChainDatabase::get_chain_database_ptr()const
+		{
+			return (ChainInterface*)this;
+		}
+
         oPropertyEntry ChainDatabase::property_lookup_by_id(const PropertyIdType id)const
         {
             const auto iter = my->_property_id_to_entry.unordered_find(static_cast<uint8_t>(id));
@@ -3938,6 +3943,29 @@ namespace cdcchain {
 
             return vec_contract;
         }
+
+		std::set<Address> ChainDatabase::get_roles_address_by_filter(RoleAuthEnum role_type, const ContractIdType& from_contract) const
+		{
+			std::set<Address> address_set;
+			for (auto iter = my->_role_addr_to_entry.unordered_begin(); iter != my->_role_addr_to_entry.unordered_end(); ++iter) {
+				RoleEntry entry = iter->second;
+				for (auto& cond : entry.role_cond_vec) {
+					if (role_type == cond.role_type) {
+						if (role_type == RoleAuthEnum::privilege_admin || role_type == RoleAuthEnum::general_admin) {
+							FC_ASSERT(from_contract == ContractIdType());
+							address_set.insert(entry.user_address);
+						}
+						else {
+							FC_ASSERT(from_contract != ContractIdType());
+							ContractIdType contract_address = cond.get_role_from_contract();
+							if (contract_address == from_contract)
+								address_set.insert(entry.user_address);
+						}
+					}
+				}
+			}
+			return address_set;
+		}
 
 		oContractTemplateEntry ChainDatabase::contracttemplate_lookup_by_hash(const std::string& hash)const
 		{

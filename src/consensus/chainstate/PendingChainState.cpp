@@ -190,6 +190,12 @@ namespace cdcchain {
             return v;
         }
 
+		ChainInterface* PendingChainState::get_chain_database_ptr()const
+		{
+			const ChainInterfacePtr prev_state = _prev_state.lock();
+			if (!prev_state) return nullptr;
+			return prev_state->get_chain_database_ptr();
+		}
 
         oPropertyEntry PendingChainState::property_lookup_by_id(const PropertyIdType id)const
         {
