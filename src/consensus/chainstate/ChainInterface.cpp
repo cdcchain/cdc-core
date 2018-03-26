@@ -705,6 +705,27 @@ namespace cdcchain {
 			} FC_CAPTURE_AND_RETHROW((entry))
 		}
 
+		oCdcDataEntry ChainInterface::get_cdcdata_entry(const CdcDataDigestIdType& id) const
+		{
+			try {
+				return lookup<CdcDataEntry>(id);
+			} FC_CAPTURE_AND_RETHROW((id))
+		}
+
+		void ChainInterface::remove_cdcdata_entry(const CdcDataDigestIdType& id)
+		{
+			try {
+				return remove<CdcDataEntry>(id);
+			} FC_CAPTURE_AND_RETHROW((id))
+		}
+
+		void ChainInterface::store_cdcdata_entry(const CdcDataEntry& entry)
+		{
+			try {
+				store(entry.cdcdata_id, entry);
+			} FC_CAPTURE_AND_RETHROW((entry))
+		}
+
         bool ChainInterface::is_destroyed_contract(const ContractState state) const
         {
             if (state == ContractState::deleted)

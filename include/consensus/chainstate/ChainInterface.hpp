@@ -475,6 +475,12 @@ namespace cdcchain {
 
 			void                              store_role_entry(const RoleEntry& entry);
 
+			oCdcDataEntry                      get_cdcdata_entry(const CdcDataDigestIdType& id) const;
+
+			void                               remove_cdcdata_entry(const CdcDataDigestIdType& id);
+
+			void                               store_cdcdata_entry(const CdcDataEntry& entry);
+
             bool                               is_destroyed_contract(const ContractState state) const;
 
             bool                               is_temporary_contract(const ContractLevel level) const;
