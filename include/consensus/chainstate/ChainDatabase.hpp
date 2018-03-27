@@ -853,14 +853,9 @@ namespace cdcchain {
 			*/
 			vector<ContractIdType> get_all_contract_entries() const;
 
-			// for CDC
-			std::set<Address> get_roles_address_by_filter(RoleAuthEnum role_type, const ContractIdType& from_contract = ContractIdType()) const;
-
         private:
             unique_ptr<detail::ChainDatabaseImpl> my;
             uint32_t m_fork_num_before;
-
-			virtual ChainInterface*			   get_chain_database_ptr()const override;
 
             /**  Get property by id from db
             *
@@ -1317,9 +1312,9 @@ namespace cdcchain {
 			virtual void proposal_insert_into_id_map(const ProposalIdType&, const ProposalEntry&);
 			virtual void proposal_erase_from_id_map(const ProposalIdType&);
 
-			virtual  oRoleEntry  role_lookup_by_addr(const Address&)const;
-			virtual void role_insert_into_addr_map(const Address&, const RoleEntry&);
-			virtual void role_erase_from_addr_map(const Address&);
+			virtual  oRoleEntry  role_lookup_by_addr(const ContractIdType&)const;
+			virtual void role_insert_into_addr_map(const ContractIdType&, const RoleEntry&);
+			virtual void role_erase_from_addr_map(const ContractIdType&);
 
 			virtual  oCdcDataEntry  cdcdata_lookup_by_id(const CdcDataDigestIdType&)const;
 			virtual void cdcdata_insert_into_id_map(const CdcDataDigestIdType&, const CdcDataEntry&);

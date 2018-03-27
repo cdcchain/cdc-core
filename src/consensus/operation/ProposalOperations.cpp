@@ -12,10 +12,11 @@ namespace cdcchain {
 			FC_ASSERT(expected_end_time > start_time);
 			FC_ASSERT(expected_end_time > eval_state._current_state->now());
 			
-			oRoleEntry role_entry = eval_state._current_state->get_role_entry(candidate);
+			oRoleEntry role_entry = eval_state._current_state->get_role_entry(ContractIdType());
 			if (role_entry.valid()) {
 				for(const auto& role_cond: role_entry->role_cond_vec) {
-					if (role_cond.role_type == RoleAuthEnum::privilege_admin)
+					if (role_cond.role_address == candidate &&
+						role_cond.role_type == RoleAuthEnum::privilege_admin)
 						FC_CAPTURE_AND_THROW(is_privilege_admin, ("candidate has already been a privilege admin"));
 				}
 			}
@@ -47,13 +48,14 @@ namespace cdcchain {
 			FC_ASSERT(expected_end_time > start_time);
 			FC_ASSERT(expected_end_time > eval_state._current_state->now());
 
-			oRoleEntry role_entry = eval_state._current_state->get_role_entry(privilege_admin);
+			oRoleEntry role_entry = eval_state._current_state->get_role_entry(ContractIdType());
 			if (!role_entry.valid())
 				FC_CAPTURE_AND_THROW(is_not_privilege_admin, ("this address is not a privilege admin"));
 
 			bool is_privilege_admin = false;
 			for (const auto& role_cond : role_entry->role_cond_vec) {
-				if (role_cond.role_type == RoleAuthEnum::privilege_admin) {
+				if (role_cond.role_address == privilege_admin &&
+					role_cond.role_type == RoleAuthEnum::privilege_admin) {
 					is_privilege_admin = true;
 					break;
 				}
@@ -108,11 +110,12 @@ namespace cdcchain {
 				if (proposal_entry->proposal_voter.size() >= apply_for_privilege_admin.delegate_vote_need)
 					FC_CAPTURE_AND_THROW(proposal_has_finished, ("this proposal has been finished"));
 
-				// 判断是否已经是超级管理员
-				oRoleEntry role_entry = eval_state._current_state->get_role_entry(apply_for_privilege_admin.candidate);
+				// 判断是否已经是超级管理员   
+				oRoleEntry role_entry = eval_state._current_state->get_role_entry(ContractIdType());
 				if (role_entry.valid()) {
 					for (const auto& role_cond : role_entry->role_cond_vec) {
-						if (role_cond.role_type == RoleAuthEnum::privilege_admin)
+						if (role_cond.role_address == apply_for_privilege_admin.candidate &&
+							role_cond.role_type == RoleAuthEnum::privilege_admin)
 							FC_CAPTURE_AND_THROW(is_privilege_admin, ("candidate has already been a privilege admin"));
 					}
 				}
@@ -125,15 +128,15 @@ namespace cdcchain {
 				if (proposal_entry->proposal_voter.size() >= apply_for_privilege_admin.delegate_vote_need)
 				{
 					RoleEntry entry;
-					oRoleEntry role_entry = eval_state._current_state->get_role_entry(apply_for_privilege_admin.candidate);
+					oRoleEntry role_entry = eval_state._current_state->get_role_entry(ContractIdType());
 					if (!role_entry.valid())
-						entry.user_address = apply_for_privilege_admin.candidate;
+						entry.contract_id = ContractIdType();
 					else
 						entry = *role_entry;
 
 					PrivilegeAdminRole privilege_admin;
 					privilege_admin.gain_auth_time = eval_state._current_state->now();
-					RoleCondition role_cond(privilege_admin);
+					RoleCondition role_cond(apply_for_privilege_admin.candidate, privilege_admin);
 
 					entry.role_cond_vec.push_back(role_cond);
 					entry.update_time = eval_state._current_state->now();
@@ -148,13 +151,14 @@ namespace cdcchain {
 					FC_CAPTURE_AND_THROW(proposal_has_finished, ("this proposal has been finished"));
 
 				// 判断是否已经不是超级管理员
-				oRoleEntry role_entry = eval_state._current_state->get_role_entry(revoke_privilege_admin.privilege_admin);
+				oRoleEntry role_entry = eval_state._current_state->get_role_entry(ContractIdType());
 				if (!role_entry.valid())
 					FC_CAPTURE_AND_THROW(is_not_privilege_admin, ("this address is not a privilege admin"));
 
 				bool is_privilege_admin = false;
 				for (const auto& role_cond : role_entry->role_cond_vec) {
-					if (role_cond.role_type == RoleAuthEnum::privilege_admin) {
+					if (role_cond.role_address == revoke_privilege_admin.privilege_admin &&
+						role_cond.role_type == RoleAuthEnum::privilege_admin) {
 						is_privilege_admin = true;
 						break;
 					}
@@ -172,7 +176,8 @@ namespace cdcchain {
 				{
 					for (auto iter = role_entry->role_cond_vec.begin(); iter != role_entry->role_cond_vec.end(); ) {
 						auto iter_tmp = iter++;
-						if (iter_tmp->role_type == RoleAuthEnum::privilege_admin)
+						if (iter_tmp->role_address == revoke_privilege_admin.privilege_admin &&
+							iter_tmp->role_type == RoleAuthEnum::privilege_admin)
 							role_entry->role_cond_vec.erase(iter_tmp);
 					}
 

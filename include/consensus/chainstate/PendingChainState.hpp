@@ -196,8 +196,8 @@ namespace cdcchain {
 
 			unordered_map<ProposalIdType, ProposalEntry>                      _proposal_id_to_entry;
 			unordered_set<ProposalIdType>                                     _proposal_id_remove;
-			unordered_map<Address, RoleEntry>						          _role_addr_to_entry;
-			unordered_set<Address>                                            _role_addr_remove;
+			unordered_map<ContractIdType, RoleEntry>						  _role_addr_to_entry;
+			unordered_set<ContractIdType>                                     _role_addr_remove;
 			unordered_map<CdcDataDigestIdType, CdcDataEntry>                  _cdcdata_id_to_entry;
 			unordered_set<CdcDataDigestIdType>                                _cdcdata_id_remove;
 
@@ -208,8 +208,6 @@ namespace cdcchain {
         private:
             // Not serialized
             std::weak_ptr<ChainInterface>                                     _prev_state;
-
-			virtual ChainInterface*			   get_chain_database_ptr()const override;
 
             /**
             * According id lookup property
@@ -643,9 +641,9 @@ namespace cdcchain {
 			virtual void proposal_insert_into_id_map(const ProposalIdType&, const ProposalEntry&);
 			virtual void proposal_erase_from_id_map(const ProposalIdType&);
 
-			virtual  oRoleEntry  role_lookup_by_addr(const Address&)const;
-			virtual void role_insert_into_addr_map(const Address&, const RoleEntry&);
-			virtual void role_erase_from_addr_map(const Address&);
+			virtual  oRoleEntry  role_lookup_by_addr(const ContractIdType&)const;
+			virtual void role_insert_into_addr_map(const ContractIdType&, const RoleEntry&);
+			virtual void role_erase_from_addr_map(const ContractIdType&);
 
 			virtual  oCdcDataEntry  cdcdata_lookup_by_id(const CdcDataDigestIdType&)const;
 			virtual void cdcdata_insert_into_id_map(const CdcDataDigestIdType&, const CdcDataEntry&);

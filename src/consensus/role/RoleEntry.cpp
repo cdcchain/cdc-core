@@ -6,43 +6,37 @@ namespace cdcchain {
 
 		const RoleAuthEnum PrivilegeAdminRole::type = privilege_admin;
 		const RoleAuthEnum GeneralAdminRole::type = general_admin;
-		const RoleAuthEnum MerchantAdminRole::type = merchant_admin;
-		const RoleAuthEnum MerchantOperatorRole::type = merchant_operator;
-		const RoleAuthEnum MiningPoolAdminRole::type = mining_pool_admin;
-		const RoleAuthEnum MiningPoolOperatorRole::type = mining_pool_operator;
-		const RoleAuthEnum StatisticsPoolAdminRole::type = statistics_pool_admin;
-		const RoleAuthEnum StatisticsPoolOperatorRole::type = statistics_pool_operator;
-		const RoleAuthEnum ArbitramentAdminRole::type = arbitrament_admin;
-		const RoleAuthEnum ArbitramentOperatorRole::type = arbitrament_operator;
+		const RoleAuthEnum ContractAdminRole::type = contract_admin;
+		const RoleAuthEnum ContractOperatorRole::type = contract_operator;
 
 
-		oRoleEntry RoleEntry::lookup(const ChainInterface& db, const Address& addr)
+		oRoleEntry RoleEntry::lookup(const ChainInterface& db, const ContractIdType& contract_id)
 		{
 			try
 			{
-				return db.role_lookup_by_addr(addr);
-			}FC_CAPTURE_AND_RETHROW((addr))
+				return db.role_lookup_by_addr(contract_id);
+			}FC_CAPTURE_AND_RETHROW((contract_id))
 		}
 
-		void RoleEntry::store(ChainInterface& db, const Address& addr, const RoleEntry& entry)
+		void RoleEntry::store(ChainInterface& db, const ContractIdType& contract_id, const RoleEntry& entry)
 		{
 			try
 			{
-				db.role_insert_into_addr_map(addr, entry);
-			}FC_CAPTURE_AND_RETHROW((addr)(entry))
+				db.role_insert_into_addr_map(contract_id, entry);
+			}FC_CAPTURE_AND_RETHROW((contract_id)(entry))
 		}
 
-		void RoleEntry::remove(ChainInterface& db, const Address& addr)
+		void RoleEntry::remove(ChainInterface& db, const ContractIdType& contract_id)
 		{
 			try
 			{
-				const oRoleEntry entry = db.lookup<RoleEntry>(addr);
+				const oRoleEntry entry = db.lookup<RoleEntry>(contract_id);
 
 				if (entry.valid())
 				{
-					db.role_erase_from_addr_map(addr);
+					db.role_erase_from_addr_map(contract_id);
 				}
-			}FC_CAPTURE_AND_RETHROW((addr))
+			}FC_CAPTURE_AND_RETHROW((contract_id))
 		}
 
 	}

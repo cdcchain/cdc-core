@@ -17,11 +17,12 @@ namespace cdcchain {
 				FC_CAPTURE_AND_THROW(missing_signature, ("AppointGeneralAdminOperation need appointer's signature"));
 
 			// 判断是否已经是管理员
-			oRoleEntry role_entry = eval_state._current_state->get_role_entry(candidate);
+			oRoleEntry role_entry = eval_state._current_state->get_role_entry(ContractIdType());
 			RoleEntry entry;
 			if (role_entry.valid()) {
 				for (const auto& role_cond : role_entry->role_cond_vec) {
-					if (role_cond.role_type == RoleAuthEnum::general_admin)
+					if (role_cond.role_address == candidate &&
+						role_cond.role_type == RoleAuthEnum::general_admin)
 						FC_CAPTURE_AND_THROW(is_general_admin, ("candidate has already been a general admin"));
 				}
 				entry = *role_entry;
@@ -29,7 +30,7 @@ namespace cdcchain {
 
 			GeneralAdminRole general_admin;
 			general_admin.gain_auth_time = eval_state._current_state->now();
-			RoleCondition role_cond(general_admin);
+			RoleCondition role_cond(candidate, general_admin);
 			entry.role_cond_vec.push_back(role_cond);
 
 			entry.update_time = eval_state._current_state->now();
@@ -48,13 +49,14 @@ namespace cdcchain {
 				FC_CAPTURE_AND_THROW(missing_signature, ("RevokeGeneralAdminOperation need appointer's signature"));
 
 			// 判断是否已经不是管理员
-			oRoleEntry role_entry = eval_state._current_state->get_role_entry(general_admin);
+			oRoleEntry role_entry = eval_state._current_state->get_role_entry(ContractIdType());
 			if (!role_entry.valid())
 				FC_CAPTURE_AND_THROW(is_not_general_admin, ("this address is not a general admin"));
 
 			bool is_general_admin = false;
 			for (const auto& role_cond : role_entry->role_cond_vec) {
-				if (role_cond.role_type == RoleAuthEnum::general_admin) {
+				if (role_cond.role_address == general_admin &&
+					role_cond.role_type == RoleAuthEnum::general_admin) {
 					is_general_admin = true;
 					break;
 				}
@@ -65,7 +67,8 @@ namespace cdcchain {
 
 			for (auto iter = role_entry->role_cond_vec.begin(); iter != role_entry->role_cond_vec.end(); ) {
 				auto iter_tmp = iter++;
-				if (iter_tmp->role_type == RoleAuthEnum::general_admin)
+				if (iter_tmp->role_address == general_admin &&
+					iter_tmp->role_type == RoleAuthEnum::general_admin)
 					role_entry->role_cond_vec.erase(iter_tmp);
 			}
 

@@ -384,7 +384,7 @@ namespace cdcchain {
 				cdcchain::db::fast_level_map<ContractIdType,ContractTrxEntry>		  _contract_to_trx_iddb;
 
 				cdcchain::db::fast_level_map<ProposalIdType, ProposalEntry>                  _proposal_id_to_entry;
-				cdcchain::db::fast_level_map<Address, RoleEntry>                             _role_addr_to_entry;
+				cdcchain::db::fast_level_map<ContractIdType, RoleEntry>                             _role_addr_to_entry;
 				cdcchain::db::fast_level_map<CdcDataDigestIdType, CdcDataEntry>              _cdcdata_id_to_entry;
 
                 // simulator contract related

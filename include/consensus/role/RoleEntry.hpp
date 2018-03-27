@@ -10,21 +10,9 @@ namespace cdcchain {
 			privilege_admin = 0,
 			general_admin = 1,
 
-			// merchant
-			merchant_admin = 10,
-			merchant_operator = 11,
-
-			// mining pool
-			mining_pool_admin = 40,
-			mining_pool_operator = 41,
-
-			// statistics pool
-			statistics_pool_admin = 50,
-			statistics_pool_operator = 51,
-
-			// arbitrament
-			arbitrament_admin = 80,
-			arbitrament_operator = 81
+			// contract
+			contract_admin = 10,
+			contract_operator = 11,
 		};
 
 		class ChainInterface;
@@ -39,67 +27,33 @@ namespace cdcchain {
 			fc::time_point_sec gain_auth_time;
 		};
 
-		struct MerchantAdminRole {
+		struct ContractAdminRole {
 			static const RoleAuthEnum type;
 			fc::time_point_sec gain_auth_time;
-			ContractIdType from_merchant;
+			ContractIdType from_contract;
 		};
 
-		struct MerchantOperatorRole {
+		struct ContractOperatorRole {
 			static const RoleAuthEnum type;
 			fc::time_point_sec gain_auth_time;
-			ContractIdType from_merchant;
-		};
-
-		struct MiningPoolAdminRole {
-			static const RoleAuthEnum type;
-			fc::time_point_sec gain_auth_time;
-			ContractIdType from_pool;
-		};
-
-		struct MiningPoolOperatorRole {
-			static const RoleAuthEnum type;
-			fc::time_point_sec gain_auth_time;
-			ContractIdType from_pool;
-		};
-
-		struct StatisticsPoolAdminRole {
-			static const RoleAuthEnum type;
-			fc::time_point_sec gain_auth_time;
-			ContractIdType from_pool;
-		};
-
-		struct StatisticsPoolOperatorRole {
-			static const RoleAuthEnum type;
-			fc::time_point_sec gain_auth_time;
-			ContractIdType from_pool;
-		};
-
-		struct ArbitramentAdminRole {
-			static const RoleAuthEnum type;
-			fc::time_point_sec gain_auth_time;
-			ContractIdType from_arbitrament;
-		};
-
-		struct ArbitramentOperatorRole {
-			static const RoleAuthEnum type;
-			fc::time_point_sec gain_auth_time;
-			ContractIdType from_arbitrament;
+			ContractIdType from_contract;
 		};
 
 		struct RoleCondition {
 			fc::enum_type<fc::unsigned_int, RoleAuthEnum> role_type;
+			cdcchain::consensus::Address role_address;
 			std::vector<char> role_data;
 
 			RoleCondition() {}
 
 			RoleCondition(const RoleCondition& cond) : role_type(cond.role_type),
-				role_data(cond.role_data) {}
+				role_address(cond.role_address), role_data(cond.role_data) {}
 
 			template<typename RoleAuthType>
-			RoleCondition(const RoleAuthType& t)
+			RoleCondition(const Address& user_address, const RoleAuthType& t)
 			{
 				role_type = RoleAuthType::type;
+				role_address = user_address;
 				role_data = fc::raw::pack(t);
 			}
 
@@ -110,42 +64,20 @@ namespace cdcchain {
 				return fc::raw::unpack<RoleAuthType>(role_data);
 			}
 
-			ContractIdType get_role_from_contract()const
-			{
-				if (role_type == privilege_admin || role_type == general_admin)
-					return ContractIdType();
-				else if (role_type == merchant_admin)
-					return fc::raw::unpack<MerchantAdminRole>(role_data).from_merchant;
-				else if (role_type == merchant_operator)
-					return fc::raw::unpack<MerchantOperatorRole>(role_data).from_merchant;
-				else if (role_type == mining_pool_admin)
-					return fc::raw::unpack<MiningPoolAdminRole>(role_data).from_pool;
-				else if (role_type == mining_pool_operator)
-					return fc::raw::unpack<MiningPoolOperatorRole>(role_data).from_pool;
-				else if (role_type == statistics_pool_admin)
-					return fc::raw::unpack<StatisticsPoolAdminRole>(role_data).from_pool;
-				else if (role_type == statistics_pool_operator)
-					return fc::raw::unpack<StatisticsPoolOperatorRole>(role_data).from_pool;
-				else if (role_type == arbitrament_admin)
-					return fc::raw::unpack<ArbitramentAdminRole>(role_data).from_arbitrament;
-				else if (role_type == arbitrament_operator)
-					return fc::raw::unpack<ArbitramentOperatorRole>(role_data).from_arbitrament;
-				else
-					return ContractIdType();
-			}
 		};
 
 		struct RoleEntry;
 		typedef fc::optional<RoleEntry> oRoleEntry;
 
 		struct RoleEntry {
-			cdcchain::consensus::Address user_address;
+			cdcchain::consensus::ContractIdType contract_id;
+			
 			vector<RoleCondition> role_cond_vec;
 			fc::time_point_sec update_time;
 
-			static oRoleEntry lookup(const ChainInterface&, const Address&);
-			static void store(ChainInterface&, const Address&, const RoleEntry&);
-			static void remove(ChainInterface&, const Address&);
+			static oRoleEntry lookup(const ChainInterface&, const ContractIdType&);
+			static void store(ChainInterface&, const ContractIdType&, const RoleEntry&);
+			static void remove(ChainInterface&, const ContractIdType&);
 		};
 
 		class RoleDbInterface
@@ -161,18 +93,13 @@ namespace cdcchain {
 FC_REFLECT_ENUM(cdcchain::consensus::RoleAuthEnum,
 (privilege_admin)
 (general_admin)
-(merchant_admin)
-(merchant_operator)
-(mining_pool_admin)
-(mining_pool_operator)
-(statistics_pool_admin)
-(statistics_pool_operator)
-(arbitrament_admin)
-(arbitrament_operator)
+(contract_admin)
+(contract_operator)
 )
 
 FC_REFLECT(cdcchain::consensus::RoleCondition,
 	(role_type)
+	(role_address)
 	(role_data)
 )
 
@@ -184,48 +111,18 @@ FC_REFLECT(cdcchain::consensus::GeneralAdminRole,
 (gain_auth_time)
 )
 
-FC_REFLECT(cdcchain::consensus::MerchantAdminRole,
+FC_REFLECT(cdcchain::consensus::ContractAdminRole,
 (gain_auth_time)
-(from_merchant)
+(from_contract)
 )
 
-FC_REFLECT(cdcchain::consensus::MerchantOperatorRole,
+FC_REFLECT(cdcchain::consensus::ContractOperatorRole,
 (gain_auth_time)
-(from_merchant)
-)
-
-FC_REFLECT(cdcchain::consensus::MiningPoolAdminRole,
-(gain_auth_time)
-(from_pool)
-)
-
-FC_REFLECT(cdcchain::consensus::MiningPoolOperatorRole,
-(gain_auth_time)
-(from_pool)
-)
-
-FC_REFLECT(cdcchain::consensus::StatisticsPoolAdminRole,
-(gain_auth_time)
-(from_pool)
-)
-
-FC_REFLECT(cdcchain::consensus::StatisticsPoolOperatorRole,
-(gain_auth_time)
-(from_pool)
-)
-
-FC_REFLECT(cdcchain::consensus::ArbitramentAdminRole,
-(gain_auth_time)
-(from_arbitrament)
-)
-
-FC_REFLECT(cdcchain::consensus::ArbitramentOperatorRole,
-(gain_auth_time)
-(from_arbitrament)
+(from_contract)
 )
 
 FC_REFLECT(cdcchain::consensus::RoleEntry,
-	(user_address)
+	(contract_id)
 	(role_cond_vec)
 	(update_time)
 	)

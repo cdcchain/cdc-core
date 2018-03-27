@@ -190,13 +190,6 @@ namespace cdcchain {
             return v;
         }
 
-		ChainInterface* PendingChainState::get_chain_database_ptr()const
-		{
-			const ChainInterfacePtr prev_state = _prev_state.lock();
-			if (!prev_state) return nullptr;
-			return prev_state->get_chain_database_ptr();
-		}
-
         oPropertyEntry PendingChainState::property_lookup_by_id(const PropertyIdType id)const
         {
             const auto iter = _property_id_to_entry.find(id);
@@ -689,29 +682,29 @@ namespace cdcchain {
 			_proposal_id_remove.insert(id);
 		}
 
-		oRoleEntry  PendingChainState::role_lookup_by_addr(const Address& addr)const
+		oRoleEntry  PendingChainState::role_lookup_by_addr(const ContractIdType& contract_id)const
 		{
-			auto it = _role_addr_to_entry.find(addr);
+			auto it = _role_addr_to_entry.find(contract_id);
 			if (it != _role_addr_to_entry.end())
 				return it->second;
-			if (_role_addr_remove.count(addr) > 0)
+			if (_role_addr_remove.count(contract_id) > 0)
 				return oRoleEntry();
 			const ChainInterfacePtr prev_state = _prev_state.lock();
 			if (!prev_state)
 				return oRoleEntry();
-			return prev_state->lookup<RoleEntry>(addr);
+			return prev_state->lookup<RoleEntry>(contract_id);
 		}
 
-		void PendingChainState::role_insert_into_addr_map(const Address& addr, const RoleEntry& entry)
+		void PendingChainState::role_insert_into_addr_map(const ContractIdType& contract_id, const RoleEntry& entry)
 		{
-			_role_addr_remove.erase(addr);
-			_role_addr_to_entry[addr] = entry;
+			_role_addr_remove.erase(contract_id);
+			_role_addr_to_entry[contract_id] = entry;
 		}
 
-		void PendingChainState::role_erase_from_addr_map(const Address& addr)
+		void PendingChainState::role_erase_from_addr_map(const ContractIdType& contract_id)
 		{
-			_role_addr_to_entry.erase(addr);
-			_role_addr_remove.insert(addr);
+			_role_addr_to_entry.erase(contract_id);
+			_role_addr_remove.insert(contract_id);
 		}
 
 		oCdcDataEntry  PendingChainState::cdcdata_lookup_by_id(const CdcDataDigestIdType& id)const

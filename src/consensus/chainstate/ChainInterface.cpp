@@ -684,14 +684,14 @@ namespace cdcchain {
 			} FC_CAPTURE_AND_RETHROW((entry))
 		}
 
-		oRoleEntry ChainInterface::get_role_entry(const Address& addr) const
+		oRoleEntry ChainInterface::get_role_entry(const ContractIdType& addr) const
 		{
 			try {
 				return lookup<RoleEntry>(addr);
 			} FC_CAPTURE_AND_RETHROW((addr))
 		}
 
-		void ChainInterface::remove_role_entry(const Address& addr)
+		void ChainInterface::remove_role_entry(const ContractIdType& addr)
 		{
 			try {
 				return remove<RoleEntry>(addr);
@@ -701,7 +701,7 @@ namespace cdcchain {
 		void ChainInterface::store_role_entry(const RoleEntry& entry)
 		{
 			try {
-				store(entry.user_address, entry);
+				store(entry.contract_id, entry);
 			} FC_CAPTURE_AND_RETHROW((entry))
 		}
 
