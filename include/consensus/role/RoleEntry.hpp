@@ -5,7 +5,7 @@
 namespace cdcchain {
 	namespace consensus {
 
-		enum RoleAuthEnum {
+		enum RoleTypeEnum {
 			// admin
 			privilege_admin = 0,
 			general_admin = 1,
@@ -14,46 +14,59 @@ namespace cdcchain {
 			contract_admin = 10,
 			contract_operator = 11,
 		};
+		
+		enum RoleSubTypeEnum {
+			// no sub
+			sub_none = 0,
+			// merchant
+			sub_merchant = 1,
+			// mining_pool
+			sub_mining_pool = 2,
+			// statistic_pool
+			sub_statistic_pool = 3,
+			// arbitrator
+			sub_arbitrator = 4
+		};
 
 		class ChainInterface;
 
 		struct  PrivilegeAdminRole {
-			static const RoleAuthEnum type;
+			static const RoleTypeEnum type;
 			fc::time_point_sec gain_auth_time;
 		};
 
 		struct  GeneralAdminRole {
-			static const RoleAuthEnum type;
+			static const RoleTypeEnum type;
 			fc::time_point_sec gain_auth_time;
 		};
 
 		struct ContractAdminRole {
-			static const RoleAuthEnum type;
+			static const RoleTypeEnum type;
 			fc::time_point_sec gain_auth_time;
-			ContractIdType from_contract;
 		};
 
 		struct ContractOperatorRole {
-			static const RoleAuthEnum type;
+			static const RoleTypeEnum type;
 			fc::time_point_sec gain_auth_time;
-			ContractIdType from_contract;
 		};
 
 		struct RoleCondition {
-			fc::enum_type<fc::unsigned_int, RoleAuthEnum> role_type;
+			fc::enum_type<fc::unsigned_int, RoleTypeEnum> role_type;
+			fc::enum_type<fc::unsigned_int, RoleSubTypeEnum> sub_role_type = RoleSubTypeEnum::sub_none;
 			cdcchain::consensus::Address role_address;
 			std::vector<char> role_data;
 
 			RoleCondition() {}
 
 			RoleCondition(const RoleCondition& cond) : role_type(cond.role_type),
-				role_address(cond.role_address), role_data(cond.role_data) {}
+				sub_role_type(cond.sub_role_type), role_address(cond.role_address), role_data(cond.role_data) {}
 
 			template<typename RoleAuthType>
-			RoleCondition(const Address& user_address, const RoleAuthType& t)
+			RoleCondition(const Address& _user_address, const RoleSubTypeEnum& _sub_role_type, const RoleAuthType& t)
 			{
 				role_type = RoleAuthType::type;
-				role_address = user_address;
+				sub_role_type = _sub_role_type;
+				role_address = _user_address;
 				role_data = fc::raw::pack(t);
 			}
 
@@ -90,7 +103,7 @@ namespace cdcchain {
 	}
 }
 
-FC_REFLECT_ENUM(cdcchain::consensus::RoleAuthEnum,
+FC_REFLECT_ENUM(cdcchain::consensus::RoleTypeEnum,
 (privilege_admin)
 (general_admin)
 (contract_admin)
@@ -113,12 +126,10 @@ FC_REFLECT(cdcchain::consensus::GeneralAdminRole,
 
 FC_REFLECT(cdcchain::consensus::ContractAdminRole,
 (gain_auth_time)
-(from_contract)
 )
 
 FC_REFLECT(cdcchain::consensus::ContractOperatorRole,
 (gain_auth_time)
-(from_contract)
 )
 
 FC_REFLECT(cdcchain::consensus::RoleEntry,

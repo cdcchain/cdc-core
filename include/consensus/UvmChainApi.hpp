@@ -160,6 +160,41 @@ namespace cdcchain
 				virtual const char *get_system_asset_symbol(lua_State *L);
 				virtual uint64_t get_system_asset_precision(lua_State *L);
 
+
+				// for CDC role
+				// get
+				virtual std::vector<std::string> get_privilege_admin(lua_State *L);
+				virtual std::vector<std::string> get_general_admin(lua_State *L);
+
+				virtual std::vector<std::string> get_contract_admin(lua_State *L, _CON_ARG_ const char* contract_id);
+				virtual std::vector<std::string> get_contract_operator(lua_State *L, _CON_ARG_ const char* contract_id);
+
+				// verify
+				virtual int32_t verify_privilege_admin(lua_State *L, const char* user_address);
+				virtual int32_t verify_general_admin(lua_State *L, const char* user_address);
+
+				virtual int32_t verify_contract_admin(lua_State *L, const char* user_address, _CON_ARG_ const char* contract_id);
+				virtual int32_t verify_contract_operator(lua_State *L, const char* user_address, _CON_ARG_ const char* contract_id);
+
+				// appoint
+				virtual int32_t appoint_contract_admin(lua_State *L, uint32_t role_sub_type, const char* user_address, _CON_ARG_ const char* contract_id);
+				virtual int32_t appoint_contract_operator(lua_State *L, uint32_t role_sub_type, const char* user_address, _CON_ARG_ const char* contract_id);
+
+				// revoke
+				virtual int32_t revoke_contract_admin(lua_State *L, const char* user_address, _CON_ARG_ const char* contract_id);
+				virtual int32_t revoke_contract_operator(lua_State *L, const char* user_address, _CON_ARG_ const char* contract_id);
+
+
+				// for CDC data
+				// checkin
+				virtual int32_t checkin_cdcdata_hash(lua_State *L, uint32_t cdcdata_type, const char* cdcdata_hash, const char* remark, _CON_ARG_ const char* caller_address);
+
+				// verify
+				virtual int32_t verify_cdcdata_hash(lua_State *L, uint32_t cdcdata_type, const char* cdcdata_hash);
+
+				// abolish
+				virtual int32_t abolish_cdcdata_hash(lua_State *L, uint32_t cdcdata_type, const char* cdcdata_hash);
+
 			};
 
 		}

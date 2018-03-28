@@ -644,7 +644,7 @@ namespace cdcchain
 
 			bool is_general_admin = false;
 			for (const auto& role_cond : role_entry->role_cond_vec) {
-				if (role_cond.role_type == RoleAuthEnum::general_admin) {
+				if (role_cond.role_type == RoleTypeEnum::general_admin) {
 					is_general_admin = true;
 					break;
 				}

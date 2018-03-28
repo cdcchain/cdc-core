@@ -917,6 +917,432 @@ namespace cdcchain {
 				return CDC_BLOCKCHAIN_PRECISION;
 			}
 
+			// CDC static function
+			static std::set<Address> get_role_addresses_by_contract_id(lua_State *L, const ContractIdType& contract_id, const RoleTypeEnum& role_type) 
+			{
+				cdcchain::consensus::TransactionEvaluationState* eval_state_ptr =
+					(cdcchain::consensus::TransactionEvaluationState*)
+					(uvm::lua::lib::get_lua_state_value(L, "evaluate_state").pointer_value);
+
+				if (eval_state_ptr == NULL)
+					FC_CAPTURE_AND_THROW(lua_executor_internal_error, (""));
+
+				std::set<Address> role_addresses_set;
+				oRoleEntry entry = eval_state_ptr->_current_state->get_role_entry(contract_id);
+				if (entry.valid()) {
+					for (const auto& cond : entry->role_cond_vec)
+						if (cond.role_type == role_type)
+							role_addresses_set.insert(cond.role_address);
+				}
+				return role_addresses_set;
+			}
+
+			// for CDC role
+			// get
+			std::vector<std::string> UvmChainApi::get_privilege_admin(lua_State *L)
+			{
+				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
+				try {
+					std::set<Address> privilege_admin_set;
+					privilege_admin_set = get_role_addresses_by_contract_id(L, ContractIdType(), RoleTypeEnum::privilege_admin);
+
+					std::vector<std::string> privilege_admin_vec;
+					for (const auto& addr : privilege_admin_set)
+						privilege_admin_vec.push_back(addr.AddressToString(AddressType::cdc_address));
+
+					return privilege_admin_vec;
+				}
+				catch (const fc::exception&)
+				{
+					L->force_stopping = true;
+					L->exit_code = LUA_API_INTERNAL_ERROR;
+					return std::vector<std::string>();
+				}
+			}
+
+			std::vector<std::string> UvmChainApi::get_general_admin(lua_State *L)
+			{
+				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
+				try {
+					std::set<Address> general_admin_set;
+					general_admin_set = get_role_addresses_by_contract_id(L, ContractIdType(), RoleTypeEnum::general_admin);
+
+					std::vector<std::string> general_admin_vec;
+					for (const auto& addr : general_admin_set)
+						general_admin_vec.push_back(addr.AddressToString(AddressType::cdc_address));
+
+					return general_admin_vec;
+				}
+				catch (const fc::exception&)
+				{
+					L->force_stopping = true;
+					L->exit_code = LUA_API_INTERNAL_ERROR;
+					return std::vector<std::string>();
+				}
+			}
+
+			std::vector<std::string> UvmChainApi::get_contract_admin(lua_State *L, _CON_ARG_ const char* contract_id)
+			{
+				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
+				try {
+					std::set<Address> contract_admin_set;
+					contract_admin_set = get_role_addresses_by_contract_id(L, ContractIdType(std::string(contract_id), AddressType::contract_address),
+						RoleTypeEnum::contract_admin);
+
+					std::vector<std::string> contract_admin_vec;
+					for (const auto& addr : contract_admin_set)
+						contract_admin_vec.push_back(addr.AddressToString(AddressType::cdc_address));
+
+					return contract_admin_vec;
+				}
+				catch (const fc::exception&)
+				{
+					L->force_stopping = true;
+					L->exit_code = LUA_API_INTERNAL_ERROR;
+					return std::vector<std::string>();
+				}
+			}
+
+			std::vector<std::string> UvmChainApi::get_contract_operator(lua_State *L, _CON_ARG_ const char* contract_id)
+			{
+				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
+				try {
+					std::set<Address> contract_operator_set;
+					contract_operator_set = get_role_addresses_by_contract_id(L, ContractIdType(std::string(contract_id), AddressType::contract_address),
+						RoleTypeEnum::contract_operator);
+
+					std::vector<std::string> contract_operator_vec;
+					for (const auto& addr : contract_operator_set)
+						contract_operator_vec.push_back(addr.AddressToString(AddressType::cdc_address));
+
+					return contract_operator_vec;
+				}
+				catch (const fc::exception&)
+				{
+					L->force_stopping = true;
+					L->exit_code = LUA_API_INTERNAL_ERROR;
+					return std::vector<std::string>();
+				}
+			}
+
+			// verify
+			int32_t UvmChainApi::verify_privilege_admin(lua_State *L, const char* user_address)
+			{
+				std::vector<std::string> privilege_admin_vec = get_privilege_admin(L);
+
+				if(L->force_stopping)
+					return 1;
+
+				auto iter = std::find(privilege_admin_vec.begin(), privilege_admin_vec.end(), std::string(user_address));
+				if (iter != privilege_admin_vec.end())
+					return 0;
+
+				return 2;
+			}
+
+			int32_t UvmChainApi::verify_general_admin(lua_State *L, const char* user_address)
+			{
+				std::vector<std::string> general_admin_vec = get_general_admin(L);
+
+				if (L->force_stopping)
+					return 1;
+
+				auto iter = std::find(general_admin_vec.begin(), general_admin_vec.end(), std::string(user_address));
+				if (iter != general_admin_vec.end())
+					return 0;
+
+				return 2;
+			}
+
+			int32_t UvmChainApi::verify_contract_admin(lua_State *L, const char* user_address, _CON_ARG_ const char* contract_id)
+			{
+				std::vector<std::string> contract_admin_vec = get_contract_admin(L, contract_id);
+
+				if (L->force_stopping)
+					return 1;
+
+				auto iter = std::find(contract_admin_vec.begin(), contract_admin_vec.end(), std::string(user_address));
+				if (iter != contract_admin_vec.end())
+					return 0;
+
+				return 2;
+			}
+
+			int32_t UvmChainApi::verify_contract_operator(lua_State *L, const char* user_address, _CON_ARG_ const char* contract_id)
+			{
+				std::vector<std::string> contract_operator_vec = get_contract_admin(L, contract_id);
+
+				if (L->force_stopping)
+					return 1;
+
+				auto iter = std::find(contract_operator_vec.begin(), contract_operator_vec.end(), std::string(user_address));
+				if (iter != contract_operator_vec.end())
+					return 0;
+
+				return 2;
+			}
+
+			// appoint
+			static int32_t appoint_contract_role(lua_State *L, const char* user_address, const char* contract_id, const RoleTypeEnum& role_type, const RoleSubTypeEnum& role_sub_type)
+			{
+				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
+				try {
+					cdcchain::consensus::TransactionEvaluationState* eval_state_ptr =
+						(cdcchain::consensus::TransactionEvaluationState*)
+						(uvm::lua::lib::get_lua_state_value(L, "evaluate_state").pointer_value);
+
+					if (eval_state_ptr == NULL)
+						FC_CAPTURE_AND_THROW(lua_executor_internal_error, (""));
+
+					std::set<Address> role_addresses_set;
+					RoleEntry entry;
+					oRoleEntry oentry = eval_state_ptr->_current_state->get_role_entry(ContractIdType(std::string(contract_id), AddressType::contract_address));
+					if (oentry.valid()) {
+						for (const auto& cond : oentry->role_cond_vec)
+							if (cond.role_address == Address(std::string(user_address), AddressType::cdc_address) && cond.role_type == role_type)
+								return 2;
+
+						entry = *oentry;
+					}
+					else {
+						entry.contract_id = ContractIdType(std::string(contract_id), AddressType::contract_address);
+					}
+
+					RoleCondition role_cond;
+					if (role_type == RoleTypeEnum::contract_admin) {
+						ContractAdminRole contract_admin_role;
+						contract_admin_role.gain_auth_time = eval_state_ptr->_current_state->now();
+						role_cond = RoleCondition(Address(std::string(user_address), AddressType::cdc_address), role_sub_type, contract_admin_role);
+					}
+					else if (role_type == RoleTypeEnum::contract_operator)
+					{
+						ContractAdminRole contract_operator_role;
+						contract_operator_role.gain_auth_time = eval_state_ptr->_current_state->now();
+						role_cond = RoleCondition(Address(std::string(user_address), AddressType::cdc_address), role_sub_type, contract_operator_role);
+					}
+					else {
+						return 3;
+					}
+					
+					entry.role_cond_vec.push_back(role_cond);
+					entry.update_time = eval_state_ptr->_current_state->now();
+					eval_state_ptr->_current_state->store_role_entry(entry);
+					return 0;
+				}
+				catch (const fc::exception&)
+				{
+					L->force_stopping = true;
+					L->exit_code = LUA_API_INTERNAL_ERROR;
+					return 1;
+				}
+			}
+
+			int32_t UvmChainApi::appoint_contract_admin(lua_State *L, uint32_t role_sub_type, const char* user_address, _CON_ARG_ const char* contract_id)
+			{
+				return appoint_contract_role(L, user_address, contract_id, RoleTypeEnum::contract_admin, (RoleSubTypeEnum)role_sub_type);
+			}
+
+			int32_t UvmChainApi::appoint_contract_operator(lua_State *L, uint32_t role_sub_type, const char* user_address, _CON_ARG_ const char* contract_id)
+			{
+				return appoint_contract_role(L, user_address, contract_id, RoleTypeEnum::contract_operator, (RoleSubTypeEnum)role_sub_type);
+			}
+
+			// revoke
+			static int32_t revoke_contract_role(lua_State *L, const char* user_address, const char* contract_id, const RoleTypeEnum& role_type)
+			{
+				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
+				try {
+					cdcchain::consensus::TransactionEvaluationState* eval_state_ptr =
+						(cdcchain::consensus::TransactionEvaluationState*)
+						(uvm::lua::lib::get_lua_state_value(L, "evaluate_state").pointer_value);
+
+					if (eval_state_ptr == NULL)
+						FC_CAPTURE_AND_THROW(lua_executor_internal_error, (""));
+
+					std::set<Address> role_addresses_set;
+					RoleEntry entry;
+					oRoleEntry oentry = eval_state_ptr->_current_state->get_role_entry(ContractIdType(std::string(contract_id), AddressType::contract_address));
+					if (oentry.valid()) {
+						bool find_role_type = false;
+						for (const auto& cond : oentry->role_cond_vec)
+							if (cond.role_address == Address(std::string(user_address), AddressType::cdc_address) && cond.role_type == role_type) {
+								find_role_type = true;
+								break;
+							} 
+
+						if (find_role_type == false)
+							return 2;
+
+						entry = *oentry;
+					}
+					else {
+						return 2;
+					}
+
+					for (auto iter = entry.role_cond_vec.begin(); iter != entry.role_cond_vec.end(); ) {
+						auto iter_tmp = iter++;
+						
+						if (iter_tmp->role_address == Address(std::string(user_address), AddressType::cdc_address) && iter_tmp->role_type == role_type) {
+							entry.role_cond_vec.erase(iter_tmp);
+						}
+					}
+					entry.update_time = eval_state_ptr->_current_state->now();
+					eval_state_ptr->_current_state->store_role_entry(entry);
+					return 0;
+				}
+				catch (const fc::exception&)
+				{
+					L->force_stopping = true;
+					L->exit_code = LUA_API_INTERNAL_ERROR;
+					return 1;
+				}
+			}
+
+			int32_t UvmChainApi::revoke_contract_admin(lua_State *L, const char* user_address, _CON_ARG_ const char* contract_id)
+			{
+				return revoke_contract_role(L, user_address, contract_id, RoleTypeEnum::contract_admin);
+			}
+			int32_t UvmChainApi::revoke_contract_operator(lua_State *L, const char* user_address, _CON_ARG_ const char* contract_id)
+			{
+				return revoke_contract_role(L, user_address, contract_id, RoleTypeEnum::contract_operator);
+			}
+
+			// for CDC data
+			// checkin
+			static int32_t check_cdcdata_hash(const char* cdcdata_hash) 
+			{
+				if (strlen(cdcdata_hash) != (256 / 8 * 2))
+					return 10;
+
+				std::string lower_str(cdcdata_hash);
+				std::transform(lower_str.begin(), lower_str.end(), lower_str.begin(), ::tolower);
+
+				for (const auto& c : lower_str)
+					if (NOT((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')))
+						return 11;
+
+				return 0;
+			}
+
+			static int32_t check_remark_size(const char* remark)
+			{
+				if (strlen(remark) > 4096)
+					return 20;
+				return 0;
+			}
+
+			int32_t UvmChainApi::checkin_cdcdata_hash(lua_State *L, uint32_t cdcdata_type, const char* cdcdata_hash, const char* remark, _CON_ARG_ const char* caller_address)
+			{
+				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
+				try {
+					int32_t retcode = 0;
+					retcode = check_cdcdata_hash(cdcdata_hash);
+					if (retcode != 0)
+						return retcode;
+
+					retcode = check_remark_size(remark);
+					if (retcode != 0)
+						return retcode;
+
+					cdcchain::consensus::TransactionEvaluationState* eval_state_ptr =
+						(cdcchain::consensus::TransactionEvaluationState*)
+						(uvm::lua::lib::get_lua_state_value(L, "evaluate_state").pointer_value);
+
+					if (eval_state_ptr == NULL)
+						FC_CAPTURE_AND_THROW(lua_executor_internal_error, (""));
+
+					CdcDataDigestIdType cdcdata_digest_id = fc::sha256(std::string(cdcdata_hash));
+					oCdcDataEntry oentry = eval_state_ptr->_current_state->get_cdcdata_entry(cdcdata_digest_id);
+					if (oentry.valid())
+						return 2;
+
+					CdcDataEntry entry(cdcdata_digest_id, (CdcDataTypeEnum)cdcdata_type, remark, eval_state_ptr->_current_state->now(),
+						Address(std::string(caller_address), AddressType::cdc_address));
+
+					eval_state_ptr->_current_state->store_cdcdata_entry(entry);
+
+					return 0;
+				}
+				catch (const fc::exception&)
+				{
+					L->force_stopping = true;
+					L->exit_code = LUA_API_INTERNAL_ERROR;
+					return 1;
+				}
+			}
+
+			// verify
+			int32_t UvmChainApi::verify_cdcdata_hash(lua_State *L, uint32_t cdcdata_type, const char* cdcdata_hash)
+			{
+				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
+				try {
+					int32_t retcode = 0;
+					retcode = check_cdcdata_hash(cdcdata_hash);
+					if (retcode != 0)
+						return retcode;
+
+					cdcchain::consensus::TransactionEvaluationState* eval_state_ptr =
+						(cdcchain::consensus::TransactionEvaluationState*)
+						(uvm::lua::lib::get_lua_state_value(L, "evaluate_state").pointer_value);
+
+					if (eval_state_ptr == NULL)
+						FC_CAPTURE_AND_THROW(lua_executor_internal_error, (""));
+
+					CdcDataDigestIdType cdcdata_digest_id = fc::sha256(std::string(cdcdata_hash));
+					oCdcDataEntry oentry = eval_state_ptr->_current_state->get_cdcdata_entry(cdcdata_digest_id);
+					if (NOT oentry.valid())
+						return 2;
+
+					if (oentry->cdcdata_type != (CdcDataTypeEnum)cdcdata_type)
+						return 3;
+
+					return 0;
+				}
+				catch (const fc::exception&)
+				{
+					L->force_stopping = true;
+					L->exit_code = LUA_API_INTERNAL_ERROR;
+					return 1;
+				}
+			}
+
+			// abolish
+			int32_t UvmChainApi::abolish_cdcdata_hash(lua_State *L, uint32_t cdcdata_type, const char* cdcdata_hash)
+			{
+				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
+				try {
+					int32_t retcode = 0;
+					retcode = check_cdcdata_hash(cdcdata_hash);
+					if (retcode != 0)
+						return retcode;
+
+					cdcchain::consensus::TransactionEvaluationState* eval_state_ptr =
+						(cdcchain::consensus::TransactionEvaluationState*)
+						(uvm::lua::lib::get_lua_state_value(L, "evaluate_state").pointer_value);
+
+					if (eval_state_ptr == NULL)
+						FC_CAPTURE_AND_THROW(lua_executor_internal_error, (""));
+
+					CdcDataDigestIdType cdcdata_digest_id = fc::sha256(std::string(cdcdata_hash));
+					oCdcDataEntry oentry = eval_state_ptr->_current_state->get_cdcdata_entry(cdcdata_digest_id);
+					if (NOT oentry.valid())
+						return 2;
+
+					if (oentry->cdcdata_type != (CdcDataTypeEnum)cdcdata_type)
+						return 3;
+
+					eval_state_ptr->_current_state->remove_cdcdata_entry(oentry->cdcdata_id);
+
+					return 0;
+				}
+				catch (const fc::exception&)
+				{
+					L->force_stopping = true;
+					L->exit_code = LUA_API_INTERNAL_ERROR;
+					return 1;
+				}
+			}
+
 		}
 	}
 }

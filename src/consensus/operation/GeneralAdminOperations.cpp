@@ -22,7 +22,7 @@ namespace cdcchain {
 			if (role_entry.valid()) {
 				for (const auto& role_cond : role_entry->role_cond_vec) {
 					if (role_cond.role_address == candidate &&
-						role_cond.role_type == RoleAuthEnum::general_admin)
+						role_cond.role_type == RoleTypeEnum::general_admin)
 						FC_CAPTURE_AND_THROW(is_general_admin, ("candidate has already been a general admin"));
 				}
 				entry = *role_entry;
@@ -30,7 +30,7 @@ namespace cdcchain {
 
 			GeneralAdminRole general_admin;
 			general_admin.gain_auth_time = eval_state._current_state->now();
-			RoleCondition role_cond(candidate, general_admin);
+			RoleCondition role_cond(candidate, RoleSubTypeEnum::sub_none, general_admin);
 			entry.role_cond_vec.push_back(role_cond);
 
 			entry.update_time = eval_state._current_state->now();
@@ -56,7 +56,7 @@ namespace cdcchain {
 			bool is_general_admin = false;
 			for (const auto& role_cond : role_entry->role_cond_vec) {
 				if (role_cond.role_address == general_admin &&
-					role_cond.role_type == RoleAuthEnum::general_admin) {
+					role_cond.role_type == RoleTypeEnum::general_admin) {
 					is_general_admin = true;
 					break;
 				}
@@ -68,7 +68,7 @@ namespace cdcchain {
 			for (auto iter = role_entry->role_cond_vec.begin(); iter != role_entry->role_cond_vec.end(); ) {
 				auto iter_tmp = iter++;
 				if (iter_tmp->role_address == general_admin &&
-					iter_tmp->role_type == RoleAuthEnum::general_admin)
+					iter_tmp->role_type == RoleTypeEnum::general_admin)
 					role_entry->role_cond_vec.erase(iter_tmp);
 			}
 

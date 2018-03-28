@@ -4,10 +4,10 @@
 namespace cdcchain {
 	namespace consensus {
 
-		const RoleAuthEnum PrivilegeAdminRole::type = privilege_admin;
-		const RoleAuthEnum GeneralAdminRole::type = general_admin;
-		const RoleAuthEnum ContractAdminRole::type = contract_admin;
-		const RoleAuthEnum ContractOperatorRole::type = contract_operator;
+		const RoleTypeEnum PrivilegeAdminRole::type = privilege_admin;
+		const RoleTypeEnum GeneralAdminRole::type = general_admin;
+		const RoleTypeEnum ContractAdminRole::type = contract_admin;
+		const RoleTypeEnum ContractOperatorRole::type = contract_operator;
 
 
 		oRoleEntry RoleEntry::lookup(const ChainInterface& db, const ContractIdType& contract_id)
