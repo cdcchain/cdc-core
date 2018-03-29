@@ -517,6 +517,22 @@ namespace cdcchain {
             fc::variant script_add_event_handler_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
             fc::variant script_delete_event_handler_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
             fc::variant script_delete_event_handler_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+            fc::variant proposal_apply_for_privilege_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant proposal_apply_for_privilege_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+            fc::variant proposal_revoke_privilege_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant proposal_revoke_privilege_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+            fc::variant proposal_approve_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant proposal_approve_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+            fc::variant proposal_get_info_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant proposal_get_info_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+            fc::variant appoint_general_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant appoint_general_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+            fc::variant revoke_general_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant revoke_general_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+            fc::variant get_all_privilege_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant get_all_privilege_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+            fc::variant get_all_general_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant get_all_general_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
         };
 
     }

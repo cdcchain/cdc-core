@@ -599,6 +599,10 @@ namespace cdcchain {
 
 			std::string ClientImpl::get_contract_registered_in_transaction(const cdcchain::consensus::TransactionIdType& trx_id)
 			{
+				// set limit in  simulator state
+				if (_chain_db->get_is_in_simulator())
+					FC_THROW_EXCEPTION(simulator_command_forbidden, "in simulator, this command is forbidden, you cannot call it!");
+
 				auto res=_chain_db->lookup<ContractinTrxEntry>(trx_id);
 				if (!res.valid() || res->contract_id == ContractIdType())
 					FC_CAPTURE_AND_THROW(no_contract_registered_in_this_transaction);
@@ -608,6 +612,10 @@ namespace cdcchain {
 
 			cdcchain::consensus::TransactionIdType ClientImpl::get_transaction_id_contract_registered(const std::string& contract_id)
 			{
+				// set limit in  simulator state
+				if (_chain_db->get_is_in_simulator())
+					FC_THROW_EXCEPTION(simulator_command_forbidden, "in simulator, this command is forbidden, you cannot call it!");
+
 				ContractIdType id(contract_id, AddressType::contract_address);
 				auto res = _chain_db->lookup<ContractTrxEntry>(id);
 				if (!res.valid() || res->trx_id == TransactionIdType())

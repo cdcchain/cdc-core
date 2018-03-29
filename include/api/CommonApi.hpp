@@ -2081,6 +2081,77 @@ namespace cdcchain {
              * @param script_id id of local script want to delete with (string, required)
              */
             virtual void script_delete_event_handler(const std::string& contract_id_str, const std::string& event_type, const std::string& script_id) = 0;
+            /**
+             * create a proposal to apply for privilege admin.
+             *
+             * @param caller_name proposal from account name (string, required)
+             * @param candidate_address candidate need to proposal for privilege admin (string, required)
+             * @param need_vote_count need vote count (uint32_t, required)
+             * @param start_time proposal start timestamp (uint32_t, required)
+             * @param expected_end_time proposal expected end timestamp (uint32_t, required)
+             *
+             * @return proposal_id_type
+             */
+            virtual cdcchain::consensus::ProposalIdType proposal_apply_for_privilege_admin(const std::string& caller_name, const std::string& candidate_address, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const = 0;
+            /**
+             * create a proposal to revoke privilege admin.
+             *
+             * @param caller_name proposal from account name (string, required)
+             * @param privilege_admin privilege admin address need to revoke (string, required)
+             * @param need_vote_count need vote count (uint32_t, required)
+             * @param start_time proposal start timestamp (uint32_t, required)
+             * @param expected_end_time proposal expected end timestamp (uint32_t, required)
+             *
+             * @return proposal_id_type
+             */
+            virtual cdcchain::consensus::ProposalIdType proposal_revoke_privilege_admin(const std::string& caller_name, const std::string& privilege_admin, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const = 0;
+            /**
+             * to approve a proposal.
+             *
+             * @param caller_name approver account name (string, required)
+             * @param proposal_id proposal id to approve (string, required)
+             *
+             * @return transaction_entry
+             */
+            virtual cdcchain::wallet::WalletTransactionEntry proposal_approve(const std::string& caller_name, const std::string& proposal_id) const = 0;
+            /**
+             * get proposal info.
+             *
+             * @param proposal_id proposal id (string, required)
+             *
+             * @return proposal_entry
+             */
+            virtual cdcchain::consensus::ProposalEntry proposal_get_info(const std::string& proposal_id) const = 0;
+            /**
+             * privilege admin appoint a general admin.
+             *
+             * @param caller_name privilege admin account name (string, required)
+             * @param candidate_address appoint candidate for general admin (string, required)
+             *
+             * @return transaction_entry
+             */
+            virtual cdcchain::wallet::WalletTransactionEntry appoint_general_admin(const std::string& caller_name, const std::string& candidate_address) const = 0;
+            /**
+             * privilege admin revoke a general admin.
+             *
+             * @param caller_name privilege admin account name (string, required)
+             * @param general_admin_address general admin need to revoke (string, required)
+             *
+             * @return transaction_entry
+             */
+            virtual cdcchain::wallet::WalletTransactionEntry revoke_general_admin(const std::string& caller_name, const std::string& general_admin_address) const = 0;
+            /**
+             * get all privilege admin.
+             *
+             * @return address_list
+             */
+            virtual std::vector<cdcchain::consensus::Address> get_all_privilege_admin() const = 0;
+            /**
+             * get all general admin.
+             *
+             * @return address_list
+             */
+            virtual std::vector<cdcchain::consensus::Address> get_all_general_admin() const = 0;
         };
 
     }

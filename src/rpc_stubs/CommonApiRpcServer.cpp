@@ -7997,6 +7997,292 @@ namespace cdcchain {
 			return fc::variant();
 		}
 
+        fc::variant CommonApiRpcServer::proposal_apply_for_privilege_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (caller_name)");
+            std::string caller_name = parameters[0].as<std::string>();
+            if (parameters.size() <= 1)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 2 (candidate_address)");
+            std::string candidate_address = parameters[1].as<std::string>();
+            if (parameters.size() <= 2)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 3 (need_vote_count)");
+            uint32_t need_vote_count = parameters[2].as<uint32_t>();
+            if (parameters.size() <= 3)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 4 (start_time)");
+            uint32_t start_time = parameters[3].as<uint32_t>();
+            if (parameters.size() <= 4)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 5 (expected_end_time)");
+            uint32_t expected_end_time = parameters[4].as<uint32_t>();
+
+            cdcchain::consensus::ProposalIdType result = get_client()->proposal_apply_for_privilege_admin(caller_name, candidate_address, need_vote_count, start_time, expected_end_time);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::proposal_apply_for_privilege_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (!parameters.contains("caller_name"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'caller_name'");
+            std::string caller_name = parameters["caller_name"].as<std::string>();
+            if (!parameters.contains("candidate_address"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'candidate_address'");
+            std::string candidate_address = parameters["candidate_address"].as<std::string>();
+            if (!parameters.contains("need_vote_count"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'need_vote_count'");
+            uint32_t need_vote_count = parameters["need_vote_count"].as<uint32_t>();
+            if (!parameters.contains("start_time"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'start_time'");
+            uint32_t start_time = parameters["start_time"].as<uint32_t>();
+            if (!parameters.contains("expected_end_time"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'expected_end_time'");
+            uint32_t expected_end_time = parameters["expected_end_time"].as<uint32_t>();
+
+            cdcchain::consensus::ProposalIdType result = get_client()->proposal_apply_for_privilege_admin(caller_name, candidate_address, need_vote_count, start_time, expected_end_time);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::proposal_revoke_privilege_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (caller_name)");
+            std::string caller_name = parameters[0].as<std::string>();
+            if (parameters.size() <= 1)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 2 (privilege_admin)");
+            std::string privilege_admin = parameters[1].as<std::string>();
+            if (parameters.size() <= 2)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 3 (need_vote_count)");
+            uint32_t need_vote_count = parameters[2].as<uint32_t>();
+            if (parameters.size() <= 3)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 4 (start_time)");
+            uint32_t start_time = parameters[3].as<uint32_t>();
+            if (parameters.size() <= 4)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 5 (expected_end_time)");
+            uint32_t expected_end_time = parameters[4].as<uint32_t>();
+
+            cdcchain::consensus::ProposalIdType result = get_client()->proposal_revoke_privilege_admin(caller_name, privilege_admin, need_vote_count, start_time, expected_end_time);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::proposal_revoke_privilege_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (!parameters.contains("caller_name"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'caller_name'");
+            std::string caller_name = parameters["caller_name"].as<std::string>();
+            if (!parameters.contains("privilege_admin"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'privilege_admin'");
+            std::string privilege_admin = parameters["privilege_admin"].as<std::string>();
+            if (!parameters.contains("need_vote_count"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'need_vote_count'");
+            uint32_t need_vote_count = parameters["need_vote_count"].as<uint32_t>();
+            if (!parameters.contains("start_time"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'start_time'");
+            uint32_t start_time = parameters["start_time"].as<uint32_t>();
+            if (!parameters.contains("expected_end_time"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'expected_end_time'");
+            uint32_t expected_end_time = parameters["expected_end_time"].as<uint32_t>();
+
+            cdcchain::consensus::ProposalIdType result = get_client()->proposal_revoke_privilege_admin(caller_name, privilege_admin, need_vote_count, start_time, expected_end_time);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::proposal_approve_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (caller_name)");
+            std::string caller_name = parameters[0].as<std::string>();
+            if (parameters.size() <= 1)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 2 (proposal_id)");
+            std::string proposal_id = parameters[1].as<std::string>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->proposal_approve(caller_name, proposal_id);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::proposal_approve_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (!parameters.contains("caller_name"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'caller_name'");
+            std::string caller_name = parameters["caller_name"].as<std::string>();
+            if (!parameters.contains("proposal_id"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'proposal_id'");
+            std::string proposal_id = parameters["proposal_id"].as<std::string>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->proposal_approve(caller_name, proposal_id);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::proposal_get_info_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // this method has no prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (proposal_id)");
+            std::string proposal_id = parameters[0].as<std::string>();
+
+            cdcchain::consensus::ProposalEntry result = get_client()->proposal_get_info(proposal_id);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::proposal_get_info_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // this method has no prerequisites
+
+            if (!parameters.contains("proposal_id"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'proposal_id'");
+            std::string proposal_id = parameters["proposal_id"].as<std::string>();
+
+            cdcchain::consensus::ProposalEntry result = get_client()->proposal_get_info(proposal_id);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::appoint_general_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (caller_name)");
+            std::string caller_name = parameters[0].as<std::string>();
+            if (parameters.size() <= 1)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 2 (candidate_address)");
+            std::string candidate_address = parameters[1].as<std::string>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->appoint_general_admin(caller_name, candidate_address);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::appoint_general_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (!parameters.contains("caller_name"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'caller_name'");
+            std::string caller_name = parameters["caller_name"].as<std::string>();
+            if (!parameters.contains("candidate_address"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'candidate_address'");
+            std::string candidate_address = parameters["candidate_address"].as<std::string>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->appoint_general_admin(caller_name, candidate_address);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::revoke_general_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (caller_name)");
+            std::string caller_name = parameters[0].as<std::string>();
+            if (parameters.size() <= 1)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 2 (general_admin_address)");
+            std::string general_admin_address = parameters[1].as<std::string>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->revoke_general_admin(caller_name, general_admin_address);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::revoke_general_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (!parameters.contains("caller_name"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'caller_name'");
+            std::string caller_name = parameters["caller_name"].as<std::string>();
+            if (!parameters.contains("general_admin_address"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'general_admin_address'");
+            std::string general_admin_address = parameters["general_admin_address"].as<std::string>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->revoke_general_admin(caller_name, general_admin_address);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::get_all_privilege_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // this method has no prerequisites
+
+
+            std::vector<cdcchain::consensus::Address> result = get_client()->get_all_privilege_admin();
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::get_all_privilege_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // this method has no prerequisites
+
+
+            std::vector<cdcchain::consensus::Address> result = get_client()->get_all_privilege_admin();
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::get_all_general_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // this method has no prerequisites
+
+
+            std::vector<cdcchain::consensus::Address> result = get_client()->get_all_general_admin();
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::get_all_general_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // this method has no prerequisites
+
+
+            std::vector<cdcchain::consensus::Address> result = get_client()->get_all_general_admin();
+            return fc::variant(result);
+        }
+
 		void CommonApiRpcServer::register_common_api_methods(const fc::rpc::json_connection_ptr& json_connection)
 		{
 			fc::rpc::json_connection::method bound_positional_method;
@@ -10160,7 +10446,71 @@ namespace cdcchain {
 				this, capture_con, _1);
 			json_connection->add_named_param_method("script_delete_event_handler", bound_named_method);
 
-		}
+           // register method proposal_apply_for_privilege_admin
+            bound_positional_method = boost::bind(&CommonApiRpcServer::proposal_apply_for_privilege_admin_positional,
+                this, capture_con, _1);
+            json_connection->add_method("proposal_apply_for_privilege_admin", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::proposal_apply_for_privilege_admin_named, 
+                this, capture_con, _1);
+            json_connection->add_named_param_method("proposal_apply_for_privilege_admin", bound_named_method);
+
+           // register method proposal_revoke_privilege_admin
+            bound_positional_method = boost::bind(&CommonApiRpcServer::proposal_revoke_privilege_admin_positional,
+                this, capture_con, _1);
+            json_connection->add_method("proposal_revoke_privilege_admin", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::proposal_revoke_privilege_admin_named, 
+                this, capture_con, _1);
+            json_connection->add_named_param_method("proposal_revoke_privilege_admin", bound_named_method);
+
+           // register method proposal_approve
+            bound_positional_method = boost::bind(&CommonApiRpcServer::proposal_approve_positional,
+                this, capture_con, _1);
+            json_connection->add_method("proposal_approve", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::proposal_approve_named, 
+                this, capture_con, _1);
+            json_connection->add_named_param_method("proposal_approve", bound_named_method);
+
+           // register method proposal_get_info
+            bound_positional_method = boost::bind(&CommonApiRpcServer::proposal_get_info_positional,
+                this, capture_con, _1);
+            json_connection->add_method("proposal_get_info", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::proposal_get_info_named, 
+                this, capture_con, _1);
+            json_connection->add_named_param_method("proposal_get_info", bound_named_method);
+
+           // register method appoint_general_admin
+            bound_positional_method = boost::bind(&CommonApiRpcServer::appoint_general_admin_positional,
+                this, capture_con, _1);
+            json_connection->add_method("appoint_general_admin", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::appoint_general_admin_named, 
+                this, capture_con, _1);
+            json_connection->add_named_param_method("appoint_general_admin", bound_named_method);
+
+           // register method revoke_general_admin
+            bound_positional_method = boost::bind(&CommonApiRpcServer::revoke_general_admin_positional,
+                this, capture_con, _1);
+            json_connection->add_method("revoke_general_admin", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::revoke_general_admin_named, 
+                this, capture_con, _1);
+            json_connection->add_named_param_method("revoke_general_admin", bound_named_method);
+
+           // register method get_all_privilege_admin
+            bound_positional_method = boost::bind(&CommonApiRpcServer::get_all_privilege_admin_positional,
+                this, capture_con, _1);
+            json_connection->add_method("get_all_privilege_admin", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::get_all_privilege_admin_named, 
+                this, capture_con, _1);
+            json_connection->add_named_param_method("get_all_privilege_admin", bound_named_method);
+
+           // register method get_all_general_admin
+            bound_positional_method = boost::bind(&CommonApiRpcServer::get_all_general_admin_positional,
+                this, capture_con, _1);
+            json_connection->add_method("get_all_general_admin", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::get_all_general_admin_named, 
+                this, capture_con, _1);
+            json_connection->add_named_param_method("get_all_general_admin", bound_named_method);
+
+        }
 
         void CommonApiRpcServer::register_common_api_method_metadata()
         {
@@ -13648,6 +13998,125 @@ namespace cdcchain {
                 store_method_metadata(script_delete_event_handler_method_metadata);
             }
 
+            {
+                // register method proposal_apply_for_privilege_admin
+                cdcchain::api::MethodData proposal_apply_for_privilege_admin_method_metadata{ "proposal_apply_for_privilege_admin", nullptr,
+                    /* description */ "create a proposal to apply for privilege admin",
+                    /* returns */ "proposal_id_type",
+                    /* params: */{
+                        {"caller_name", "string", cdcchain::api::required_positional, fc::ovariant()},
+                        {"candidate_address", "string", cdcchain::api::required_positional, fc::ovariant()},
+                        {"need_vote_count", "uint32_t", cdcchain::api::required_positional, fc::ovariant()},
+                        {"start_time", "uint32_t", cdcchain::api::required_positional, fc::ovariant()},
+                        {"expected_end_time", "uint32_t", cdcchain::api::required_positional, fc::ovariant()}
+                          },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 4,
+                    /* detailed description */ "create a proposal to apply for privilege admin\n\nParameters:\n  caller_name (string, required): proposal from account name\n  candidate_address (string, required): candidate need to proposal for privilege admin\n  need_vote_count (uint32_t, required): need vote count\n  start_time (uint32_t, required): proposal start timestamp\n  expected_end_time (uint32_t, required): proposal expected end timestamp\n\nReturns:\n  proposal_id_type\n",
+                    /* aliases */ {}, true};
+                store_method_metadata(proposal_apply_for_privilege_admin_method_metadata);
+            }
+
+            {
+                // register method proposal_revoke_privilege_admin
+                cdcchain::api::MethodData proposal_revoke_privilege_admin_method_metadata{ "proposal_revoke_privilege_admin", nullptr,
+                    /* description */ "create a proposal to revoke privilege admin",
+                    /* returns */ "proposal_id_type",
+                    /* params: */{
+                        {"caller_name", "string", cdcchain::api::required_positional, fc::ovariant()},
+                        {"privilege_admin", "string", cdcchain::api::required_positional, fc::ovariant()},
+                        {"need_vote_count", "uint32_t", cdcchain::api::required_positional, fc::ovariant()},
+                        {"start_time", "uint32_t", cdcchain::api::required_positional, fc::ovariant()},
+                        {"expected_end_time", "uint32_t", cdcchain::api::required_positional, fc::ovariant()}
+                          },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 4,
+                    /* detailed description */ "create a proposal to revoke privilege admin\n\nParameters:\n  caller_name (string, required): proposal from account name\n  privilege_admin (string, required): privilege admin address need to revoke\n  need_vote_count (uint32_t, required): need vote count\n  start_time (uint32_t, required): proposal start timestamp\n  expected_end_time (uint32_t, required): proposal expected end timestamp\n\nReturns:\n  proposal_id_type\n",
+                    /* aliases */ {}, true};
+                store_method_metadata(proposal_revoke_privilege_admin_method_metadata);
+            }
+
+            {
+                // register method proposal_approve
+                cdcchain::api::MethodData proposal_approve_method_metadata{ "proposal_approve", nullptr,
+                    /* description */ "to approve a proposal",
+                    /* returns */ "transaction_entry",
+                    /* params: */{
+                        {"caller_name", "string", cdcchain::api::required_positional, fc::ovariant()},
+                        {"proposal_id", "string", cdcchain::api::required_positional, fc::ovariant()}
+                          },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 4,
+                    /* detailed description */ "to approve a proposal\n\nParameters:\n  caller_name (string, required): approver account name\n  proposal_id (string, required): proposal id to approve\n\nReturns:\n  transaction_entry\n",
+                    /* aliases */ {}, true};
+                store_method_metadata(proposal_approve_method_metadata);
+            }
+
+            {
+                // register method proposal_get_info
+                cdcchain::api::MethodData proposal_get_info_method_metadata{ "proposal_get_info", nullptr,
+                    /* description */ "get proposal info",
+                    /* returns */ "proposal_entry",
+                    /* params: */{
+                        {"proposal_id", "string", cdcchain::api::required_positional, fc::ovariant()}
+                          },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 0,
+                    /* detailed description */ "get proposal info\n\nParameters:\n  proposal_id (string, required): proposal id\n\nReturns:\n  proposal_entry\n",
+                    /* aliases */ {}, true};
+                store_method_metadata(proposal_get_info_method_metadata);
+            }
+
+            {
+                // register method appoint_general_admin
+                cdcchain::api::MethodData appoint_general_admin_method_metadata{ "appoint_general_admin", nullptr,
+                    /* description */ "privilege admin appoint a general admin",
+                    /* returns */ "transaction_entry",
+                    /* params: */{
+                        {"caller_name", "string", cdcchain::api::required_positional, fc::ovariant()},
+                        {"candidate_address", "string", cdcchain::api::required_positional, fc::ovariant()}
+                          },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 4,
+                    /* detailed description */ "privilege admin appoint a general admin\n\nParameters:\n  caller_name (string, required): privilege admin account name\n  candidate_address (string, required): appoint candidate for general admin\n\nReturns:\n  transaction_entry\n",
+                    /* aliases */ {}, true};
+                store_method_metadata(appoint_general_admin_method_metadata);
+            }
+
+            {
+                // register method revoke_general_admin
+                cdcchain::api::MethodData revoke_general_admin_method_metadata{ "revoke_general_admin", nullptr,
+                    /* description */ "privilege admin revoke a general admin",
+                    /* returns */ "transaction_entry",
+                    /* params: */{
+                        {"caller_name", "string", cdcchain::api::required_positional, fc::ovariant()},
+                        {"general_admin_address", "string", cdcchain::api::required_positional, fc::ovariant()}
+                          },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 4,
+                    /* detailed description */ "privilege admin revoke a general admin\n\nParameters:\n  caller_name (string, required): privilege admin account name\n  general_admin_address (string, required): general admin need to revoke\n\nReturns:\n  transaction_entry\n",
+                    /* aliases */ {}, true};
+                store_method_metadata(revoke_general_admin_method_metadata);
+            }
+
+            {
+                // register method get_all_privilege_admin
+                cdcchain::api::MethodData get_all_privilege_admin_method_metadata{ "get_all_privilege_admin", nullptr,
+                    /* description */ "get all privilege admin",
+                    /* returns */ "address_list",
+                    /* params: */{                    },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 0,
+                    /* detailed description */ "get all privilege admin\n\nParameters:\n  (none)\n\nReturns:\n  address_list\n",
+                    /* aliases */ {}, true};
+                store_method_metadata(get_all_privilege_admin_method_metadata);
+            }
+
+            {
+                // register method get_all_general_admin
+                cdcchain::api::MethodData get_all_general_admin_method_metadata{ "get_all_general_admin", nullptr,
+                    /* description */ "get all general admin",
+                    /* returns */ "address_list",
+                    /* params: */{                    },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 0,
+                    /* detailed description */ "get all general admin\n\nParameters:\n  (none)\n\nReturns:\n  address_list\n",
+                    /* aliases */ {}, true};
+                store_method_metadata(get_all_general_admin_method_metadata);
+            }
+
         }
 
         fc::variant CommonApiRpcServer::direct_invoke_positional_method(const std::string& method_name, const fc::variants& parameters)
@@ -14133,6 +14602,22 @@ namespace cdcchain {
                 return script_add_event_handler_positional(nullptr, parameters);
             if (method_name == "script_delete_event_handler")
                 return script_delete_event_handler_positional(nullptr, parameters);
+            if (method_name == "proposal_apply_for_privilege_admin")
+                return proposal_apply_for_privilege_admin_positional(nullptr, parameters);
+            if (method_name == "proposal_revoke_privilege_admin")
+                return proposal_revoke_privilege_admin_positional(nullptr, parameters);
+            if (method_name == "proposal_approve")
+                return proposal_approve_positional(nullptr, parameters);
+            if (method_name == "proposal_get_info")
+                return proposal_get_info_positional(nullptr, parameters);
+            if (method_name == "appoint_general_admin")
+                return appoint_general_admin_positional(nullptr, parameters);
+            if (method_name == "revoke_general_admin")
+                return revoke_general_admin_positional(nullptr, parameters);
+            if (method_name == "get_all_privilege_admin")
+                return get_all_privilege_admin_positional(nullptr, parameters);
+            if (method_name == "get_all_general_admin")
+                return get_all_general_admin_positional(nullptr, parameters);
             FC_ASSERT(false, "shouldn't happen");
         }
 

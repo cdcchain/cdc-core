@@ -7217,5 +7217,246 @@ namespace cdcchain {
             FC_RETHROW_EXCEPTIONS(warn, "")
         }
 
+        cdcchain::consensus::ProposalIdType CommonApiClient::proposal_apply_for_privilege_admin(const std::string& caller_name, const std::string& candidate_address, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const
+        {
+            ilog("received RPC call: proposal_apply_for_privilege_admin(${caller_name}, ${candidate_address}, ${need_vote_count}, ${start_time}, ${expected_end_time})", ("caller_name", caller_name)("candidate_address", candidate_address)("need_vote_count", need_vote_count)("start_time", start_time)("expected_end_time", expected_end_time));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if( glog != NULL )
+            {
+                args.push_back( fc::variant(caller_name) );
+                args.push_back( fc::variant(candidate_address) );
+                args.push_back( fc::variant(need_vote_count) );
+                args.push_back( fc::variant(start_time) );
+                args.push_back( fc::variant(expected_end_time) );
+                call_id = glog->log_call_started( this, "proposal_apply_for_privilege_admin", args );
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call proposal_apply_for_privilege_admin finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                cdcchain::consensus::ProposalIdType result =             get_impl()->proposal_apply_for_privilege_admin(caller_name, candidate_address, need_vote_count, start_time, expected_end_time);
+                if( call_id != 0 )
+                    glog->log_call_finished( call_id, this, "proposal_apply_for_privilege_admin", args, fc::variant(result) );
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
+        cdcchain::consensus::ProposalIdType CommonApiClient::proposal_revoke_privilege_admin(const std::string& caller_name, const std::string& privilege_admin, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const
+        {
+            ilog("received RPC call: proposal_revoke_privilege_admin(${caller_name}, ${privilege_admin}, ${need_vote_count}, ${start_time}, ${expected_end_time})", ("caller_name", caller_name)("privilege_admin", privilege_admin)("need_vote_count", need_vote_count)("start_time", start_time)("expected_end_time", expected_end_time));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if( glog != NULL )
+            {
+                args.push_back( fc::variant(caller_name) );
+                args.push_back( fc::variant(privilege_admin) );
+                args.push_back( fc::variant(need_vote_count) );
+                args.push_back( fc::variant(start_time) );
+                args.push_back( fc::variant(expected_end_time) );
+                call_id = glog->log_call_started( this, "proposal_revoke_privilege_admin", args );
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call proposal_revoke_privilege_admin finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                cdcchain::consensus::ProposalIdType result =             get_impl()->proposal_revoke_privilege_admin(caller_name, privilege_admin, need_vote_count, start_time, expected_end_time);
+                if( call_id != 0 )
+                    glog->log_call_finished( call_id, this, "proposal_revoke_privilege_admin", args, fc::variant(result) );
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
+        cdcchain::wallet::WalletTransactionEntry CommonApiClient::proposal_approve(const std::string& caller_name, const std::string& proposal_id) const
+        {
+            ilog("received RPC call: proposal_approve(${caller_name}, ${proposal_id})", ("caller_name", caller_name)("proposal_id", proposal_id));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if( glog != NULL )
+            {
+                args.push_back( fc::variant(caller_name) );
+                args.push_back( fc::variant(proposal_id) );
+                call_id = glog->log_call_started( this, "proposal_approve", args );
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call proposal_approve finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                cdcchain::wallet::WalletTransactionEntry result =             get_impl()->proposal_approve(caller_name, proposal_id);
+                if( call_id != 0 )
+                    glog->log_call_finished( call_id, this, "proposal_approve", args, fc::variant(result) );
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
+        cdcchain::consensus::ProposalEntry CommonApiClient::proposal_get_info(const std::string& proposal_id) const
+        {
+            ilog("received RPC call: proposal_get_info(${proposal_id})", ("proposal_id", proposal_id));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if( glog != NULL )
+            {
+                args.push_back( fc::variant(proposal_id) );
+                call_id = glog->log_call_started( this, "proposal_get_info", args );
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call proposal_get_info finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                cdcchain::consensus::ProposalEntry result =             get_impl()->proposal_get_info(proposal_id);
+                if( call_id != 0 )
+                    glog->log_call_finished( call_id, this, "proposal_get_info", args, fc::variant(result) );
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
+        cdcchain::wallet::WalletTransactionEntry CommonApiClient::appoint_general_admin(const std::string& caller_name, const std::string& candidate_address) const
+        {
+            ilog("received RPC call: appoint_general_admin(${caller_name}, ${candidate_address})", ("caller_name", caller_name)("candidate_address", candidate_address));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if( glog != NULL )
+            {
+                args.push_back( fc::variant(caller_name) );
+                args.push_back( fc::variant(candidate_address) );
+                call_id = glog->log_call_started( this, "appoint_general_admin", args );
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call appoint_general_admin finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                cdcchain::wallet::WalletTransactionEntry result =             get_impl()->appoint_general_admin(caller_name, candidate_address);
+                if( call_id != 0 )
+                    glog->log_call_finished( call_id, this, "appoint_general_admin", args, fc::variant(result) );
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
+        cdcchain::wallet::WalletTransactionEntry CommonApiClient::revoke_general_admin(const std::string& caller_name, const std::string& general_admin_address) const
+        {
+            ilog("received RPC call: revoke_general_admin(${caller_name}, ${general_admin_address})", ("caller_name", caller_name)("general_admin_address", general_admin_address));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if( glog != NULL )
+            {
+                args.push_back( fc::variant(caller_name) );
+                args.push_back( fc::variant(general_admin_address) );
+                call_id = glog->log_call_started( this, "revoke_general_admin", args );
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call revoke_general_admin finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                cdcchain::wallet::WalletTransactionEntry result =             get_impl()->revoke_general_admin(caller_name, general_admin_address);
+                if( call_id != 0 )
+                    glog->log_call_finished( call_id, this, "revoke_general_admin", args, fc::variant(result) );
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
+        std::vector<cdcchain::consensus::Address> CommonApiClient::get_all_privilege_admin() const
+        {
+            ilog("received RPC call: get_all_privilege_admin()", );
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if( glog != NULL )
+            {
+                call_id = glog->log_call_started( this, "get_all_privilege_admin", args );
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call get_all_privilege_admin finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                std::vector<cdcchain::consensus::Address> result =             get_impl()->get_all_privilege_admin();
+                if( call_id != 0 )
+                    glog->log_call_finished( call_id, this, "get_all_privilege_admin", args, fc::variant(result) );
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
+        std::vector<cdcchain::consensus::Address> CommonApiClient::get_all_general_admin() const
+        {
+            ilog("received RPC call: get_all_general_admin()", );
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if( glog != NULL )
+            {
+                call_id = glog->log_call_started( this, "get_all_general_admin", args );
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call get_all_general_admin finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                std::vector<cdcchain::consensus::Address> result =             get_impl()->get_all_general_admin();
+                if( call_id != 0 )
+                    glog->log_call_finished( call_id, this, "get_all_general_admin", args, fc::variant(result) );
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
     }
 } // end namespace cdcchain::rpc_stubs

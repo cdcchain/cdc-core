@@ -1166,6 +1166,46 @@ namespace cdcchain {
         {
             fc::variant result = get_json_connection()->async_call("script_delete_event_handler", std::vector<fc::variant>{fc::variant(contract_id_str), fc::variant(event_type), fc::variant(script_id)}).wait();
         }
+        cdcchain::consensus::ProposalIdType CommonApiRpcClient::proposal_apply_for_privilege_admin(const std::string& caller_name, const std::string& candidate_address, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const
+        {
+            fc::variant result = get_json_connection()->async_call("proposal_apply_for_privilege_admin", std::vector<fc::variant>{fc::variant(caller_name), fc::variant(candidate_address), fc::variant(need_vote_count), fc::variant(start_time), fc::variant(expected_end_time)}).wait();
+            return result.as<cdcchain::consensus::ProposalIdType>();
+        }
+        cdcchain::consensus::ProposalIdType CommonApiRpcClient::proposal_revoke_privilege_admin(const std::string& caller_name, const std::string& privilege_admin, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const
+        {
+            fc::variant result = get_json_connection()->async_call("proposal_revoke_privilege_admin", std::vector<fc::variant>{fc::variant(caller_name), fc::variant(privilege_admin), fc::variant(need_vote_count), fc::variant(start_time), fc::variant(expected_end_time)}).wait();
+            return result.as<cdcchain::consensus::ProposalIdType>();
+        }
+        cdcchain::wallet::WalletTransactionEntry CommonApiRpcClient::proposal_approve(const std::string& caller_name, const std::string& proposal_id) const
+        {
+            fc::variant result = get_json_connection()->async_call("proposal_approve", std::vector<fc::variant>{fc::variant(caller_name), fc::variant(proposal_id)}).wait();
+            return result.as<cdcchain::wallet::WalletTransactionEntry>();
+        }
+        cdcchain::consensus::ProposalEntry CommonApiRpcClient::proposal_get_info(const std::string& proposal_id) const
+        {
+            fc::variant result = get_json_connection()->async_call("proposal_get_info", std::vector<fc::variant>{fc::variant(proposal_id)}).wait();
+            return result.as<cdcchain::consensus::ProposalEntry>();
+        }
+        cdcchain::wallet::WalletTransactionEntry CommonApiRpcClient::appoint_general_admin(const std::string& caller_name, const std::string& candidate_address) const
+        {
+            fc::variant result = get_json_connection()->async_call("appoint_general_admin", std::vector<fc::variant>{fc::variant(caller_name), fc::variant(candidate_address)}).wait();
+            return result.as<cdcchain::wallet::WalletTransactionEntry>();
+        }
+        cdcchain::wallet::WalletTransactionEntry CommonApiRpcClient::revoke_general_admin(const std::string& caller_name, const std::string& general_admin_address) const
+        {
+            fc::variant result = get_json_connection()->async_call("revoke_general_admin", std::vector<fc::variant>{fc::variant(caller_name), fc::variant(general_admin_address)}).wait();
+            return result.as<cdcchain::wallet::WalletTransactionEntry>();
+        }
+        std::vector<cdcchain::consensus::Address> CommonApiRpcClient::get_all_privilege_admin() const
+        {
+            fc::variant result = get_json_connection()->async_call("get_all_privilege_admin", std::vector<fc::variant>{}).wait();
+            return result.as<std::vector<cdcchain::consensus::Address>>();
+        }
+        std::vector<cdcchain::consensus::Address> CommonApiRpcClient::get_all_general_admin() const
+        {
+            fc::variant result = get_json_connection()->async_call("get_all_general_admin", std::vector<fc::variant>{}).wait();
+            return result.as<std::vector<cdcchain::consensus::Address>>();
+        }
 
     }
 } // end namespace cdcchain::rpc_stubs
