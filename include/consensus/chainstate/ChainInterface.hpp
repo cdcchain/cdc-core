@@ -59,7 +59,7 @@ namespace cdcchain {
             *
             * @return bool
             */
-            bool                               is_valid_symbol_name_v1(const string& symbol)const;
+            //bool                               is_valid_symbol_name_v1(const string& symbol)const;
             /**
             * Determine  whether an asset associated with the specified assetentry is  fraudulent
             * @param  suspect_entry  assetentry accociatied with the asset
@@ -98,9 +98,9 @@ namespace cdcchain {
             */
             ShareType                         get_asset_registration_fee(uint8_t symbol_length)const;
             ShareType                         get_imessage_need_fee(const string & imessage)const;
-            ShareType                         get_delegate_registration_fee_v1(uint8_t pay_rate)const;
-            ShareType                         get_asset_registration_fee_v1()const;
-            ShareType                         get_delegate_pay_rate_v1()const;
+            //ShareType                         get_delegate_registration_fee_v1(uint8_t pay_rate)const;
+            //ShareType                         get_asset_registration_fee_v1()const;
+            //ShareType                         get_delegate_pay_rate_v1()const;
             /**  get all active delegates and return all delegate ids
             *
             * @return vector<AccountIdType>
@@ -282,10 +282,10 @@ namespace cdcchain {
             * @return AccountIdType
             */
             AccountIdType                    new_account_id();
-            ImessageLengthIdType get_imessage_min_length()const;
-            void set_imessage_min_length(const ImessageLengthIdType& imessage_length);
-            ImessageIdType get_imessage_fee_coefficient()const;
-            void set_imessage_fee_coefficient(const ImessageIdType& fee_coe);
+            //ImessageLengthIdType get_imessage_min_length()const;
+            //void set_imessage_min_length(const ImessageLengthIdType& imessage_length);
+            //ImessageIdType get_imessage_fee_coefficient()const;
+            //void set_imessage_fee_coefficient(const ImessageIdType& fee_coe);
             SignedTransaction transfer_asset_from_contract(
                 ShareType real_amount_to_transfer,
                 const string& amount_to_transfer_symbol,

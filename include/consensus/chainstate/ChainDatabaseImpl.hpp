@@ -290,15 +290,17 @@ namespace cdcchain {
                 void                                        update_head_block(const SignedBlockHeader& block_header,
                     const BlockIdType& block_id);
 
-                void                                        pay_delegate_v2(const BlockIdType& block_id,
-                    const PublicKeyType& block_signee,
-                    const PendingChainStatePtr& pending_state,
-                    oBlockEntry& block_entry)const;
+				
+                //void                                        pay_delegate_v2(const BlockIdType& block_id,
+                //    const PublicKeyType& block_signee,
+                //    const PendingChainStatePtr& pending_state,
+                //    oBlockEntry& block_entry)const;
 
-                void                                        pay_delegate_v1(const BlockIdType& block_id,
-                    const PublicKeyType& block_signee,
-                    const PendingChainStatePtr& pending_state,
-                    oBlockEntry& block_entry)const;
+                //void                                        pay_delegate_v1(const BlockIdType& block_id,
+                //    const PublicKeyType& block_signee,
+                //    const PendingChainStatePtr& pending_state,
+                //    oBlockEntry& block_entry)const;
+				
 
 
                 //void                                        update_active_delegate_list_v1( const uint32_t block_num,

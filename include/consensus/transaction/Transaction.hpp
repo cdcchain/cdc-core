@@ -141,6 +141,31 @@ namespace cdcchain {
                 const map<BalanceIdType, ShareType>& balances
                 );
 
+			void proposal_apply_for_privilege_admin(const Address& proposal_from,
+				const Address& candidate,
+				int delegate_vote_need,
+				const fc::time_point_sec& start_time,
+				const fc::time_point_sec& expected_end_time);
+
+			void proposal_revoke_privilege_admin(const Address& proposal_from,
+				const Address& privilege_admin,
+				int delegate_vote_need,
+				const fc::time_point_sec& start_time,
+				const fc::time_point_sec& expected_end_time);
+
+			void proposal_approve(
+				const Address& proposal_approver,
+				const ProposalIdType& proposal_id);
+
+			void appoint_general_admin(
+				const Address& caller_address,
+				const Address& candidate_address);
+
+			void revoke_general_admin(
+				const Address& caller_address,
+				const Address& general_admin_address);
+
+
             void update_signing_key(const AccountIdType account_id, const PublicKeyType& signing_key);
 
             void update_balance_vote(const BalanceIdType& balance_id, const optional<Address>& new_restricted_owner);

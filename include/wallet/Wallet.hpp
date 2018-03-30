@@ -1035,7 +1035,8 @@ namespace cdcchain {
 				uint32_t need_vote_count,
 				uint32_t start_time,
 				uint32_t expected_end_time,
-				ProposalIdType& proposal_id);
+				ProposalIdType& proposal_id,
+				bool sign = true);
 
 			WalletTransactionEntry proposal_revoke_privilege_admin(
 				const std::string& caller_name,
@@ -1043,19 +1044,23 @@ namespace cdcchain {
 				uint32_t need_vote_count,
 				uint32_t start_time,
 				uint32_t expected_end_time,
-				ProposalIdType& proposal_id);
+				ProposalIdType& proposal_id,
+				bool sign = true);
 
 			WalletTransactionEntry proposal_approve(
 				const std::string& caller_name,
-				const ProposalIdType& proposal_id);
+				const ProposalIdType& proposal_id,
+				bool sign = true);
 
 			WalletTransactionEntry appoint_general_admin(
 				const std::string& caller_name,
-				const cdcchain::consensus::Address& candidate_address);
+				const cdcchain::consensus::Address& candidate_address,
+				bool sign = true);
 
 			WalletTransactionEntry revoke_general_admin(
 				const std::string& caller_name,
-				const cdcchain::consensus::Address& general_admin_address);
+				const cdcchain::consensus::Address& general_admin_address,
+				bool sign = true);
 
 
 			variant_object get_info_from_transaction_builder(const TransactionBuilder& builder);

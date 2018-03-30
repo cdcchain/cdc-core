@@ -3,12 +3,14 @@
 #include <consensus/operation/BalanceOperations.hpp>
 
 #include <consensus/operation/SlateOperations.hpp>
+#include <consensus/operation/ProposalOperations.hpp>
 #include <consensus/Time.hpp>
 #include <consensus/transaction/Transaction.hpp>
 #include <consensus/operation/ImessageOperations.hpp>
 #include <consensus/operation/ContractOperations.hpp>
 #include <fc/io/raw_variant.hpp>
 #include <consensus/operation/TransactionOperations.hpp>
+#include <consensus/operation/GeneralAdminOperations.hpp>
 
 
 namespace cdcchain {
@@ -334,6 +336,45 @@ namespace cdcchain {
         {
             operations.emplace_back(CallContractOperation(contract, method, arguments, caller_public_key, costlimit,transaction_fee, balances));
         }
+
+		void Transaction::proposal_apply_for_privilege_admin(const Address& proposal_from,
+			const Address& candidate,
+			int delegate_vote_need,
+			const fc::time_point_sec& start_time,
+			const fc::time_point_sec& expected_end_time)
+		{
+			operations.emplace_back(ProposalForPrivilegeOperation(proposal_from, candidate, delegate_vote_need, start_time, expected_end_time));
+		}
+
+		void Transaction::proposal_revoke_privilege_admin(const Address& proposal_from,
+			const Address& privilege_admin,
+			int delegate_vote_need,
+			const fc::time_point_sec& start_time,
+			const fc::time_point_sec& expected_end_time)
+		{
+			operations.emplace_back(ProposalRevokePrivilegeOperation(proposal_from, privilege_admin, delegate_vote_need, start_time, expected_end_time));
+		}
+
+		void Transaction::proposal_approve(
+			const Address& proposal_approver,
+			const ProposalIdType& proposal_id)
+		{
+			operations.emplace_back(ProposalApproveOperation(proposal_id, proposal_approver));
+		}
+
+		void Transaction::appoint_general_admin(
+			const Address& caller_address,
+			const Address& candidate_address)
+		{
+			operations.emplace_back(AppointGeneralAdminOperation(caller_address, candidate_address));
+		}
+
+		void Transaction::revoke_general_admin(
+			const Address& caller_address,
+			const Address& general_admin_address)
+		{
+			operations.emplace_back(RevokeGeneralAdminOperation(caller_address, general_admin_address));
+		}
 
         void Transaction::issue(const Asset& amount_to_issue)
         {

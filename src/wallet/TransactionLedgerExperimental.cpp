@@ -594,7 +594,7 @@ namespace cdcchain {
 
                 if (relevant_to_me && store_entry) // TODO
                 {
-                    ulog("wallet_transaction_entry_v2:\n${rec}", ("rec", fc::json::to_pretty_string(entry)));
+                    //ulog("wallet_transaction_entry_v2:\n${rec}", ("rec", fc::json::to_pretty_string(entry)));
                     _wallet_db.experimental_transactions[entry.id] = entry;
                 }
 

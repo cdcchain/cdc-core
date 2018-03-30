@@ -4239,9 +4239,63 @@ namespace cdcchain {
 			uint32_t need_vote_count, 
 			uint32_t start_time, 
 			uint32_t expected_end_time,
-			ProposalIdType& proposal_id) 
+			ProposalIdType& proposal_id,
+			bool sign)
 		{
-			return WalletTransactionEntry();
+			try
+			{
+				FC_ASSERT(is_open(), "Wallet not open!");
+				FC_ASSERT(is_unlocked(), "Wallet not unlock!");
+
+				PublicKeyType  owner_pub_key = get_owner_public_key(caller_name);
+				Address        owner_address = Address(owner_pub_key);
+
+				SignedTransaction     trx;
+				unordered_set<Address> required_signatures;
+				const auto required_fees = get_transaction_fee();
+
+				my->withdraw_to_transaction(required_fees, caller_name, trx, required_signatures);
+				trx.proposal_apply_for_privilege_admin(owner_address, candidate_address, need_vote_count, fc::time_point_sec(start_time), fc::time_point_sec(expected_end_time));
+
+				ApplyForPrivilegeAdmin apply_for_privilege_admin(candidate_address, need_vote_count);
+				ProposalEntry proposal_entry(apply_for_privilege_admin, owner_address, fc::time_point_sec(start_time), fc::time_point_sec(expected_end_time));
+				proposal_id = proposal_entry.id();
+
+				trx.expiration = cdcchain::consensus::now() + get_transaction_expiration();
+
+				auto entry = LedgerEntry();
+				entry.from_account = owner_pub_key;
+				entry.amount = Asset(0, 0);
+
+				entry.memo = "Proposal for:" + candidate_address.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
+				if (sign)
+					my->sign_transaction(trx, required_signatures);
+
+				try
+				{
+					auto account_rec = my->_blockchain->get_account_entry(candidate_address);
+					if (account_rec.valid()) {
+						entry.to_account = account_rec->owner_key;
+					}
+					else {
+						auto acc_rec = get_account_for_address(candidate_address);
+						if (acc_rec.valid()) {
+							entry.to_account = acc_rec->owner_key;
+						}
+					}
+				}
+				catch (...)
+				{
+				}
+				auto trans_entry = WalletTransactionEntry();
+				trans_entry.ledger_entries.push_back(entry);
+				trans_entry.fee = required_fees;
+				trans_entry.extra_addresses.push_back(candidate_address);
+				trans_entry.trx = trx;
+
+				return trans_entry;
+
+			} FC_CAPTURE_AND_RETHROW((caller_name)(candidate_address))
 		}
 
 		WalletTransactionEntry Wallet::proposal_revoke_privilege_admin(
@@ -4250,30 +4304,217 @@ namespace cdcchain {
 			uint32_t need_vote_count,
 			uint32_t start_time,
 			uint32_t expected_end_time,
-			ProposalIdType& proposal_id)
+			ProposalIdType& proposal_id,
+			bool sign)
 		{
-			return WalletTransactionEntry();
+			try
+			{
+				FC_ASSERT(is_open(), "Wallet not open!");
+				FC_ASSERT(is_unlocked(), "Wallet not unlock!");
+
+				PublicKeyType  owner_pub_key = get_owner_public_key(caller_name);
+				Address        owner_address = Address(owner_pub_key);
+
+				SignedTransaction     trx;
+				unordered_set<Address> required_signatures;
+				const auto required_fees = get_transaction_fee();
+
+				my->withdraw_to_transaction(required_fees, caller_name, trx, required_signatures);
+				trx.proposal_revoke_privilege_admin(owner_address, privilege_admin, need_vote_count, fc::time_point_sec(start_time), fc::time_point_sec(expected_end_time));
+
+				RevokePrivilegeAdmin revoke_privilege_admin(privilege_admin, need_vote_count);
+				ProposalEntry proposal_entry(revoke_privilege_admin, owner_address, fc::time_point_sec(start_time), fc::time_point_sec(expected_end_time));
+				proposal_id = proposal_entry.id();
+
+				trx.expiration = cdcchain::consensus::now() + get_transaction_expiration();
+
+				auto entry = LedgerEntry();
+				entry.from_account = owner_pub_key;
+				entry.amount = Asset(0, 0);
+
+				entry.memo = "Proposal for:" + privilege_admin.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
+				if (sign)
+					my->sign_transaction(trx, required_signatures);
+
+				try
+				{
+					auto account_rec = my->_blockchain->get_account_entry(privilege_admin);
+					if (account_rec.valid()) {
+						entry.to_account = account_rec->owner_key;
+					}
+					else {
+						auto acc_rec = get_account_for_address(privilege_admin);
+						if (acc_rec.valid()) {
+							entry.to_account = acc_rec->owner_key;
+						}
+					}
+				}
+				catch (...)
+				{
+				}
+				auto trans_entry = WalletTransactionEntry();
+				trans_entry.ledger_entries.push_back(entry);
+				trans_entry.fee = required_fees;
+				trans_entry.extra_addresses.push_back(privilege_admin);
+				trans_entry.trx = trx;
+
+				return trans_entry;
+
+			} FC_CAPTURE_AND_RETHROW((caller_name)(privilege_admin))
 		}
 
 		WalletTransactionEntry Wallet::proposal_approve(
 			const std::string& caller_name,
-			const ProposalIdType& proposal_id)
+			const ProposalIdType& proposal_id,
+			bool sign)
 		{
-			return WalletTransactionEntry();
+			try
+			{
+				FC_ASSERT(is_open(), "Wallet not open!");
+				FC_ASSERT(is_unlocked(), "Wallet not unlock!");
+
+				PublicKeyType  owner_pub_key = get_owner_public_key(caller_name);
+				Address        owner_address = Address(owner_pub_key);
+
+				SignedTransaction     trx;
+				unordered_set<Address> required_signatures;
+				const auto required_fees = get_transaction_fee();
+
+				my->withdraw_to_transaction(required_fees, caller_name, trx, required_signatures);
+				trx.proposal_approve(owner_address, proposal_id);
+
+				trx.expiration = cdcchain::consensus::now() + get_transaction_expiration();
+
+				auto entry = LedgerEntry();
+				entry.from_account = owner_pub_key;
+				entry.amount = Asset(0, 0);
+
+				entry.memo = "Approve:" + proposal_id.str().substr(0, 8) + "...";
+				if (sign)
+					my->sign_transaction(trx, required_signatures);
+
+				auto trans_entry = WalletTransactionEntry();
+				trans_entry.ledger_entries.push_back(entry);
+				trans_entry.fee = required_fees;
+				trans_entry.trx = trx;
+
+				return trans_entry;
+
+			} FC_CAPTURE_AND_RETHROW((caller_name)(proposal_id))
 		}
 
 		WalletTransactionEntry Wallet::appoint_general_admin(
 			const std::string& caller_name,
-			const cdcchain::consensus::Address& candidate_address)
+			const cdcchain::consensus::Address& candidate_address,
+			bool sign)
 		{
-			return WalletTransactionEntry();
+			try
+			{
+				FC_ASSERT(is_open(), "Wallet not open!");
+				FC_ASSERT(is_unlocked(), "Wallet not unlock!");
+
+				PublicKeyType  owner_pub_key = get_owner_public_key(caller_name);
+				Address        owner_address = Address(owner_pub_key);
+
+				SignedTransaction     trx;
+				unordered_set<Address> required_signatures;
+				const auto required_fees = get_transaction_fee();
+
+				my->withdraw_to_transaction(required_fees, caller_name, trx, required_signatures);
+				trx.appoint_general_admin(owner_address, candidate_address);
+
+				trx.expiration = cdcchain::consensus::now() + get_transaction_expiration();
+
+				auto entry = LedgerEntry();
+				entry.from_account = owner_pub_key;
+				entry.amount = Asset(0, 0);
+
+				entry.memo = "Appoint to:" + candidate_address.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
+				if (sign)
+					my->sign_transaction(trx, required_signatures);
+
+				try
+				{
+					auto account_rec = my->_blockchain->get_account_entry(candidate_address);
+					if (account_rec.valid()) {
+						entry.to_account = account_rec->owner_key;
+					}
+					else {
+						auto acc_rec = get_account_for_address(candidate_address);
+						if (acc_rec.valid()) {
+							entry.to_account = acc_rec->owner_key;
+						}
+					}
+				}
+				catch (...)
+				{
+				}
+				auto trans_entry = WalletTransactionEntry();
+				trans_entry.ledger_entries.push_back(entry);
+				trans_entry.fee = required_fees;
+				trans_entry.extra_addresses.push_back(candidate_address);
+				trans_entry.trx = trx;
+
+				return trans_entry;
+
+			} FC_CAPTURE_AND_RETHROW((caller_name)(candidate_address))
 		}
 
 		WalletTransactionEntry Wallet::revoke_general_admin(
 			const std::string& caller_name,
-			const cdcchain::consensus::Address& general_admin_address)
+			const cdcchain::consensus::Address& general_admin_address,
+			bool sign)
 		{
-			return WalletTransactionEntry();
+			try
+			{
+				FC_ASSERT(is_open(), "Wallet not open!");
+				FC_ASSERT(is_unlocked(), "Wallet not unlock!");
+
+				PublicKeyType  owner_pub_key = get_owner_public_key(caller_name);
+				Address        owner_address = Address(owner_pub_key);
+
+				SignedTransaction     trx;
+				unordered_set<Address> required_signatures;
+				const auto required_fees = get_transaction_fee();
+
+				my->withdraw_to_transaction(required_fees, caller_name, trx, required_signatures);
+				trx.revoke_general_admin(owner_address, general_admin_address);
+
+				trx.expiration = cdcchain::consensus::now() + get_transaction_expiration();
+
+				auto entry = LedgerEntry();
+				entry.from_account = owner_pub_key;
+				entry.amount = Asset(0, 0);
+
+				entry.memo = "Revoke to:" + general_admin_address.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
+				if (sign)
+					my->sign_transaction(trx, required_signatures);
+
+				try
+				{
+					auto account_rec = my->_blockchain->get_account_entry(general_admin_address);
+					if (account_rec.valid()) {
+						entry.to_account = account_rec->owner_key;
+					}
+					else {
+						auto acc_rec = get_account_for_address(general_admin_address);
+						if (acc_rec.valid()) {
+							entry.to_account = acc_rec->owner_key;
+						}
+					}
+				}
+				catch (...)
+				{
+				}
+				auto trans_entry = WalletTransactionEntry();
+				trans_entry.ledger_entries.push_back(entry);
+				trans_entry.fee = required_fees;
+				trans_entry.extra_addresses.push_back(general_admin_address);
+				trans_entry.trx = trx;
+
+				return trans_entry;
+
+			} FC_CAPTURE_AND_RETHROW((caller_name)(general_admin_address))
 		}
 
 
