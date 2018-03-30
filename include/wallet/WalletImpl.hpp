@@ -9,6 +9,8 @@
 #include "db/FastLevelMap.hpp"
 #include <boost/thread/thread.hpp>  
 #include <consensus/operation/ContractOperations.hpp>
+#include <consensus/operation/ProposalOperations.hpp>
+#include <consensus/operation/GeneralAdminOperations.hpp>
 namespace cdcchain {
     namespace wallet {
         namespace detail {
@@ -179,7 +181,14 @@ namespace cdcchain {
                 bool scan_update_account(const UpdateAccountOperation& op, WalletTransactionEntry& trx_rec);
 
                 bool scan_create_asset(const CreateAssetOperation& op, WalletTransactionEntry& trx_rec);
-                bool scan_issue_asset(const IssueAssetOperation& op, WalletTransactionEntry& trx_rec);
+
+				bool scan_proposal_for_privilege(const ProposalForPrivilegeOperation& op, WalletTransactionEntry& trx_rec);
+				bool scan_proposal_revoke_privilege(const ProposalRevokePrivilegeOperation& op, WalletTransactionEntry& trx_rec);
+				bool scan_proposal_approve(const ProposalApproveOperation& op, WalletTransactionEntry& trx_rec);
+				bool scan_appoint_general_admin(const AppointGeneralAdminOperation& op, WalletTransactionEntry& trx_rec);
+				bool scan_revoke_general_admin(const RevokeGeneralAdminOperation& op, WalletTransactionEntry& trx_rec);
+				
+				bool scan_issue_asset(const IssueAssetOperation& op, WalletTransactionEntry& trx_rec);
 
                 //bool scan_update_feed(const update_feed_operation& op, wallet_transaction_entry& trx_rec );
 

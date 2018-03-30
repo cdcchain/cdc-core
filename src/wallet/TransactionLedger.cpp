@@ -9,6 +9,8 @@
 #include <consensus/operation/TransactionOperations.hpp>
 #include <consensus/operation/ContractOperations.hpp>
 #include <consensus/operation/ImessageOperations.hpp>
+#include <consensus/operation/ProposalOperations.hpp>
+#include <consensus/operation/GeneralAdminOperations.hpp>
 #include <sstream>
 
 using namespace cdcchain::wallet;
@@ -80,48 +82,48 @@ void WalletImpl::scan_block(uint32_t block_num)
     try {
         const SignedBlockHeader block_header = _blockchain->get_block_header(block_num);
         const vector<TransactionEntry> transaction_entrys = _blockchain->get_transactions_for_block(block_header.id());
-        fc::async([=]
-        {
-            vector<fc::future<void>> scan_key_progress;
-            for (int i = 0; i < transaction_entrys.size(); i++)
-            {
-                auto eval_state = transaction_entrys[i];
-                scan_key_progress.push_back(_scanner_threads[i%_num_scanner_threads]->async([=]
-        {
-            try
-            {
-                scan_transaction(eval_state.trx, block_num, block_header.timestamp,true);
-            }
-            catch (...)
-            {
-            }
-                }, "scan transaction"));
-                if (i % 200 == 0 && i > 0)
-                {
-                    for (auto fut : scan_key_progress)
-                    {
-                        try
-                        {
-                            fut.wait();
-        }
-                        catch (...)
-                        {
-                        }
-                    }
-                    scan_key_progress.clear();
-                }
-            }
-            for (auto fut : scan_key_progress)
-            {
-                try
-                {
-                    fut.wait();
-                }
-                catch (...)
-                {
-                }
-            }
-        }).wait();
+		fc::async([=]
+		{
+			vector<fc::future<void>> scan_key_progress;
+			for (int i = 0; i < transaction_entrys.size(); i++)
+			{
+				auto eval_state = transaction_entrys[i];
+				scan_key_progress.push_back(_scanner_threads[i%_num_scanner_threads]->async([=]
+				{
+					try
+					{
+						scan_transaction(eval_state.trx, block_num, block_header.timestamp, true);
+					}
+					catch (...)
+					{
+					}
+				}, "scan transaction"));
+				if (i % 200 == 0 && i > 0)
+				{
+					for (auto fut : scan_key_progress)
+					{
+						try
+						{
+							fut.wait();
+						}
+						catch (...)
+						{
+						}
+					}
+					scan_key_progress.clear();
+				}
+			}
+			for (auto fut : scan_key_progress)
+			{
+				try
+				{
+					fut.wait();
+				}
+				catch (...)
+				{
+				}
+			}
+		}).wait();
 
     } FC_CAPTURE_AND_RETHROW((block_num))
 }
@@ -297,6 +299,36 @@ WalletTransactionEntry WalletImpl::scan_transaction(
                 break;
             }
         }
+
+		for (const auto& op : transaction.operations)
+		{
+			readlock(m_mutex_for_wallet);
+			switch (OperationTypeEnum(op.type))
+			{
+			case proposal_for_privilege_op_type:
+				store_entry |= scan_proposal_for_privilege(op.as<ProposalForPrivilegeOperation>(), *transaction_entry);
+				break;
+
+			case proposal_revoke_privilege_op_type:
+				store_entry |= scan_proposal_revoke_privilege(op.as<ProposalRevokePrivilegeOperation>(), *transaction_entry);
+				break;
+
+			case proposal_approve_op_type:
+				store_entry |= scan_proposal_approve(op.as<ProposalApproveOperation>(), *transaction_entry);
+				break;
+
+			case appoint_general_admin_op_type:
+				store_entry |= scan_appoint_general_admin(op.as<AppointGeneralAdminOperation>(), *transaction_entry);
+				break;
+
+			case revoke_general_admin_op_type:
+				store_entry |= scan_revoke_general_admin(op.as<RevokeGeneralAdminOperation>(), *transaction_entry);
+				break;
+
+			default:
+				break;
+			}
+		}
 
         if (has_withdrawal)
         {
@@ -916,6 +948,31 @@ bool WalletImpl::scan_create_asset(const CreateAssetOperation& op, WalletTransac
         }
     }
     return false;
+}
+
+bool WalletImpl::scan_proposal_for_privilege(const ProposalForPrivilegeOperation& op, WalletTransactionEntry& trx_rec)
+{
+	return true;
+}
+
+bool WalletImpl::scan_proposal_revoke_privilege(const ProposalRevokePrivilegeOperation& op, WalletTransactionEntry& trx_rec)
+{
+	return true;
+}
+
+bool WalletImpl::scan_proposal_approve(const ProposalApproveOperation& op, WalletTransactionEntry& trx_rec)
+{
+	return true;
+}
+
+bool WalletImpl::scan_appoint_general_admin(const AppointGeneralAdminOperation& op, WalletTransactionEntry& trx_rec)
+{
+	return true;
+}
+
+bool WalletImpl::scan_revoke_general_admin(const RevokeGeneralAdminOperation& op, WalletTransactionEntry& trx_rec)
+{
+	return true;
 }
 
 bool WalletImpl::scan_issue_asset(const IssueAssetOperation& op, WalletTransactionEntry& trx_rec)
@@ -2285,6 +2342,112 @@ PrettyTransaction		Wallet::to_pretty_trx(const cdcchain::consensus::TransactionE
         }
     }
 
+
+	for (const auto& op : trx.operations)
+	{
+		switch (OperationTypeEnum(op.type))
+		{
+		case proposal_for_privilege_op_type:
+		{
+			auto proposal_privilege_op = op.as<ProposalForPrivilegeOperation>();
+
+			pretty_entry.amount = Asset(0);
+			pretty_entry.from_account = proposal_privilege_op.proposal_from.AddressToString(AddressType::cdc_address);
+			pretty_entry.to_account = proposal_privilege_op.candidate.AddressToString(AddressType::cdc_address);
+
+			auto proposal_from_entry = my->_blockchain->get_account_entry(proposal_privilege_op.proposal_from);
+			if (proposal_from_entry.valid())
+				pretty_entry.from_account_name = proposal_from_entry->name;
+
+			auto candidate_entry = my->_blockchain->get_account_entry(proposal_privilege_op.candidate);
+			if (candidate_entry.valid())
+				pretty_entry.to_account_name = candidate_entry->name;
+
+			pretty_entry.memo = "proposal from: " + pretty_entry.from_account + " to: " + pretty_entry.to_account + " for privilege admin";
+
+			break;
+		}
+		case proposal_revoke_privilege_op_type:
+		{
+			auto proposal_revoke_op = op.as<ProposalRevokePrivilegeOperation>();
+
+			pretty_entry.amount = Asset(0);
+			pretty_entry.from_account = proposal_revoke_op.proposal_from.AddressToString(AddressType::cdc_address);
+			pretty_entry.to_account = proposal_revoke_op.privilege_admin.AddressToString(AddressType::cdc_address);
+
+			auto proposal_from_entry = my->_blockchain->get_account_entry(proposal_revoke_op.proposal_from);
+			if (proposal_from_entry.valid())
+				pretty_entry.from_account_name = proposal_from_entry->name;
+
+			auto privilege_admin_entry = my->_blockchain->get_account_entry(proposal_revoke_op.privilege_admin);
+			if (privilege_admin_entry.valid())
+				pretty_entry.to_account_name = privilege_admin_entry->name;
+
+			pretty_entry.memo = "proposal from: " + pretty_entry.from_account + " to: " + pretty_entry.to_account + " for revoking privilege admin";
+
+			break;
+		}
+		case proposal_approve_op_type:
+		{
+			auto proposal_approve_op = op.as<ProposalApproveOperation>();
+
+			pretty_entry.amount = Asset(0);
+			pretty_entry.from_account = proposal_approve_op.approver.AddressToString(AddressType::cdc_address);
+			std::string proposal_id = fc::variant(proposal_approve_op.proposal_id).as_string();
+
+			auto approver_entry = my->_blockchain->get_account_entry(proposal_approve_op.approver);
+			if (approver_entry.valid())
+				pretty_entry.from_account_name = approver_entry->name;
+
+			pretty_entry.memo = "proposal id: " + proposal_id + " approved from: " + pretty_entry.from_account;
+
+			break;
+		}
+		case appoint_general_admin_op_type:
+		{
+			auto appoint_general_admin_op = op.as<AppointGeneralAdminOperation>();
+
+			pretty_entry.amount = Asset(0);
+			pretty_entry.from_account = appoint_general_admin_op.appointer.AddressToString(AddressType::cdc_address);
+			pretty_entry.to_account = appoint_general_admin_op.candidate.AddressToString(AddressType::cdc_address);
+
+			auto proposal_from_entry = my->_blockchain->get_account_entry(appoint_general_admin_op.appointer);
+			if (proposal_from_entry.valid())
+				pretty_entry.from_account_name = proposal_from_entry->name;
+
+			auto candidate_entry = my->_blockchain->get_account_entry(appoint_general_admin_op.candidate);
+			if (candidate_entry.valid())
+				pretty_entry.to_account_name = candidate_entry->name;
+
+			pretty_entry.memo = "appoint from: " + pretty_entry.from_account + " to: " + pretty_entry.to_account + " for general admin";
+
+			break;
+		}
+		case revoke_general_admin_op_type:
+		{
+			auto revoke_general_admin_op = op.as<RevokeGeneralAdminOperation>();
+
+			pretty_entry.amount = Asset(0);
+			pretty_entry.from_account = revoke_general_admin_op.appointer.AddressToString(AddressType::cdc_address);
+			pretty_entry.to_account = revoke_general_admin_op.general_admin.AddressToString(AddressType::cdc_address);
+
+			auto proposal_from_entry = my->_blockchain->get_account_entry(revoke_general_admin_op.appointer);
+			if (proposal_from_entry.valid())
+				pretty_entry.from_account_name = proposal_from_entry->name;
+
+			auto general_admin_entry = my->_blockchain->get_account_entry(revoke_general_admin_op.general_admin);
+			if (general_admin_entry.valid())
+				pretty_entry.to_account_name = general_admin_entry->name;
+
+			pretty_entry.memo = "revoke from: " + pretty_entry.from_account + " to: " + pretty_entry.to_account + " for general admin";
+
+			break;
+		}
+
+		default:
+			break;
+		}
+	}
 
 
     for (const auto& op : trx.operations)
