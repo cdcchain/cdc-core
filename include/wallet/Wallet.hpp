@@ -1028,6 +1028,36 @@ namespace cdcchain {
                 const string& memo_message,
                 bool sign
                 );
+
+			WalletTransactionEntry proposal_apply_for_privilege_admin(
+				const std::string& caller_name,
+				const cdcchain::consensus::Address& candidate_address,
+				uint32_t need_vote_count,
+				uint32_t start_time,
+				uint32_t expected_end_time,
+				ProposalIdType& proposal_id);
+
+			WalletTransactionEntry proposal_revoke_privilege_admin(
+				const std::string& caller_name,
+				const cdcchain::consensus::Address& privilege_admin,
+				uint32_t need_vote_count,
+				uint32_t start_time,
+				uint32_t expected_end_time,
+				ProposalIdType& proposal_id);
+
+			WalletTransactionEntry proposal_approve(
+				const std::string& caller_name,
+				const ProposalIdType& proposal_id);
+
+			WalletTransactionEntry appoint_general_admin(
+				const std::string& caller_name,
+				const cdcchain::consensus::Address& candidate_address);
+
+			WalletTransactionEntry revoke_general_admin(
+				const std::string& caller_name,
+				const cdcchain::consensus::Address& general_admin_address);
+
+
 			variant_object get_info_from_transaction_builder(const TransactionBuilder& builder);
             /**
             * register a new account

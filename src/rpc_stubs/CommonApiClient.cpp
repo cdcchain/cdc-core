@@ -7217,7 +7217,7 @@ namespace cdcchain {
             FC_RETHROW_EXCEPTIONS(warn, "")
         }
 
-        cdcchain::consensus::ProposalIdType CommonApiClient::proposal_apply_for_privilege_admin(const std::string& caller_name, const std::string& candidate_address, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const
+        cdcchain::consensus::ProposalIdType CommonApiClient::proposal_apply_for_privilege_admin(const std::string& caller_name, const std::string& candidate_address, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time)
         {
             ilog("received RPC call: proposal_apply_for_privilege_admin(${caller_name}, ${candidate_address}, ${need_vote_count}, ${start_time}, ${expected_end_time})", ("caller_name", caller_name)("candidate_address", candidate_address)("need_vote_count", need_vote_count)("start_time", start_time)("expected_end_time", expected_end_time));
             cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
@@ -7250,7 +7250,7 @@ namespace cdcchain {
             FC_RETHROW_EXCEPTIONS(warn, "")
         }
 
-        cdcchain::consensus::ProposalIdType CommonApiClient::proposal_revoke_privilege_admin(const std::string& caller_name, const std::string& privilege_admin, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const
+        cdcchain::consensus::ProposalIdType CommonApiClient::proposal_revoke_privilege_admin(const std::string& caller_name, const std::string& privilege_admin, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time)
         {
             ilog("received RPC call: proposal_revoke_privilege_admin(${caller_name}, ${privilege_admin}, ${need_vote_count}, ${start_time}, ${expected_end_time})", ("caller_name", caller_name)("privilege_admin", privilege_admin)("need_vote_count", need_vote_count)("start_time", start_time)("expected_end_time", expected_end_time));
             cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
@@ -7283,7 +7283,7 @@ namespace cdcchain {
             FC_RETHROW_EXCEPTIONS(warn, "")
         }
 
-        cdcchain::wallet::WalletTransactionEntry CommonApiClient::proposal_approve(const std::string& caller_name, const std::string& proposal_id) const
+        cdcchain::wallet::WalletTransactionEntry CommonApiClient::proposal_approve(const std::string& caller_name, const std::string& proposal_id)
         {
             ilog("received RPC call: proposal_approve(${caller_name}, ${proposal_id})", ("caller_name", caller_name)("proposal_id", proposal_id));
             cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
@@ -7342,7 +7342,7 @@ namespace cdcchain {
             FC_RETHROW_EXCEPTIONS(warn, "")
         }
 
-        cdcchain::wallet::WalletTransactionEntry CommonApiClient::appoint_general_admin(const std::string& caller_name, const std::string& candidate_address) const
+        cdcchain::wallet::WalletTransactionEntry CommonApiClient::appoint_general_admin(const std::string& caller_name, const std::string& candidate_address)
         {
             ilog("received RPC call: appoint_general_admin(${caller_name}, ${candidate_address})", ("caller_name", caller_name)("candidate_address", candidate_address));
             cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
@@ -7372,7 +7372,7 @@ namespace cdcchain {
             FC_RETHROW_EXCEPTIONS(warn, "")
         }
 
-        cdcchain::wallet::WalletTransactionEntry CommonApiClient::revoke_general_admin(const std::string& caller_name, const std::string& general_admin_address) const
+        cdcchain::wallet::WalletTransactionEntry CommonApiClient::revoke_general_admin(const std::string& caller_name, const std::string& general_admin_address)
         {
             ilog("received RPC call: revoke_general_admin(${caller_name}, ${general_admin_address})", ("caller_name", caller_name)("general_admin_address", general_admin_address));
             cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();

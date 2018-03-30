@@ -4233,6 +4233,49 @@ namespace cdcchain {
             } FC_CAPTURE_AND_RETHROW((contract_id)(destroyer_name))
         }
 
+		WalletTransactionEntry Wallet::proposal_apply_for_privilege_admin(
+			const std::string& caller_name, 
+			const cdcchain::consensus::Address& candidate_address, 
+			uint32_t need_vote_count, 
+			uint32_t start_time, 
+			uint32_t expected_end_time,
+			ProposalIdType& proposal_id) 
+		{
+			return WalletTransactionEntry();
+		}
+
+		WalletTransactionEntry Wallet::proposal_revoke_privilege_admin(
+			const std::string& caller_name,
+			const cdcchain::consensus::Address& privilege_admin,
+			uint32_t need_vote_count,
+			uint32_t start_time,
+			uint32_t expected_end_time,
+			ProposalIdType& proposal_id)
+		{
+			return WalletTransactionEntry();
+		}
+
+		WalletTransactionEntry Wallet::proposal_approve(
+			const std::string& caller_name,
+			const ProposalIdType& proposal_id)
+		{
+			return WalletTransactionEntry();
+		}
+
+		WalletTransactionEntry Wallet::appoint_general_admin(
+			const std::string& caller_name,
+			const cdcchain::consensus::Address& candidate_address)
+		{
+			return WalletTransactionEntry();
+		}
+
+		WalletTransactionEntry Wallet::revoke_general_admin(
+			const std::string& caller_name,
+			const cdcchain::consensus::Address& general_admin_address)
+		{
+			return WalletTransactionEntry();
+		}
+
 
         WalletTransactionEntry Wallet::transfer_asset_to_many_address(
             const string& amount_to_transfer_symbol,

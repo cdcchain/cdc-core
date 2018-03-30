@@ -2092,7 +2092,7 @@ namespace cdcchain {
              *
              * @return proposal_id_type
              */
-            virtual cdcchain::consensus::ProposalIdType proposal_apply_for_privilege_admin(const std::string& caller_name, const std::string& candidate_address, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const = 0;
+            virtual cdcchain::consensus::ProposalIdType proposal_apply_for_privilege_admin(const std::string& caller_name, const std::string& candidate_address, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) = 0;
             /**
              * create a proposal to revoke privilege admin.
              *
@@ -2104,7 +2104,7 @@ namespace cdcchain {
              *
              * @return proposal_id_type
              */
-            virtual cdcchain::consensus::ProposalIdType proposal_revoke_privilege_admin(const std::string& caller_name, const std::string& privilege_admin, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const = 0;
+            virtual cdcchain::consensus::ProposalIdType proposal_revoke_privilege_admin(const std::string& caller_name, const std::string& privilege_admin, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) = 0;
             /**
              * to approve a proposal.
              *
@@ -2113,7 +2113,7 @@ namespace cdcchain {
              *
              * @return transaction_entry
              */
-            virtual cdcchain::wallet::WalletTransactionEntry proposal_approve(const std::string& caller_name, const std::string& proposal_id) const = 0;
+            virtual cdcchain::wallet::WalletTransactionEntry proposal_approve(const std::string& caller_name, const std::string& proposal_id) = 0;
             /**
              * get proposal info.
              *
@@ -2130,7 +2130,7 @@ namespace cdcchain {
              *
              * @return transaction_entry
              */
-            virtual cdcchain::wallet::WalletTransactionEntry appoint_general_admin(const std::string& caller_name, const std::string& candidate_address) const = 0;
+            virtual cdcchain::wallet::WalletTransactionEntry appoint_general_admin(const std::string& caller_name, const std::string& candidate_address) = 0;
             /**
              * privilege admin revoke a general admin.
              *
@@ -2139,7 +2139,7 @@ namespace cdcchain {
              *
              * @return transaction_entry
              */
-            virtual cdcchain::wallet::WalletTransactionEntry revoke_general_admin(const std::string& caller_name, const std::string& general_admin_address) const = 0;
+            virtual cdcchain::wallet::WalletTransactionEntry revoke_general_admin(const std::string& caller_name, const std::string& general_admin_address) = 0;
             /**
              * get all privilege admin.
              *

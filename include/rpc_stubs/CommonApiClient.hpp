@@ -268,12 +268,12 @@ namespace cdcchain {
             std::vector<std::string> script_list_event_handler(const std::string& contract_id_str, const std::string& event_type) override;
             void script_add_event_handler(const std::string& contract_id_str, const std::string& event_type, const std::string& script_id, uint32_t index) override;
             void script_delete_event_handler(const std::string& contract_id_str, const std::string& event_type, const std::string& script_id) override;
-            cdcchain::consensus::ProposalIdType proposal_apply_for_privilege_admin(const std::string& caller_name, const std::string& candidate_address, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const override;
-            cdcchain::consensus::ProposalIdType proposal_revoke_privilege_admin(const std::string& caller_name, const std::string& privilege_admin, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) const override;
-            cdcchain::wallet::WalletTransactionEntry proposal_approve(const std::string& caller_name, const std::string& proposal_id) const override;
+            cdcchain::consensus::ProposalIdType proposal_apply_for_privilege_admin(const std::string& caller_name, const std::string& candidate_address, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) override;
+            cdcchain::consensus::ProposalIdType proposal_revoke_privilege_admin(const std::string& caller_name, const std::string& privilege_admin, uint32_t need_vote_count, uint32_t start_time, uint32_t expected_end_time) override;
+            cdcchain::wallet::WalletTransactionEntry proposal_approve(const std::string& caller_name, const std::string& proposal_id) override;
             cdcchain::consensus::ProposalEntry proposal_get_info(const std::string& proposal_id) const override;
-            cdcchain::wallet::WalletTransactionEntry appoint_general_admin(const std::string& caller_name, const std::string& candidate_address) const override;
-            cdcchain::wallet::WalletTransactionEntry revoke_general_admin(const std::string& caller_name, const std::string& general_admin_address) const override;
+            cdcchain::wallet::WalletTransactionEntry appoint_general_admin(const std::string& caller_name, const std::string& candidate_address) override;
+            cdcchain::wallet::WalletTransactionEntry revoke_general_admin(const std::string& caller_name, const std::string& general_admin_address) override;
             std::vector<cdcchain::consensus::Address> get_all_privilege_admin() const override;
             std::vector<cdcchain::consensus::Address> get_all_general_admin() const override;
         };
