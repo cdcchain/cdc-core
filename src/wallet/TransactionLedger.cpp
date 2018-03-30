@@ -952,27 +952,166 @@ bool WalletImpl::scan_create_asset(const CreateAssetOperation& op, WalletTransac
 
 bool WalletImpl::scan_proposal_for_privilege(const ProposalForPrivilegeOperation& op, WalletTransactionEntry& trx_rec)
 {
-	return true;
+	try {
+		auto opt_key_rec1 = _wallet_db.lookup_key(op.proposal_from);
+		auto opt_key_rec2 = _wallet_db.lookup_key(op.candidate);
+
+		if ( (!opt_key_rec1.valid() || !opt_key_rec1->has_private_key())
+			&& (!opt_key_rec2.valid() || !opt_key_rec2->has_private_key()) )
+			return false;
+
+		for (auto& entry : trx_rec.ledger_entries)
+		{
+			if (!entry.to_account.valid())
+			{
+				entry.from_account = op.proposal_from;
+				entry.to_account = op.candidate;
+				entry.amount = Asset(0); 
+				entry.memo = "proposal for privilege, from: " 
+					+ op.proposal_from.AddressToString(AddressType::cdc_address)
+					+ " to: " + op.candidate.AddressToString(AddressType::cdc_address);
+				break;
+			}
+			else if (entry.to_account == op.candidate)
+			{
+				entry.amount = Asset(0); 
+				break;
+			}
+		}
+
+		_dirty_accounts = true;
+		return true;
+	} FC_CAPTURE_AND_RETHROW()
 }
 
 bool WalletImpl::scan_proposal_revoke_privilege(const ProposalRevokePrivilegeOperation& op, WalletTransactionEntry& trx_rec)
 {
-	return true;
+	try {
+		auto opt_key_rec1 = _wallet_db.lookup_key(op.proposal_from);
+		auto opt_key_rec2 = _wallet_db.lookup_key(op.privilege_admin);
+
+		if ((!opt_key_rec1.valid() || !opt_key_rec1->has_private_key())
+			&& (!opt_key_rec2.valid() || !opt_key_rec2->has_private_key()))
+			return false;
+
+		for (auto& entry : trx_rec.ledger_entries)
+		{
+			if (!entry.to_account.valid())
+			{
+				entry.from_account = op.proposal_from;
+				entry.to_account = op.privilege_admin;
+				entry.amount = Asset(0);
+				entry.memo = "proposal for revoking privilege, from: "
+					+ op.proposal_from.AddressToString(AddressType::cdc_address)
+					+ " to: " + op.privilege_admin.AddressToString(AddressType::cdc_address);
+				break;
+			}
+			else if (entry.to_account == op.privilege_admin)
+			{
+				entry.amount = Asset(0);
+				break;
+			}
+		}
+
+		_dirty_accounts = true;
+		return true;
+	} FC_CAPTURE_AND_RETHROW()
 }
 
 bool WalletImpl::scan_proposal_approve(const ProposalApproveOperation& op, WalletTransactionEntry& trx_rec)
 {
-	return true;
+	try {
+		auto opt_key_rec = _wallet_db.lookup_key(op.approver);
+
+		if (!opt_key_rec.valid() || !opt_key_rec->has_private_key())
+			return false;
+
+		std::string proposal_id = fc::variant(op.proposal_id).as_string();
+
+		for (auto& entry : trx_rec.ledger_entries)
+		{
+			if (!entry.from_account.valid())
+			{
+				entry.from_account = op.approver;
+				entry.amount = Asset(0);
+				entry.memo = op.approver.AddressToString(AddressType::cdc_address) + " approve proposal : " + proposal_id;
+				break;
+			}
+			else if (entry.from_account == op.approver)
+			{
+				entry.amount = Asset(0);
+				break;
+			}
+		}
+
+		_dirty_accounts = true;
+		return true;
+	} FC_CAPTURE_AND_RETHROW()
 }
 
 bool WalletImpl::scan_appoint_general_admin(const AppointGeneralAdminOperation& op, WalletTransactionEntry& trx_rec)
 {
-	return true;
-}
+	try {
+		auto opt_key_rec1 = _wallet_db.lookup_key(op.appointer);
+		auto opt_key_rec2 = _wallet_db.lookup_key(op.candidate);
 
+		if ((!opt_key_rec1.valid() || !opt_key_rec1->has_private_key())
+			&& (!opt_key_rec2.valid() || !opt_key_rec2->has_private_key()))
+			return false;
+
+		for (auto& entry : trx_rec.ledger_entries)
+		{
+			if (!entry.to_account.valid())
+			{
+				entry.from_account = op.appointer;
+				entry.to_account = op.candidate;
+				entry.amount = Asset(0);
+				entry.memo = op.appointer.AddressToString(AddressType::cdc_address) + " appoint "
+					+ op.candidate.AddressToString(AddressType::cdc_address) + " as general admin";
+				break;
+			}
+			else if (entry.to_account == op.candidate)
+			{
+				entry.amount = Asset(0);
+				break;
+			}
+		}
+
+		_dirty_accounts = true;
+		return true;
+	} FC_CAPTURE_AND_RETHROW()
+}
 bool WalletImpl::scan_revoke_general_admin(const RevokeGeneralAdminOperation& op, WalletTransactionEntry& trx_rec)
 {
-	return true;
+	try {
+		auto opt_key_rec1 = _wallet_db.lookup_key(op.appointer);
+		auto opt_key_rec2 = _wallet_db.lookup_key(op.general_admin);
+
+		if ((!opt_key_rec1.valid() || !opt_key_rec1->has_private_key())
+			&& (!opt_key_rec2.valid() || !opt_key_rec2->has_private_key()))
+			return false;
+
+		for (auto& entry : trx_rec.ledger_entries)
+		{
+			if (!entry.to_account.valid())
+			{
+				entry.from_account = op.appointer;
+				entry.to_account = op.general_admin;
+				entry.amount = Asset(0);
+				entry.memo = op.appointer.AddressToString(AddressType::cdc_address) + " revoke "
+					+ op.general_admin.AddressToString(AddressType::cdc_address) + " from general admin";
+				break;
+			}
+			else if (entry.to_account == op.general_admin)
+			{
+				entry.amount = Asset(0);
+				break;
+			}
+		}
+
+		_dirty_accounts = true;
+		return true;
+	} FC_CAPTURE_AND_RETHROW()
 }
 
 bool WalletImpl::scan_issue_asset(const IssueAssetOperation& op, WalletTransactionEntry& trx_rec)
