@@ -1,9 +1,10 @@
-﻿################################################################################
-# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
-################################################################################
-
-/.vs/CDC/v15
-/x64/Release
-/CDC.sln
-/CDC.v12.suo
-/CDC.vcxproj
+﻿.gitignore
+.vs/
+PropertySheet.props
+cdc_project.sln
+cdc_project.vcxproj
+cdc_project.vcxproj.filters
+cdc_project.vcxproj.user
+third_libs/
+uvm/
+x64/
