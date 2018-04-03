@@ -223,7 +223,7 @@ namespace cdcchain {
                 oContractEntry contract_entry;
 				bool is_addr = false;
 				try {
-					is_addr = contract_address.is_valid(contract, CONTRACT_ADDRESS_PREFIX);
+					is_addr = contract_address.is_valid(contract, AddressType::contract_address);
 				}
 				catch (...) {
 					is_addr = false;
@@ -403,7 +403,7 @@ namespace cdcchain {
 
                 Address addr;
 
-                FC_ASSERT(addr.is_valid(contract_address, CONTRACT_ADDRESS_PREFIX), "contract address not valid");
+                FC_ASSERT(addr.is_valid(contract_address, AddressType::contract_address), "contract address not valid");
                 addr = Address(contract_address, AddressType::contract_address);
 
                 auto entry = _wallet->contract_upgrade(addr,
@@ -430,7 +430,7 @@ namespace cdcchain {
 
 				Address addr;
 
-				FC_ASSERT(addr.is_valid(contract_address, CONTRACT_ADDRESS_PREFIX), "contract address not valid");
+				FC_ASSERT(addr.is_valid(contract_address, AddressType::contract_address), "contract address not valid");
 				addr = Address(contract_address, AddressType::contract_address);
 
 				return _wallet->contract_upgrade_testing(addr, upgrader_name, new_contract_name, new_contract_desc);
@@ -451,7 +451,7 @@ namespace cdcchain {
 
                 Address addr;
 
-                FC_ASSERT(addr.is_valid(contract_address, CONTRACT_ADDRESS_PREFIX), "contract address not valid");
+                FC_ASSERT(addr.is_valid(contract_address, AddressType::contract_address), "contract address not valid");
                 addr = Address(contract_address, AddressType::contract_address);
 
                 auto entry = _wallet->contract_destroy(addr,
@@ -472,7 +472,7 @@ namespace cdcchain {
 
 				Address addr;
 
-				FC_ASSERT(addr.is_valid(contract_address, CONTRACT_ADDRESS_PREFIX), "contract address not valid");
+				FC_ASSERT(addr.is_valid(contract_address, AddressType::contract_address), "contract address not valid");
 				addr = Address(contract_address, AddressType::contract_address);
 
 			    return _wallet->contract_destroy_testing(addr, destroyer_name);

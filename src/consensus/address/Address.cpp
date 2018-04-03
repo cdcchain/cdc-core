@@ -1,190 +1,197 @@
 #include <consensus/address/Address.hpp>
 #include <consensus/WithdrawTypes.hpp>
 #include <consensus/Exceptions.hpp>
+
 #include <fc/crypto/base58.hpp>
 #include <algorithm>
 
+#include <utilities/Keccak.hpp>
+
 namespace cdcchain {
-	namespace consensus {
+  namespace consensus {
+
+   Address::Address(const AddressType& address_type){}
+
+   
+   Address::Address(const std::string& hex_str, const AddressType& address_type)
+   {
+       std::string  addr_str;
+
+       if (!Address::is_valid(hex_str, address_type))
+       {
+           FC_THROW_EXCEPTION(invalid_address, "invalid address ${a}", ("a", hex_str));
+       }
+
+       if (address_type == AddressType::cdc_address)
+           addr_str = hex_str.substr(2, hex_str.size());
+       else
+           addr_str = hex_str.substr(1, hex_str.size());
+
+       addr = fc::ripemd160(addr_str);
+   }
+
+   Address::Address( const WithdrawCondition& condition )
+   {
+      fc::sha512::encoder enc;
+      fc::raw::pack(enc, condition);
+      auto tmp = enc.result();
+
+      Keccak tmp_addr;
+      tmp_addr.add(tmp.data(), tmp.data_size());
+
+      auto addr_str_keccaksha3 = tmp_addr.getHash();
+      auto hex_str = addr_str_keccaksha3.substr(24, addr_str_keccaksha3.size());
+
+      addr = fc::ripemd160(hex_str);
+   }
+
+   bool Address::is_valid( const std::string& hex_str, const AddressType& address_type)
+   {
+       std::string  addr_str;
+
+       if (address_type == AddressType::cdc_address)
+       {
+           FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == CDC_ADDRESS_PREFIX[0] && CDC_ADDRESS_PREFIX[1]);
+           addr_str = hex_str.substr(2, hex_str.size());
+       }        
+       else if (address_type == AddressType::contract_address)
+       {
+           FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == CONTRACT_ADDRESS_PREFIX[0]);
+           addr_str = hex_str.substr(1, hex_str.size());
+
+       }           
+       else if (address_type == AddressType::script_id)
+       {
+           FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == SCRIPT_ID_PREFIX[0]);
+           addr_str = hex_str.substr(1, hex_str.size());
+       }           
+       else if (address_type == AddressType::multisig_address)
+       {
+           FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == MULTI_ADDRESS_PREFIX[0]);
+           addr_str = hex_str.substr(1, hex_str.size());
+       }
+
+       FC_ASSERT(addr_str.size() == 40, "the address hex str length is invalid!");
+
+       for (auto i = addr_str.begin(); i != addr_str.end(); ++i)
+       {
+           fc::from_hex(*i);
+       }
+
+       return true;     
+   }
+
+   Address::Address( const fc::ecc::public_key& pub )
+   {
+       auto dat = pub.serialize_ecc_point();
+       
+       Keccak tmp_addr;
+       tmp_addr.add(dat.begin() + 1, dat.size() - 1);
+
+       auto addr_str_keccaksha3 = tmp_addr.getHash();
+       auto hex_str = addr_str_keccaksha3.substr(24, addr_str_keccaksha3.size());
+
+       addr = fc::ripemd160(hex_str);
+
+   }
+
+   Address::Address( const PtsAddress& ptsaddr )
+   {
+
+       Keccak tmp_addr;
+       tmp_addr.add((char*)&ptsaddr, sizeof(ptsaddr));
+
+       auto addr_str_keccaksha3 = tmp_addr.getHash();
+       auto hex_str = addr_str_keccaksha3.substr(24, addr_str_keccaksha3.size());
+
+       addr = fc::ripemd160(hex_str);
+   }
+
+   Address::Address( const fc::ecc::public_key_data& pub )
+   {
+       fc::ecc::public_key pub_key(pub);
+       auto dat = pub_key.serialize_ecc_point();
+
+       Keccak tmp_addr;
+       tmp_addr.add(dat.begin() + 1, dat.size() - 1);
+
+       auto addr_str_keccaksha3 = tmp_addr.getHash();
+       auto hex_str = addr_str_keccaksha3.substr(24, addr_str_keccaksha3.size());
+
+       addr = fc::ripemd160(hex_str);
+   }
+
+   Address::Address( const PublicKeyType& pub )
+   {
+
+       fc::ecc::public_key pub_key(pub.key_data);
+       auto dat = pub_key.serialize_ecc_point();
+
+       Keccak tmp_addr;
+       tmp_addr.add(dat.begin() + 1, dat.size() - 1);
+
+       auto addr_str_keccaksha3 = tmp_addr.getHash();
+       auto hex_str = addr_str_keccaksha3.substr(24, addr_str_keccaksha3.size());
+
+       addr = fc::ripemd160(hex_str);
+
+   }
+
+   int Address::judge_addr_type(const std::string& hex_str)
+   {
+       // chain address
+       if (hex_str[0] == CDC_ADDRESS_PREFIX[0] && CDC_ADDRESS_PREFIX[1])
+           return AddressType::cdc_address;
+       else if (hex_str[0] == CONTRACT_ADDRESS_PREFIX[0])
+           return AddressType::contract_address;
+       else if (hex_str[0] == SCRIPT_ID_PREFIX[0])
+           return AddressType::script_id;
+       else if (hex_str[0] == MULTI_ADDRESS_PREFIX[0])
+           return AddressType::multisig_address;
+   }
+
+   std::string Address::AddressToString(const AddressType& address_type)const
+   {
+       if (address_type == AddressType::cdc_address)
+       {
+           return  CDC_ADDRESS_PREFIX + addr.str();
+       }
+       else if (address_type == AddressType::contract_address)
+       {
+           return CONTRACT_ADDRESS_PREFIX + addr.str();
+       }
+       else if (address_type == AddressType::script_id)
+       {
+           return SCRIPT_ID_PREFIX + addr.str();
+       }
+       else if (address_type == AddressType::multisig_address)
+       {
+           return MULTI_ADDRESS_PREFIX + addr.str();
+       }
 
 
-		Address::Address(const AddressType& address_type ){
-			fc::ripemd160 temp_ripe;
-			auto temp_addr = Address(temp_ripe, address_type);
-			this->addr = temp_addr.addr;
-		}
+   }
 
-		Address::Address(const std::string& base58str, const AddressType& address_type)
-		{
+   Address::operator std::string() const
+   {
 
-			std::vector<char> v = fc::from_base58(::fc::string(base58str));
-			if (v.size())
-				memcpy(addr.data, v.data(), std::min<size_t>(v.size(), sizeof(addr)));
-
-			if (!Address::is_valid(base58str, CDC_ADDRESS_PREFIX))
-			{
-				FC_THROW_EXCEPTION(invalid_address, "invalid address ${a}", ("a", base58str));
-			}
-
-
-		}
-
-		Address::Address(const WithdrawCondition& condition, const AddressType& address_type)
-		{
-			fc::sha256::encoder enc;
-			fc::raw::pack(enc, condition);
-			auto rep = fc::ripemd160::hash(enc.result());
-			if (address_type == AddressType::cdc_address)
-				addr.data[0] = 68;
-			else if (address_type == AddressType::contract_address)
-				addr.data[0] = 28;
-			else if (address_type == AddressType::script_id)
-				addr.data[0] = 63;
-			else if (address_type == AddressType::multisig_address)
-				addr.data[0] = 50;
-			memcpy(addr.data + 1, (char*)&rep, sizeof(rep));
-			auto check = fc::sha256::hash(addr.data, sizeof(rep) + 1);
-			check = fc::sha256::hash(check); // double
-			memcpy(addr.data + 1 + sizeof(rep), (char*)&check, 4);
-		}
-
-		/**
-		*  Checks the address to verify it has a
-		*  valid checksum
-		*/
-		bool Address::is_valid(const std::string& base58str, const std::string& prefix)
-		{
-			const size_t prefix_len = prefix.size();
-			if (base58str.size() <= prefix_len)
-				return false;
-			if (base58str.substr(0, prefix_len) != CDC_ADDRESS_PREFIX && base58str.substr(0, prefix_len) != CONTRACT_ADDRESS_PREFIX && base58str.substr(0, prefix_len) != SCRIPT_ID_PREFIX &&base58str.substr(0, prefix_len) != MULTI_ADDRESS_PREFIX)
-				return false;
-			vector<char> v = fc::from_base58(base58str);
-			auto check = ::fc::sha256::hash(&v[0], sizeof(fc::ripemd160) + 1);
-			check = ::fc::sha256::hash(check); // double
-			return memcmp(&v[0] + 1 + sizeof(fc::ripemd160), (char*)&check, 4) == 0;
-		}
-
-		std::string Address::AddressToString(const AddressType& address_type)const
-		{
-			return fc::to_base58(addr.data, sizeof(addr));
-		}
-
-		int Address::judge_addr_type(const std::string& base58str)
-		{
-			// ub address
-			if (base58str[0] == 'U')
-				return AddressType::cdc_address;
-			else if (base58str[0] == 'C')
-				return AddressType::contract_address;
-			else if (base58str[0] == 'S')
-				return AddressType::script_id;
-			else if (base58str[0] == 'M')
-				return AddressType::multisig_address;
-		}
-
-		void Address::AddressHelper(const ::fc::ecc::public_key& pub, bool compressed, uint8_t version)
-		{
-			::fc::sha256 sha2;
-			if (compressed)
-			{
-				auto dat = pub.serialize();
-				sha2 = ::fc::sha256::hash(dat.data, sizeof(dat));
-			}
-			else
-			{
-				auto dat = pub.serialize_ecc_point();
-				sha2 = fc::sha256::hash(dat.data, sizeof(dat));
-			}
-			auto rep = fc::ripemd160::hash((char*)&sha2, sizeof(sha2));
-			addr.data[0] = version;
-			memcpy(addr.data + 1, (char*)&rep, sizeof(rep));
-			auto check = fc::sha256::hash(addr.data, sizeof(rep) + 1);
-			check = fc::sha256::hash(check); // double
-			memcpy(addr.data + 1 + sizeof(rep), (char*)&check, 4);
-
-		}
-
-
-		Address::Address(const fc::ecc::public_key& pub, const AddressType& address_type)
-		{
-			if (address_type == AddressType::cdc_address)
-				AddressHelper(pub, true, 68);
-			else if (address_type == AddressType::contract_address)
-				AddressHelper(pub, true, 28);
-			else if (address_type == AddressType::script_id)
-				AddressHelper(pub, true, 63);
-			else if (address_type == AddressType::multisig_address)
-				AddressHelper(pub, true, 50);
-
-		}
-
-		Address::Address(const fc::ripemd160& ripe, const AddressType& address_type)
-		{
-			auto version = 0;
-			if (address_type == AddressType::cdc_address)
-				version = 68;
-			else if (address_type == AddressType::contract_address)
-				version = 28;
-			else if (address_type == AddressType::script_id)
-				version = 63;
-			else if (address_type == AddressType::multisig_address)
-				version = 50;
-
-			auto rep = ripe;
-			addr.data[0] = version;
-			memcpy(addr.data + 1, (char*)&rep, sizeof(rep));
-			auto check = fc::sha256::hash(addr.data, sizeof(rep) + 1);
-			check = fc::sha256::hash(check); // double
-			memcpy(addr.data + 1 + sizeof(rep), (char*)&check, 4);
-
-		}
-
-
-		Address::Address(const PtsAddress& ptsaddr)
-		{
-			addr = ptsaddr.addr;
-		}
-
-		Address::Address(const fc::ecc::public_key_data& pub, const AddressType& address_type) : Address(fc::ecc::public_key(pub), address_type)
-		{
-
-		}
-
-		Address::Address(const cdcchain::consensus::PublicKeyType& pub, const AddressType& address_type) : Address(fc::ecc::public_key(pub.key_data), address_type)
-		{
-		}
-
-
-		//   Address::Address(const PublicKeyType& pubkey, const TransactionIdType& trxid)
-		//   {
-		//       fc::sha512::encoder enc;
-		//       fc::raw::pack(enc, pubkey);
-		//       fc::raw::pack(trxid);
-		//       addr = fc::ripemd160::hash(enc.result());
-		//   }
+       return CDC_ADDRESS_PREFIX +  addr.str();
+   }
 
 
 
+} } // namespace emo::blockchain
 
-		Address::operator std::string()const
-		{
-			return fc::to_base58(addr.data, sizeof(addr));
-		}
-
-
-
-	}
-} // namespace cdcchain::consensus
 
 namespace fc
 {
-	void to_variant(const cdcchain::consensus::Address& var, variant& vo)
-	{
-		vo = std::string(var);
-	}
-	void from_variant(const variant& var, cdcchain::consensus::Address& vo)
-	{
-		vo = cdcchain::consensus::Address(var.as_string());
-	}
+    void to_variant(const cdcchain::consensus::Address& var, variant& vo)
+    {
+        vo = std::string(var);
+    }
+    void from_variant(const variant& var, cdcchain::consensus::Address& vo)
+    {
+        vo = cdcchain::consensus::Address(var.as_string());
+    }
 }
+

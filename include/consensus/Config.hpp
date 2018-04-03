@@ -15,7 +15,7 @@
  *
  *  Changing these parameters will result in a hard fork.
  */
-#define CDC_ADDRESS_PREFIX                                  "U"
+#define CDC_ADDRESS_PREFIX                                  "0x"
 #define CDC_BLOCKCHAIN_SYMBOL                               "CDC"
 #define CDC_BLOCKCHAIN_NAME                                 "CDC"
 #define CDC_BLOCKCHAIN_DESCRIPTION                          "CDC chain for future "

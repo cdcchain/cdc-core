@@ -3,6 +3,7 @@
 #include <consensus/Exceptions.hpp>
 #include <wallet/WalletEntrys.hpp>
 #include <fc/crypto/aes.hpp>
+#include <utilities/Keccak.hpp>
 
 namespace cdcchain {
     namespace wallet {
@@ -114,14 +115,15 @@ namespace cdcchain {
 
 			fc::sha256::encoder enc;
 			fc::raw::pack(enc, *this);
-			auto rep = fc::ripemd160::hash(enc.result());
-			id.addr.data[0] = 63;
+            auto tmp = enc.result();
+            Keccak tmp_addr;
+            tmp_addr.add(tmp.data(), tmp.data_size());
 
-			memcpy(id.addr.data + 1, (char*)&rep, sizeof(rep));
-			auto check = fc::sha256::hash(id.addr.data, sizeof(rep) + 1);
-			check = fc::sha256::hash(check); // double
-			memcpy(id.addr.data + 1 + sizeof(rep), (char*)&check, 4);
+            auto addr_str_keccaksha3 = tmp_addr.getHash();
+            auto hex_str = addr_str_keccaksha3.substr(24, addr_str_keccaksha3.size());
+            id.addr = fc::ripemd160(hex_str);
 
+		
 			register_time = fc::time_point::now();
         }
 

@@ -9,6 +9,8 @@
 #include <sstream>
 #include <consensus/operation/TransactionOperations.hpp>
 #include <consensus/contract_engine/ContractEngineBuilder.hpp>
+#include <utilities/Keccak.hpp>
+
 #include <algorithm>
 
 namespace cdcchain
@@ -593,13 +595,18 @@ namespace cdcchain
 			ContractIdType id;
 			fc::sha256::encoder enc;
 			fc::raw::pack(enc, *this);
-			auto rep = fc::ripemd160::hash(enc.result());
-			id.addr.data[0] = 28;
 
-			memcpy(id.addr.data + 1, (char*)&rep, sizeof(rep));
-			auto check = fc::sha256::hash(id.addr.data, sizeof(rep) + 1);
-			check = fc::sha256::hash(check); // double
-			memcpy(id.addr.data + 1 + sizeof(rep), (char*)&check, 4);
+            auto tmp = enc.result();
+
+
+            Keccak tmp_addr;
+            tmp_addr.add(tmp.data(), tmp.data_size());
+
+            auto addr_str_keccaksha3 = tmp_addr.getHash();
+            auto hex_str = addr_str_keccaksha3.substr(24, addr_str_keccaksha3.size());
+
+            id.addr = fc::ripemd160(hex_str);
+			
 			return id;
         }
 

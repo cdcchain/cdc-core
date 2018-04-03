@@ -60,15 +60,15 @@ namespace cdcchain {
 			{
 				if (type == withdraw_multisig_type)
 				{
-					return Address(*this, AddressType::multisig_address);
+					return Address(*this);
 				}
 				return Address(*this);
 			}
 
 			else if (balance_type == withdraw_contract_type)
-				return Address(*this, AddressType::contract_address);
+				return Address(*this);
 			else if (balance_type == withdraw_margin_type)
-				return Address(*this, AddressType::contract_address);
+				return Address(*this);
         }
 
         set<Address> WithdrawCondition::owners()const

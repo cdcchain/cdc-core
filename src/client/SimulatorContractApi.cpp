@@ -59,7 +59,7 @@ namespace cdcchain
             Address ClientImpl::simulator_get_contract_address(const string& contract) const
             {
                 Address contract_address;
-                bool is_addr = contract_address.is_valid(contract, CONTRACT_ADDRESS_PREFIX);
+                bool is_addr = contract_address.is_valid(contract, AddressType::contract_address);
 
                 ChainInterfacePtr data_ptr = simulator_get_correct_state_ptr();
                 return get_contract_address(contract, data_ptr);
@@ -135,7 +135,7 @@ namespace cdcchain
 			{
 				Address addr;
 
-				FC_ASSERT(addr.is_valid(contract_address, CONTRACT_ADDRESS_PREFIX), "contract address not valid");
+				FC_ASSERT(addr.is_valid(contract_address, AddressType::contract_address), "contract address not valid");
 				addr = Address(contract_address, AddressType::contract_address);
 		
 				return _wallet->contract_upgrade_testing(addr, upgrader_name, new_contract_name, new_contract_desc);
@@ -150,7 +150,7 @@ namespace cdcchain
             {
                 Address addr;
 
-                FC_ASSERT(addr.is_valid(contract_address, CONTRACT_ADDRESS_PREFIX), "contract address not valid");
+                FC_ASSERT(addr.is_valid(contract_address, AddressType::contract_address), "contract address not valid");
                 addr = Address(contract_address, AddressType::contract_address);
 
                 auto entry = _wallet->contract_upgrade(addr,
@@ -171,7 +171,7 @@ namespace cdcchain
 			{
 				Address addr;
 
-				FC_ASSERT(addr.is_valid(contract_address, CONTRACT_ADDRESS_PREFIX), "contract address not valid");
+				FC_ASSERT(addr.is_valid(contract_address, AddressType::contract_address), "contract address not valid");
 				addr = Address(contract_address, AddressType::contract_address);
 				
 				return _wallet->contract_destroy_testing(addr, destroyer_name);
@@ -182,7 +182,7 @@ namespace cdcchain
             {
                 Address addr;
 
-                FC_ASSERT(addr.is_valid(contract_address, CONTRACT_ADDRESS_PREFIX), "contract address not valid");
+                FC_ASSERT(addr.is_valid(contract_address, AddressType::contract_address), "contract address not valid");
                 addr = Address(contract_address, AddressType::contract_address);
 
                 auto entry = _wallet->contract_destroy(addr,
