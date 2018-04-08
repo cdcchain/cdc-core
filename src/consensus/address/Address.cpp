@@ -56,7 +56,7 @@ namespace cdcchain {
 
        if (address_type == AddressType::cdc_address)
        {
-           FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == CDC_ADDRESS_PREFIX[0] && CDC_ADDRESS_PREFIX[1]);
+           FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == CDC_ADDRESS_PREFIX[0] && hex_str[1] == CDC_ADDRESS_PREFIX[1]);
            addr_str = hex_str.substr(2, hex_str.size());
        }        
        else if (address_type == AddressType::contract_address)
@@ -76,7 +76,7 @@ namespace cdcchain {
            addr_str = hex_str.substr(1, hex_str.size());
        }
 
-       FC_ASSERT(addr_str.size() == 40, "the address hex str length is invalid!");
+       FC_ASSERT(addr_str.size() == ADDRESS_HEX_LEN, "the address hex str length is invalid!");
 
        for (auto i = addr_str.begin(); i != addr_str.end(); ++i)
        {
@@ -145,7 +145,7 @@ namespace cdcchain {
    int Address::judge_addr_type(const std::string& hex_str)
    {
        // chain address
-       if (hex_str[0] == CDC_ADDRESS_PREFIX[0] && CDC_ADDRESS_PREFIX[1])
+       if (hex_str[0] == CDC_ADDRESS_PREFIX[0] && hex_str[1] == CDC_ADDRESS_PREFIX[1])
            return AddressType::cdc_address;
        else if (hex_str[0] == CONTRACT_ADDRESS_PREFIX[0])
            return AddressType::contract_address;

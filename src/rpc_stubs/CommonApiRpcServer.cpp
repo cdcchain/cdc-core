@@ -149,6 +149,56 @@ namespace cdcchain {
 			return fc::variant();
 		}
 
+        fc::variant CommonApiRpcServer::wallet_import_ethereum_private_key_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (priv_key_str)");
+            std::string priv_key_str = parameters[0].as<std::string>();
+            std::string account_name = (parameters.size() <= 1) ?
+                (fc::json::from_string("null").as<std::string>()) :
+                parameters[1].as<std::string>();
+            bool create_new_account = (parameters.size() <= 2) ?
+                (fc::json::from_string("false").as<bool>()) :
+                parameters[2].as<bool>();
+            bool rescan = (parameters.size() <= 3) ?
+                (fc::json::from_string("false").as<bool>()) :
+                parameters[3].as<bool>();
+
+            std::string result = get_client()->wallet_import_ethereum_private_key(priv_key_str, account_name, create_new_account, rescan);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::wallet_import_ethereum_private_key_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (!parameters.contains("priv_key_str"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'priv_key_str'");
+            std::string priv_key_str = parameters["priv_key_str"].as<std::string>();
+            std::string account_name = parameters.contains("account_name") ?
+                (fc::json::from_string("null").as<std::string>()) :
+                parameters["account_name"].as<std::string>();
+            bool create_new_account = parameters.contains("create_new_account") ?
+                (fc::json::from_string("false").as<bool>()) :
+                parameters["create_new_account"].as<bool>();
+            bool rescan = parameters.contains("rescan") ?
+                (fc::json::from_string("false").as<bool>()) :
+                parameters["rescan"].as<bool>();
+
+            std::string result = get_client()->wallet_import_ethereum_private_key(priv_key_str, account_name, create_new_account, rescan);
+            return fc::variant(result);
+        }
+
 		fc::variant CommonApiRpcServer::blockchain_calculate_supply_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
 		{
 			// this method has no prerequisites
@@ -9003,6 +9053,14 @@ namespace cdcchain {
 			json_connection->add_named_param_method("import_key", bound_named_method);
 			json_connection->add_named_param_method("importprivkey", bound_named_method);
 
+            // register method wallet_import_ethereum_private_key
+            bound_positional_method = boost::bind(&CommonApiRpcServer::wallet_import_ethereum_private_key_positional,
+                this, capture_con, _1);
+            json_connection->add_method("wallet_import_ethereum_private_key", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::wallet_import_ethereum_private_key_named,
+                this, capture_con, _1);
+            json_connection->add_named_param_method("wallet_import_ethereum_private_key", bound_named_method);
+
 			// register method wallet_close
 			bound_positional_method = boost::bind(&CommonApiRpcServer::wallet_close_positional,
 				this, capture_con, _1);
@@ -11594,6 +11652,23 @@ namespace cdcchain {
                     /* detailed description */ "Loads the private key into the specified account. Returns which account it was actually imported to.\n\nParameters:\n  wif_key (wif_private_key, required): A private key in bitcoin Wallet Import Format (WIF)\n  account_name (account_name, optional, defaults to null): the name of the account the key should be imported into, if null then the key must belong to an active account\n  create_new_account (bool, optional, defaults to false): If true, the wallet will attempt to create a new account for the name provided rather than import the key into an existing account\n  rescan (bool, optional, defaults to false): If true, the wallet will rescan the blockchain looking for transactions that involve this private key\n\nReturns:\n  account_name\n",
                     /* aliases */ {"import_key", "importprivkey"}, false};
                 store_method_metadata(wallet_import_private_key_method_metadata);
+            }
+
+            {
+                // register method wallet_import_ethereum_private_key
+                cdcchain::api::MethodData wallet_import_ethereum_private_key_method_metadata{ "wallet_import_ethereum_private_key", nullptr,
+                    /* description */ "Loads the ethereum private key into the specified account. Returns which account it was actually imported to.",
+                    /* returns */ "account_name",
+                    /* params: */{
+                        { "priv_key_str", "string", cdcchain::api::required_positional, fc::ovariant() },
+                { "account_name", "account_name", cdcchain::api::optional_positional, fc::variant(fc::json::from_string("null")) },
+                { "create_new_account", "bool", cdcchain::api::optional_positional, fc::variant(fc::json::from_string("false")) },
+                { "rescan", "bool", cdcchain::api::optional_positional, fc::variant(fc::json::from_string("false")) }
+                },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 4,
+                    /* detailed description */ "Loads the ethereum private key into the specified account. Returns which account it was actually imported to.\n\nParameters:\n  priv_key_str (string, required): A private key of ethereum\n  account_name (account_name, optional, defaults to null): the name of the account the key should be imported into, if null then the key must belong to an active account\n  create_new_account (bool, optional, defaults to false): If true, the wallet will attempt to create a new account for the name provided rather than import the key into an existing account\n  rescan (bool, optional, defaults to false): If true, the wallet will rescan the blockchain looking for transactions that involve this private key\n\nReturns:\n  account_name\n",
+                    /* aliases */{}, false };
+                store_method_metadata(wallet_import_ethereum_private_key_method_metadata);
             }
 
             {
@@ -14283,6 +14358,8 @@ namespace cdcchain {
                 return wallet_get_name_positional(nullptr, parameters);
             if (method_name == "wallet_import_private_key")
                 return wallet_import_private_key_positional(nullptr, parameters);
+            if (method_name == "wallet_import_ethereum_private_key")
+                return wallet_import_ethereum_private_key_positional(nullptr, parameters);
             if (method_name == "wallet_close")
                 return wallet_close_positional(nullptr, parameters);
             if (method_name == "wallet_backup_create")

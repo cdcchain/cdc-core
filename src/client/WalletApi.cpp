@@ -1687,6 +1687,43 @@ namespace cdcchain {
             // } FC_CAPTURE_AND_RETHROW( (account_name) ) }
             // 
 
+            string detail::ClientImpl::wallet_import_ethereum_private_key(const string& priv_key_str, const string& account_name, bool create_account, bool wallet_rescan_blockchain)
+            {
+
+                unsigned s = (priv_key_str.size() >= 2 && priv_key_str[0] == '0' && priv_key_str[1] == 'x') ? 2 : 0;
+                std::vector<char> ret;
+                ret.reserve((priv_key_str.size() - s + 1) / 2);
+
+                if (priv_key_str.size() % 2)
+                {
+                    int h = _wallet->from_hex_char(priv_key_str[s++]);
+                    FC_ASSERT(h != -1, "the priv_key_str is not valid!");
+                    ret.push_back(h);
+
+                }
+
+                for (unsigned i = s; i < priv_key_str.size(); i += 2)
+                {
+                    int h = _wallet->from_hex_char(priv_key_str[i]);
+                    int l = _wallet->from_hex_char(priv_key_str[i + 1]);
+
+                    FC_ASSERT(h != -1 && l != -1, "the priv_key_str is not valid!");
+
+                    ret.push_back((char)(h * 16 + l));
+
+                }
+
+
+                //     printf("the size of ret: %d", ret.size());
+
+                fc::ecc::private_key priv_key = fc::variant(ret).as<fc::ecc::private_key>();
+                auto wif_key = utilities::key_to_wif(priv_key);
+                //     printf("wif key: %s\n", wif_key.c_str());
+
+
+                return wallet_import_private_key(wif_key, account_name, create_account, wallet_rescan_blockchain);
+
+            }
 
 
 

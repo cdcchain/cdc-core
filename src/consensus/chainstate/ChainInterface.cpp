@@ -126,7 +126,7 @@ namespace cdcchain {
         // just like in Bitcoin
         ShareType ChainInterface::get_max_delegate_pay_issued_per_block()const
         {
-			// return ShareType(0);
+			return ShareType(0);
             ShareType pay_per_block = CDC_MAX_DELEGATE_PAY_PER_BLOCK;
 			const auto share_entry = get_asset_entry(CDC_BLOCKCHAIN_SYMBOL);
 			static const time_point_sec start_timestamp = get_genesis_timestamp();

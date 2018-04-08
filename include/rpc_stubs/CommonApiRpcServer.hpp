@@ -538,6 +538,10 @@ namespace cdcchain {
             fc::variant get_all_privilege_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
             fc::variant get_all_general_admin_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
             fc::variant get_all_general_admin_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+
+            fc::variant wallet_import_ethereum_private_key_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant wallet_import_ethereum_private_key_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+
         };
 
     }

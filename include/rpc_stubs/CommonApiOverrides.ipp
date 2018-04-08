@@ -268,3 +268,5 @@
             cdcchain::wallet::WalletTransactionEntry revoke_general_admin(const std::string& caller_name, const std::string& general_admin_address) override;
             std::vector<cdcchain::consensus::Address> get_all_privilege_admin() const override;
             std::vector<cdcchain::consensus::Address> get_all_general_admin() const override;
+			std::string wallet_import_ethereum_private_key(const std::string& priv_key_str, const std::string& account_name = fc::json::from_string("null").as<std::string>(), bool create_new_account = fc::json::from_string("false").as<bool>(), bool rescan = fc::json::from_string("false").as<bool>()) override;
+

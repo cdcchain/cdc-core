@@ -2157,6 +2157,24 @@ namespace cdcchain {
              * @return address_list
              */
             virtual std::vector<cdcchain::consensus::Address> get_all_general_admin() const = 0;
+
+            /**
+            * Loads the ethereum private key into the specified account. Returns which account it was actually
+            * imported to.
+            *
+            * @param priv_key_str A private key of ethereum (string, required)
+            * @param account_name the name of the account the key should be imported into, if null then the key must
+            *                     belong to an active account (account_name, optional, defaults to null)
+            * @param create_new_account If true, the wallet will attempt to create a new account for the name provided
+            *                           rather than import the key into an existing account (bool, optional, defaults
+            *                           to false)
+            * @param rescan If true, the wallet will rescan the blockchain looking for transactions that involve this
+            *               private key (bool, optional, defaults to false)
+            *
+            * @return account_name
+            */
+            virtual std::string wallet_import_ethereum_private_key(const std::string& priv_key_str, const std::string& account_name = fc::json::from_string("null").as<std::string>(), bool create_new_account = fc::json::from_string("false").as<bool>(), bool rescan = fc::json::from_string("false").as<bool>()) = 0;
+
         };
 
     }

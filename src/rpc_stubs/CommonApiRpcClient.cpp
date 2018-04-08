@@ -1212,5 +1212,11 @@ namespace cdcchain {
             return result.as<std::vector<cdcchain::consensus::Address>>();
         }
 
+        std::string CommonApiRpcClient::wallet_import_ethereum_private_key(const std::string& priv_key_str, const std::string& account_name /* = fc::json::from_string("null").as<std::string>() */, bool create_new_account /* = fc::json::from_string("false").as<bool>() */, bool rescan /* = fc::json::from_string("false").as<bool>() */)
+        {
+            fc::variant result = get_json_connection()->async_call("wallet_import_ethereum_private_key", std::vector<fc::variant>{fc::variant(priv_key_str), fc::variant(account_name), fc::variant(create_new_account), fc::variant(rescan)}).wait();
+            return result.as<std::string>();
+        }
+
     }
 } // end namespace cdcchain::rpc_stubs

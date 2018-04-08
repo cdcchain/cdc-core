@@ -11,6 +11,8 @@
 #include <fc/crypto/ripemd160.hpp>
 #include <fc/crypto/hex.hpp>
 
+#define ADDRESS_HEX_LEN  40
+
 namespace fc { namespace ecc {
     class public_key;
     typedef fc::array<char,33>  public_key_data;
