@@ -125,6 +125,12 @@ namespace cdcchain {
             void    close();
 
 
+
+            /************************************************************************/
+            /*     add import ethereum private key functions                        */
+            /************************************************************************/
+            int from_hex_char(char _i);
+
             /**
             * Whether the client open wallet function
             *

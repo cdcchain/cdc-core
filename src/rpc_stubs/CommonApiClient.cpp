@@ -7463,5 +7463,37 @@ namespace cdcchain {
             FC_RETHROW_EXCEPTIONS(warn, "")
         }
 
+        std::string CommonApiClient::wallet_import_ethereum_private_key(const std::string& priv_key_str, const std::string& account_name /* = fc::json::from_string("null").as<std::string>() */, bool create_new_account /* = fc::json::from_string("false").as<bool>() */, bool rescan /* = fc::json::from_string("false").as<bool>() */)
+        {
+            ilog("received RPC call: wallet_import_ethereum_private_key(${priv_key_str}, ${account_name}, ${create_new_account}, ${rescan})", ("priv_key_str", priv_key_str)("account_name", account_name)("create_new_account", create_new_account)("rescan", rescan));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if (glog != NULL)
+            {
+                args.push_back(fc::variant(priv_key_str));
+                args.push_back(fc::variant(account_name));
+                args.push_back(fc::variant(create_new_account));
+                args.push_back(fc::variant(rescan));
+                call_id = glog->log_call_started(this, "wallet_import_ethereum_private_key", args);
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call wallet_import_ethereum_private_key finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                std::string result = get_impl()->wallet_import_ethereum_private_key(priv_key_str, account_name, create_new_account, rescan);
+                if (call_id != 0)
+                    glog->log_call_finished(call_id, this, "wallet_import_ethereum_private_key", args, fc::variant(result));
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
     }
 } // end namespace cdcchain::rpc_stubs
