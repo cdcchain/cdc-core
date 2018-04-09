@@ -7,6 +7,8 @@
 #include <consensus/chainstate/PendingChainState.hpp>
 #include <consensus/operation/GeneralAdminOperations.hpp>
 
+#include<stack>
+
 namespace cdcchain {
 	namespace consensus {
 
@@ -66,17 +68,21 @@ namespace cdcchain {
 					break;
 				}
 			}
-
 			if (NOT is_general_admin)
 				FC_CAPTURE_AND_THROW(is_not_general_admin, ("this address is not a general admin"));
-
+            std::stack<vector<RoleCondition>::iterator> remove_stack;
 			for (auto iter = role_entry->role_cond_vec.begin(); iter != role_entry->role_cond_vec.end(); ) {
 				auto iter_tmp = iter++;
-				if (iter_tmp->role_address == general_admin &&
-					iter_tmp->role_type == RoleTypeEnum::general_admin)
-					role_entry->role_cond_vec.erase(iter_tmp);
+                if (iter_tmp->role_address == general_admin &&
+                    iter_tmp->role_type == RoleTypeEnum::general_admin)
+                    remove_stack.push(iter_tmp);
+					//role_entry->role_cond_vec.erase(iter_tmp);
 			}
-
+            while (remove_stack.size() > 0)
+            {
+                role_entry->role_cond_vec.erase(remove_stack.top());
+                remove_stack.pop();
+            }
 			role_entry->update_time = eval_state._current_state->now();
 			eval_state._current_state->store_role_entry(*role_entry);
 		}
