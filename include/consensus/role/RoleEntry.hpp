@@ -30,7 +30,15 @@ namespace cdcchain {
 			// statistic_pool
 			sub_statistic_pool = 3,
 			// arbitrator
-			sub_arbitrator = 4
+			sub_arbitrator = 4,
+			// merchant_alliance
+			sub_merchant_alliance = 11,
+			// mining_pool_alliance
+			sub_mining_pool_alliance = 12,
+			// statistic_pool_alliance
+			sub_statistic_pool_alliance = 13,
+			// arbitrator_committee
+			sub_arbitrator_committee = 14
 		};
 
 		class ChainInterface;
@@ -113,6 +121,18 @@ FC_REFLECT_ENUM(cdcchain::consensus::RoleTypeEnum,
 (general_admin)
 (contract_admin)
 (contract_operator)
+)
+
+FC_REFLECT_ENUM(cdcchain::consensus::RoleSubTypeEnum,
+(sub_none)
+(sub_merchant)
+(sub_mining_pool)
+(sub_statistic_pool)
+(sub_arbitrator)
+(sub_merchant_alliance)
+(sub_mining_pool_alliance)
+(sub_statistic_pool_alliance)
+(sub_arbitrator_committee)
 )
 
 FC_REFLECT(cdcchain::consensus::RoleCondition,
