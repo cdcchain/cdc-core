@@ -650,7 +650,7 @@ namespace cdcchain
 			*/
 
 			// 判断合约创建者角色 是否为管理员
-			oRoleEntry role_entry = eval_state._current_state->get_role_entry(Address(owner));
+			oRoleEntry role_entry = eval_state._current_state->get_role_entry(ContractIdType());
 			if (!role_entry.valid())
 				FC_CAPTURE_AND_THROW(is_not_general_admin, ("contract creator is not a general admin"));
 

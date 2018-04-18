@@ -95,7 +95,7 @@ namespace cdcchain {
 			oProposalEntry proposal_entry = eval_state._current_state->get_proposal_entry(proposal_id);
 			FC_ASSERT(proposal_entry.valid(), "can not find proposal entry");
 
-			FC_ASSERT(proposal_entry->expected_end_time < eval_state._current_state->now(), "this proposal is outmoded");
+			FC_ASSERT(proposal_entry->expected_end_time > eval_state._current_state->now(), "this proposal is outmoded");
 
 			oAccountEntry account_entry = eval_state._current_state->get_account_entry(approver);
 			FC_ASSERT(account_entry.valid(), "approver account must be registered account");
