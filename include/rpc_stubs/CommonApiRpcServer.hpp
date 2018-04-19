@@ -542,6 +542,15 @@ namespace cdcchain {
             fc::variant wallet_import_ethereum_private_key_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
             fc::variant wallet_import_ethereum_private_key_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
 
+            fc::variant wallet_transfer_to_address_build_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant wallet_transfer_to_address_build_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+            fc::variant wallet_transfer_to_contract_build_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant wallet_transfer_to_contract_build_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+            fc::variant sign_build_transaction_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant sign_build_transaction_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+            fc::variant broadcast_building_transaction_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters);
+            fc::variant broadcast_building_transaction_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters);
+
         };
 
     }

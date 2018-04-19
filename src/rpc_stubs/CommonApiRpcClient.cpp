@@ -1218,5 +1218,32 @@ namespace cdcchain {
             return result.as<std::string>();
         }
 
+        cdcchain::wallet::WalletTransactionEntry CommonApiRpcClient::wallet_transfer_to_address_build(const std::string& amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_address, const cdcchain::consensus::Imessage& memo_message /* = fc::json::from_string("\"\"").as<cdcchain::consensus::Imessage>() */, const cdcchain::wallet::VoteStrategy& strategy /* = fc::json::from_string("\"vote_none\"").as<cdcchain::wallet::VoteStrategy>() */)
+        {
+            fc::variant result = get_json_connection()->async_call("wallet_transfer_to_address_build", std::vector<fc::variant>{fc::variant(amount_to_transfer), fc::variant(asset_symbol), fc::variant(from_account_public_key), fc::variant(to_address), fc::variant(memo_message), fc::variant(strategy)}).wait();
+            return result.as<cdcchain::wallet::WalletTransactionEntry>();
+        }
+
+        cdcchain::wallet::WalletTransactionEntry CommonApiRpcClient::sign_build_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building)
+        {
+            fc::variant result = get_json_connection()->async_call("sign_build_transaction", std::vector<fc::variant>{fc::variant(trasaction_building)}).wait();
+            return result.as<cdcchain::wallet::WalletTransactionEntry>();
+        }
+
+        bool CommonApiRpcClient::broadcast_building_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building)
+        {
+            fc::variant result = get_json_connection()->async_call("broadcast_building_transaction", std::vector<fc::variant>{fc::variant(trasaction_building)}).wait();
+            return result.as<bool>();
+        }
+
+        cdcchain::wallet::WalletTransactionEntry CommonApiRpcClient::wallet_transfer_to_contract_build(double amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_contract, double amount_for_exec)
+        {
+            fc::variant result = get_json_connection()->async_call("wallet_transfer_to_contract_build", std::vector<fc::variant>{fc::variant(amount_to_transfer), fc::variant(asset_symbol), fc::variant(from_account_public_key), fc::variant(to_contract), fc::variant(amount_for_exec)}).wait();
+            return result.as<cdcchain::wallet::WalletTransactionEntry>();
+        }
+
+
+
+
     }
 } // end namespace cdcchain::rpc_stubs

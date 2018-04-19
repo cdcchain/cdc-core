@@ -3130,6 +3130,186 @@ namespace cdcchain {
 			return fc::variant();
 		}
 
+        fc::variant CommonApiRpcServer::wallet_transfer_to_address_build_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            // done checking prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (amount_to_transfer)");
+            std::string amount_to_transfer = parameters[0].as<std::string>();
+            if (parameters.size() <= 1)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 2 (asset_symbol)");
+            std::string asset_symbol = parameters[1].as<std::string>();
+            if (parameters.size() <= 2)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 3 (from_account_public_key)");
+            std::string from_account_public_key = parameters[2].as<std::string>();
+            if (parameters.size() <= 3)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 4 (to_address)");
+            std::string to_address = parameters[3].as<std::string>();
+            cdcchain::consensus::Imessage memo_message = (parameters.size() <= 4) ?
+                (fc::json::from_string("\"\"").as<cdcchain::consensus::Imessage>()) :
+                parameters[4].as<cdcchain::consensus::Imessage>();
+            cdcchain::wallet::VoteStrategy strategy = (parameters.size() <= 5) ?
+                (fc::json::from_string("\"vote_none\"").as<cdcchain::wallet::VoteStrategy>()) :
+                parameters[5].as<cdcchain::wallet::VoteStrategy>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->wallet_transfer_to_address_build(amount_to_transfer, asset_symbol, from_account_public_key, to_address, memo_message, strategy);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::wallet_transfer_to_address_build_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            // done checking prerequisites
+
+            if (!parameters.contains("amount_to_transfer"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'amount_to_transfer'");
+            std::string amount_to_transfer = parameters["amount_to_transfer"].as<std::string>();
+            if (!parameters.contains("asset_symbol"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'asset_symbol'");
+            std::string asset_symbol = parameters["asset_symbol"].as<std::string>();
+            if (!parameters.contains("from_account_public_key"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'from_account_public_key'");
+            std::string from_account_public_key = parameters["from_account_public_key"].as<std::string>();
+            if (!parameters.contains("to_address"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'to_address'");
+            std::string to_address = parameters["to_address"].as<std::string>();
+            cdcchain::consensus::Imessage memo_message = parameters.contains("memo_message") ?
+                (fc::json::from_string("\"\"").as<cdcchain::consensus::Imessage>()) :
+                parameters["memo_message"].as<cdcchain::consensus::Imessage>();
+            cdcchain::wallet::VoteStrategy strategy = parameters.contains("strategy") ?
+                (fc::json::from_string("\"vote_none\"").as<cdcchain::wallet::VoteStrategy>()) :
+                parameters["strategy"].as<cdcchain::wallet::VoteStrategy>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->wallet_transfer_to_address_build(amount_to_transfer, asset_symbol, from_account_public_key, to_address, memo_message, strategy);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::wallet_transfer_to_contract_build_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (amount_to_transfer)");
+            double amount_to_transfer = parameters[0].as<double>();
+            if (parameters.size() <= 1)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 2 (asset_symbol)");
+            std::string asset_symbol = parameters[1].as<std::string>();
+            if (parameters.size() <= 2)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 3 (from_account_public_key)");
+            std::string from_account_public_key = parameters[2].as<std::string>();
+            if (parameters.size() <= 3)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 4 (to_contract)");
+            std::string to_contract = parameters[3].as<std::string>();
+            if (parameters.size() <= 4)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 5 (amount_for_exec)");
+            double amount_for_exec = parameters[4].as<double>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->wallet_transfer_to_contract_build(amount_to_transfer, asset_symbol, from_account_public_key, to_contract, amount_for_exec);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::wallet_transfer_to_contract_build_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (!parameters.contains("amount_to_transfer"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'amount_to_transfer'");
+            double amount_to_transfer = parameters["amount_to_transfer"].as<double>();
+            if (!parameters.contains("asset_symbol"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'asset_symbol'");
+            std::string asset_symbol = parameters["asset_symbol"].as<std::string>();
+            if (!parameters.contains("from_account_public_key"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'from_account_public_key'");
+            std::string from_account_public_key = parameters["from_account_public_key"].as<std::string>();
+            if (!parameters.contains("to_contract"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'to_contract'");
+            std::string to_contract = parameters["to_contract"].as<std::string>();
+            if (!parameters.contains("amount_for_exec"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'amount_for_exec'");
+            double amount_for_exec = parameters["amount_for_exec"].as<double>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->wallet_transfer_to_contract_build(amount_to_transfer, asset_symbol, from_account_public_key, to_contract, amount_for_exec);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::sign_build_transaction_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (trasaction_building)");
+            cdcchain::wallet::WalletTransactionEntry trasaction_building = parameters[0].as<cdcchain::wallet::WalletTransactionEntry>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->sign_build_transaction(trasaction_building);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::sign_build_transaction_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (!parameters.contains("trasaction_building"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'trasaction_building'");
+            cdcchain::wallet::WalletTransactionEntry trasaction_building = parameters["trasaction_building"].as<cdcchain::wallet::WalletTransactionEntry>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->sign_build_transaction(trasaction_building);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::broadcast_building_transaction_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (trasaction_building)");
+            cdcchain::wallet::WalletTransactionEntry trasaction_building = parameters[0].as<cdcchain::wallet::WalletTransactionEntry>();
+
+            bool result = get_client()->broadcast_building_transaction(trasaction_building);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::broadcast_building_transaction_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            verify_wallet_is_unlocked();
+            // done checking prerequisites
+
+            if (!parameters.contains("trasaction_building"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'trasaction_building'");
+            cdcchain::wallet::WalletTransactionEntry trasaction_building = parameters["trasaction_building"].as<cdcchain::wallet::WalletTransactionEntry>();
+
+            bool result = get_client()->broadcast_building_transaction(trasaction_building);
+            return fc::variant(result);
+        }
+
 		fc::variant CommonApiRpcServer::wallet_account_register_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
 		{
 			// check all of this method's prerequisites
@@ -8827,6 +9007,39 @@ namespace cdcchain {
 				this, capture_con, _1);
 			json_connection->add_named_param_method("network_broadcast_transaction", bound_named_method);
 
+            // register method wallet_transfer_to_address_build
+            bound_positional_method = boost::bind(&CommonApiRpcServer::wallet_transfer_to_address_build_positional,
+                this, capture_con, _1);
+            json_connection->add_method("wallet_transfer_to_address_build", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::wallet_transfer_to_address_build_named,
+                this, capture_con, _1);
+            json_connection->add_named_param_method("wallet_transfer_to_address_build", bound_named_method);
+
+            // register method wallet_transfer_to_contract_build
+            bound_positional_method = boost::bind(&CommonApiRpcServer::wallet_transfer_to_contract_build_positional,
+                this, capture_con, _1);
+            json_connection->add_method("wallet_transfer_to_contract_build", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::wallet_transfer_to_contract_build_named,
+                this, capture_con, _1);
+            json_connection->add_named_param_method("wallet_transfer_to_contract_build", bound_named_method);
+
+            // register method sign_build_transaction
+            bound_positional_method = boost::bind(&CommonApiRpcServer::sign_build_transaction_positional,
+                this, capture_con, _1);
+            json_connection->add_method("sign_build_transaction", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::sign_build_transaction_named,
+                this, capture_con, _1);
+            json_connection->add_named_param_method("sign_build_transaction", bound_named_method);
+
+            // register method broadcast_building_transaction
+            bound_positional_method = boost::bind(&CommonApiRpcServer::broadcast_building_transaction_positional,
+                this, capture_con, _1);
+            json_connection->add_method("broadcast_building_transaction", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::broadcast_building_transaction_named,
+                this, capture_con, _1);
+            json_connection->add_named_param_method("broadcast_building_transaction", bound_named_method);
+
+
 			// register method network_set_advanced_node_parameters
 			bound_positional_method = boost::bind(&CommonApiRpcServer::network_set_advanced_node_parameters_positional,
 				this, capture_con, _1);
@@ -11163,6 +11376,71 @@ namespace cdcchain {
                     /* detailed description */ "set the vm enabled flag of normal node, no effect for the delegate\n\nParameters:\n  enabled (bool, required): vm enabled flag\n\nReturns:\n  void\n",
                     /* aliases */ {}, true};
                 store_method_metadata(blockchain_set_node_vm_enabled_method_metadata);
+            }
+
+            {
+                // register method wallet_transfer_to_address_build
+                cdcchain::api::MethodData wallet_transfer_to_address_build_method_metadata{ "wallet_transfer_to_address_build", nullptr,
+                    /* description */ "create a simple (non-TITAN) transfer to an address without signature",
+                    /* returns */ "transaction_entry",
+                    /* params: */{
+                        { "amount_to_transfer", "string", cdcchain::api::required_positional, fc::ovariant() },
+                { "asset_symbol", "asset_symbol", cdcchain::api::required_positional, fc::ovariant() },
+                { "from_account_public_key", "string", cdcchain::api::required_positional, fc::ovariant() },
+                { "to_address", "string", cdcchain::api::required_positional, fc::ovariant() },
+                { "memo_message", "information", cdcchain::api::optional_positional, fc::variant(fc::json::from_string("\"\"")) },
+                { "strategy", "vote_strategy", cdcchain::api::optional_positional, fc::variant(fc::json::from_string("\"vote_none\"")) }
+                },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 2,
+                    /* detailed description */ "create a simple (non-TITAN) transfer to an address without signature\n\nParameters:\n  amount_to_transfer (string, required): the amount of shares to transfer\n  asset_symbol (asset_symbol, required): the asset to transfer\n  from_account_public_key (string, required): the source account to draw the shares from\n  to_address (string, required): the address or pubkey to transfer to\n  memo_message (information, optional, defaults to \"\"): a memo to store with the transaction\n  strategy (vote_strategy, optional, defaults to \"vote_none\"): enumeration [vote_none | vote_all | vote_random | vote_recommended] \n\nReturns:\n  transaction_entry\n",
+                    /* aliases */{}, false };
+                store_method_metadata(wallet_transfer_to_address_build_method_metadata);
+            }
+
+            {
+            // register method wallet_transfer_to_contract_build
+            cdcchain::api::MethodData wallet_transfer_to_contract_build_method_metadata{ "wallet_transfer_to_contract_build", nullptr,
+                /* description */ "Do a simple transfer to a contract (name or address)",
+                /* returns */ "transaction_entry",
+                /* params: */{
+                    { "amount_to_transfer", "real_amount", cdcchain::api::required_positional, fc::ovariant() },
+            { "asset_symbol", "asset_symbol", cdcchain::api::required_positional, fc::ovariant() },
+            { "from_account_public_key", "string", cdcchain::api::required_positional, fc::ovariant() },
+            { "to_contract", "string", cdcchain::api::required_positional, fc::ovariant() },
+            { "amount_for_exec", "real_amount", cdcchain::api::required_positional, fc::ovariant() }
+            },
+                /* prerequisites */ (cdcchain::api::MethodPrerequisites) 4,
+                /* detailed description */ "Do a simple transfer to a contract (name or address)\n\nParameters:\n  amount_to_transfer (real_amount, required): the amount of shares to transfer\n  asset_symbol (asset_symbol, required): the asset to transfer\n  from_account_public_key (string, required): the source account public key to draw the shares from\n  to_contract (string, required): the contract name or contract address to transfer to\n  amount_for_exec (real_amount, required): the amount of shares to exec  on_deposit callback of target contract\n\nReturns:\n  transaction_entry\n",
+                /* aliases */{}, false };
+            store_method_metadata(wallet_transfer_to_contract_build_method_metadata);
+            }
+
+            {
+                // register method sign_build_transaction
+                cdcchain::api::MethodData sign_build_transaction_method_metadata{ "sign_build_transaction", nullptr,
+                    /* description */ "sign transaction which get from build interface",
+                    /* returns */ "transaction_entry",
+                    /* params: */{
+                        { "trasaction_building", "transaction_entry", cdcchain::api::required_positional, fc::ovariant() }
+                },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 4,
+                    /* detailed description */ "sign transaction which get from build interface\n\nParameters:\n  trasaction_building (transaction_entry, required): the transaction which get from build interface\n\nReturns:\n  transaction_entry\n",
+                    /* aliases */{}, false };
+                store_method_metadata(sign_build_transaction_method_metadata);
+            }
+
+            {
+                // register method broadcast_building_transaction
+                cdcchain::api::MethodData broadcast_building_transaction_method_metadata{ "broadcast_building_transaction", nullptr,
+                    /* description */ "broadcast signed transaction which get from build interface",
+                    /* returns */ "bool",
+                    /* params: */{
+                        { "trasaction_building", "transaction_entry", cdcchain::api::required_positional, fc::ovariant() }
+                },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 4,
+                    /* detailed description */ "broadcast signed transaction which get from build interface\n\nParameters:\n  trasaction_building (transaction_entry, required): the transaction which get from build interface\n\nReturns:\n  bool\n",
+                    /* aliases */{}, false };
+                store_method_metadata(broadcast_building_transaction_method_metadata);
             }
 
             {
@@ -14552,6 +14830,14 @@ namespace cdcchain {
                 return wallet_builder_get_multisig_detail_positional(nullptr, parameters);
             if (method_name == "wallet_builder_file_get_multisig_detail")
                 return wallet_builder_file_get_multisig_detail_positional(nullptr, parameters);
+            if (method_name == "wallet_transfer_to_address_build")
+                return wallet_transfer_to_address_build_positional(nullptr, parameters);
+            if (method_name == "wallet_transfer_to_contract_build")
+                return wallet_transfer_to_contract_build_positional(nullptr, parameters);
+            if (method_name == "sign_build_transaction")
+                return sign_build_transaction_positional(nullptr, parameters);
+            if (method_name == "broadcast_building_transaction")
+                return broadcast_building_transaction_positional(nullptr, parameters);
             if (method_name == "about")
                 return about_positional(nullptr, parameters);
             if (method_name == "get_info")

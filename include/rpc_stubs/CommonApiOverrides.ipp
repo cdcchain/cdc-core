@@ -269,4 +269,8 @@
             std::vector<cdcchain::consensus::Address> get_all_privilege_admin() const override;
             std::vector<cdcchain::consensus::Address> get_all_general_admin() const override;
 			std::string wallet_import_ethereum_private_key(const std::string& priv_key_str, const std::string& account_name = fc::json::from_string("null").as<std::string>(), bool create_new_account = fc::json::from_string("false").as<bool>(), bool rescan = fc::json::from_string("false").as<bool>()) override;
-
+			cdcchain::wallet::WalletTransactionEntry wallet_transfer_to_address_build(const std::string& amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_address, const cdcchain::consensus::Imessage& memo_message = fc::json::from_string("\"\"").as<cdcchain::consensus::Imessage>(), const cdcchain::wallet::VoteStrategy& strategy = fc::json::from_string("\"vote_none\"").as<cdcchain::wallet::VoteStrategy>()) override;
+			cdcchain::wallet::WalletTransactionEntry wallet_transfer_to_contract_build(double amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_contract, double amount_for_exec) override;
+			cdcchain::wallet::WalletTransactionEntry sign_build_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building) override;
+			bool broadcast_building_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building) override;
+			

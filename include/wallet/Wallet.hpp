@@ -125,6 +125,26 @@ namespace cdcchain {
             void    close();
 
 
+            void get_enough_balances_by_address(const string& account_public_key, const Asset target, std::map<BalanceIdType, ShareType>& balances, unordered_set<Address>& required_signatures);
+            bool analysis_require_signature(WalletTransactionEntry& trx_entry, unordered_set<Address>& require_signatures);
+
+            WalletTransactionEntry transfer_asset_to_address_without_signature(
+                const string& real_amount_to_transfer,
+                const string& amount_to_transfer_symbol,
+                const PublicKeyType& from_account_address,
+                const Address& to_address,
+                const string& memo_message,
+                VoteStrategy strategy,
+                bool sign,
+                const string& cdc_account = "");
+
+            cdcchain::wallet::WalletTransactionEntry transfer_asset_to_contract_without_signature(
+                double real_amount_to_transfer,
+                const string& amount_to_transfer_symbol,
+                const string& from_account_public_key_str,
+                const Address& to_contract_address,
+                double exec_cost,
+                bool is_testing = false);
 
             /************************************************************************/
             /*     add import ethereum private key functions                        */

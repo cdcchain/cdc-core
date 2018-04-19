@@ -2175,7 +2175,60 @@ namespace cdcchain {
             */
             virtual std::string wallet_import_ethereum_private_key(const std::string& priv_key_str, const std::string& account_name = fc::json::from_string("null").as<std::string>(), bool create_new_account = fc::json::from_string("false").as<bool>(), bool rescan = fc::json::from_string("false").as<bool>()) = 0;
 
-        };
+
+            /**
+            * create a simple (non-TITAN) transfer to an address without signature.
+            *
+            * @param amount_to_transfer the amount of shares to transfer (string, required)
+            * @param asset_symbol the asset to transfer (asset_symbol, required)
+            * @param from_account_public_key the source account to draw the shares from (string, required)
+            * @param to_address the address or pubkey to transfer to (string, required)
+            * @param memo_message a memo to store with the transaction (information, optional, defaults to "")
+            * @param strategy enumeration [vote_none | vote_all | vote_random | vote_recommended] (vote_strategy,
+            *                 optional, defaults to "vote_none")
+            *
+            * @return transaction_entry
+            */
+            virtual cdcchain::wallet::WalletTransactionEntry wallet_transfer_to_address_build(const std::string& amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_address, const cdcchain::consensus::Imessage& memo_message = fc::json::from_string("\"\"").as<cdcchain::consensus::Imessage>(), const cdcchain::wallet::VoteStrategy& strategy = fc::json::from_string("\"vote_none\"").as<cdcchain::wallet::VoteStrategy>()) = 0;
+            
+
+            /**
+            * Do a simple transfer to a contract (name or address).
+            *
+            * @param amount_to_transfer the amount of shares to transfer (real_amount, required)
+            * @param asset_symbol the asset to transfer (asset_symbol, required)
+            * @param from_account_public_key the source account public key to draw the shares from (string, required)
+            * @param to_contract the contract name or contract address to transfer to (string, required)
+            * @param amount_for_exec the amount of shares to exec on_deposit callback of target contract (real_amount,
+            *                        required)
+            *
+            * @return transaction_entry
+            */
+            virtual cdcchain::wallet::WalletTransactionEntry wallet_transfer_to_contract_build(double amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_contract, double amount_for_exec) = 0;
+
+
+
+            /**
+            * sign transaction which get from build interface.
+            *
+            * @param trasaction_building the transaction which get from build interface (transaction_entry, required)
+            *
+            * @return transaction_entry
+            */
+            virtual cdcchain::wallet::WalletTransactionEntry sign_build_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building) = 0;
+            /**
+            * broadcast signed transaction which get from build interface.
+            *
+            * @param trasaction_building the transaction which get from build interface (transaction_entry, required)
+            *
+            * @return bool
+            */
+            virtual bool broadcast_building_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building) = 0;
+            
+
+
+
+         };
 
     }
 } // end namespace cdcchain::api

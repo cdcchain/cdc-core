@@ -642,6 +642,61 @@ namespace cdcchain {
                 return entry;
 
             }
+
+
+            WalletTransactionEntry detail::ClientImpl::wallet_transfer_to_address_build(
+                const string& amount_to_transfer,
+                const string& asset_symbol,
+                const string& from_account_public_key,
+                const string& to_address,
+                const string& memo_message,
+                const VoteStrategy& strategy)
+            {
+                // set limit in  sandbox state
+                if (_chain_db->get_is_in_simulator())
+                    FC_THROW_EXCEPTION(simulator_command_forbidden, "in simulator, this command is forbidden, you cannot call it!");
+
+                string strToAccount;
+                string strSubAccount;
+                _wallet->accountsplit(to_address, strToAccount, strSubAccount);
+                Address effective_address;
+                if (Address::is_valid(strToAccount))
+                    effective_address = Address(strToAccount);
+                else
+                    effective_address = Address(PublicKeyType(strToAccount));
+                PublicKeyType from_public_key(from_account_public_key);
+                auto entry = _wallet->transfer_asset_to_address_without_signature(amount_to_transfer,
+                    asset_symbol,
+                    from_public_key,
+                    effective_address,
+                    memo_message,
+                    strategy,
+                    true,
+                    strSubAccount);
+
+
+                return entry;
+
+            }
+
+            WalletTransactionEntry detail::ClientImpl::sign_build_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building)
+            {
+                unordered_set<Address> require_signatures;
+                WalletTransactionEntry trx_entry = trasaction_building;
+                if (_wallet->analysis_require_signature(trx_entry, require_signatures))
+                    return trx_entry;
+                return trasaction_building;
+
+            }
+
+            bool  detail::ClientImpl::broadcast_building_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building)
+            {
+                WalletTransactionEntry trx_entry = trasaction_building;
+                _wallet->cache_transaction(trx_entry);
+                network_broadcast_transaction(trx_entry.trx);
+                return true;
+            }
+
 			
 			fc::variant_object detail::ClientImpl::wallet_builder_get_multisig_detail(const cdcchain::wallet::TransactionBuilder& transaction_builder) const
 			{

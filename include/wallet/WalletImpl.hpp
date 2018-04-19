@@ -226,6 +226,13 @@ namespace cdcchain {
                     SignedTransaction& trx,
                     unordered_set<Address>& required_signatures);
 
+                void withdraw_to_transaction_by_address(
+                    const Asset& amount_to_withdraw,
+                    const Address& from_account_name,
+                    SignedTransaction& trx,
+                    unordered_set<Address>& required_signatures
+                );
+
                 /**  authorize_update
                 *
                 * @param  required_signatures  unordered_set<Address>

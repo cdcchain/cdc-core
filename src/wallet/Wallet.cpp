@@ -258,6 +258,51 @@ namespace cdcchain {
                 } FC_CAPTURE_AND_RETHROW((amount_to_withdraw)(from_account_name)(trx)(required_signatures))
             }
 
+            
+            
+            void WalletImpl::withdraw_to_transaction_by_address(
+                const Asset& amount_to_withdraw,
+                const Address& from_account_address,
+                SignedTransaction& trx,
+                unordered_set<Address>& required_signatures
+            )
+            {
+                try {
+                    auto amount_remaining = amount_to_withdraw;
+
+                    auto all_balances = _blockchain->get_balances_for_address(from_account_address);
+
+                    for (auto iter = all_balances.begin(); iter != all_balances.end(); ++iter)
+                    {
+                        auto entry = iter->second;
+                        const Asset balance = entry.get_spendable_balance(_blockchain->get_pending_state()->now());
+                        if (balance.amount <= 0 || balance.asset_id != amount_remaining.asset_id)
+                            continue;
+
+                        const auto owner = entry.owner();
+                        if (!owner.valid())
+                            continue;
+
+                        if (amount_remaining.amount > balance.amount)
+                        {
+                            trx.withdraw(entry.id(), balance.amount);
+                            required_signatures.insert(*owner);
+                            amount_remaining -= balance;
+                        }
+                        else
+                        {
+                            trx.withdraw(entry.id(), amount_remaining.amount);
+                            required_signatures.insert(*owner);
+                            return;
+                        }
+                    }
+
+                    const string required = _blockchain->to_pretty_asset(amount_to_withdraw);
+                    const string available = _blockchain->to_pretty_asset(amount_to_withdraw - amount_remaining);
+                    FC_CAPTURE_AND_THROW(insufficient_funds, (required)(available)(all_balances));
+                } FC_CAPTURE_AND_RETHROW((amount_to_withdraw)(from_account_address)(trx)(required_signatures))
+            }
+            
             // TODO: What about retracted accounts?
             void WalletImpl::authorize_update(unordered_set<Address>& required_signatures, oAccountEntry account, bool need_owner_key)
             {
@@ -3101,6 +3146,310 @@ namespace cdcchain {
             trans_entry.trx = trx;
             return trans_entry;
         }
+
+        void Wallet::get_enough_balances_by_address(const string& account_public_key, const Asset target, std::map<BalanceIdType, ShareType>& balances, unordered_set<Address>& required_signatures)
+        {
+            try {
+                auto user_public_key = PublicKeyType(account_public_key);
+                auto amount_remaining = target;
+
+                auto all_balances = my->_blockchain->get_balances_for_address((Address)user_public_key);
+
+                for (auto iter = all_balances.begin(); iter != all_balances.end(); ++iter)
+                {
+                    auto entry = iter->second;
+                    const Asset balance = entry.get_spendable_balance(my->_blockchain->get_pending_state()->now());
+                    if (balance.amount <= 0 || balance.asset_id != amount_remaining.asset_id)
+                        continue;
+
+                    const auto owner = entry.owner();
+                    if (!owner.valid())
+                        continue;
+
+                    if (amount_remaining.amount > balance.amount)
+                    {
+
+                        balances.insert(std::make_pair(entry.id(), balance.amount));
+                        required_signatures.insert(*owner);
+                        amount_remaining -= balance;
+                    }
+                    else
+                    {
+                        balances.insert(std::make_pair(entry.id(), amount_remaining.amount));
+                        required_signatures.insert(*owner);
+                        return;
+                    }
+                }
+                const string required = my->_blockchain->to_pretty_asset(target);
+                const string available = my->_blockchain->to_pretty_asset(target - amount_remaining);
+                FC_CAPTURE_AND_THROW(insufficient_funds, (required)(available)(all_balances));
+
+
+            }FC_CAPTURE_AND_RETHROW((account_public_key)(target)(balances)(required_signatures))
+        }
+
+        bool Wallet::analysis_require_signature(WalletTransactionEntry& trx_entry, unordered_set<Address>& require_signatures)
+        {
+
+            for (const auto& op : trx_entry.trx.operations)
+            {
+                if (op.type.value == withdraw_op_type)
+                {
+                    auto withdraw_op = op.as<WithdrawOperation>();
+
+                    oBalanceEntry current_balance_entry = my->_blockchain->get_balance_entry(withdraw_op.balance_id);
+                    if (!current_balance_entry.valid())
+                        return false;
+                    for (auto owner : current_balance_entry->owners())
+                        require_signatures.emplace(owner);
+                }
+                else if (op.type.value == withdraw_pay_op_type)
+                {
+                    auto withdraw_pay_op = op.as<WithdrawPayOperation>();
+                    const AccountIdType account_id = abs(withdraw_pay_op.account_id);
+                    oAccountEntry account = my->_blockchain->get_account_entry(account_id);
+                    if (!account.valid())
+                        return false;
+
+                    if (!account->is_delegate())
+                        return false;
+                    require_signatures.emplace(account->owner_address());
+
+                }
+                else if (op.type.value == contract_register_op_type || op.type.value == contract_call_op_type || op.type.value == transfer_contract_op_type
+                    || op.type.value == contract_upgrade_op_type || op.type.value == contract_destroy_op_type)
+                {
+                    std::map<BalanceIdType, ShareType> balances;
+                    if (op.type.value == contract_register_op_type)
+                    {
+                        auto register_contract_op = op.as<RegisterContractOperation>();
+                        balances = register_contract_op.balances;
+                    }
+                    else if (op.type.value == contract_call_op_type)
+                    {
+                        auto call_contract_op = op.as<CallContractOperation>();
+                        balances = call_contract_op.balances;
+                    }
+                    else if (op.type.value == transfer_contract_op_type)
+                    {
+                        auto transfer_contract_op = op.as<TransferContractOperation>();
+                        balances = transfer_contract_op.balances;
+                    }
+                    else if (op.type.value == contract_upgrade_op_type)
+                    {
+                        auto upgrade_contract_op = op.as<UpgradeContractOperation>();
+                        balances = upgrade_contract_op.balances;
+                    }
+                    else if (op.type.value == contract_destroy_op_type)
+                    {
+                        auto destroy_contract_op = op.as<DestroyContractOperation>();
+                        balances = destroy_contract_op.balances;
+                    }
+
+                    for (const auto& balance : balances)
+                    {
+                        oBalanceEntry current_balance_entry = my->_blockchain->get_balance_entry(balance.first);
+                        if (!current_balance_entry.valid())
+                            return false;
+                        for (auto owner : current_balance_entry->owners())
+                            require_signatures.emplace(owner);
+                    }
+                }
+            }
+            try {
+                my->sign_transaction(trx_entry.trx, require_signatures);
+                return true;
+            }
+            catch (...)
+            {
+                return false;
+            }
+
+
+
+
+        }
+
+        cdcchain::wallet::WalletTransactionEntry Wallet::transfer_asset_to_contract_without_signature(
+            double real_amount_to_transfer,
+            const string& amount_to_transfer_symbol,
+            const string& from_account_public_key_str,
+            const Address& to_contract_address,
+            double exec_cost,
+            bool is_testing)
+        {
+            try {
+
+                ChainInterfacePtr data_ptr = get_correct_state_ptr();
+
+                FC_ASSERT(exec_cost >= 0, "exec_cost should greater or equal than 0");
+                FC_ASSERT(is_open(), "Wallet not open!");
+                FC_ASSERT(is_unlocked(), "Wallet not unlock!");
+                FC_ASSERT(amount_to_transfer_symbol == CDC_BLOCKCHAIN_SYMBOL, "Asset symbol should be HSR");
+                FC_ASSERT(data_ptr->is_valid_symbol(amount_to_transfer_symbol), "Invalid asset symbol");
+
+                PublicKeyType  sender_public_key = get_owner_public_key(from_account_public_key_str);
+                const auto asset_rec = data_ptr->get_asset_entry(amount_to_transfer_symbol);
+                FC_ASSERT(asset_rec.valid(), "Asset not exist!");
+                const auto asset_id = asset_rec->id;
+                FC_ASSERT(asset_id == 0, "Asset symbol should be HSR");
+                const int64_t precision = asset_rec->precision ? asset_rec->precision : 1;
+                //ShareType amount_to_transfer = real_amount_to_transfer * precision;
+                //Asset asset_to_transfer(amount_to_transfer, asset_id);
+                FC_ASSERT(real_amount_to_transfer >= 1.0 / precision, "transfer amount must bigger than 0");
+                Asset asset_to_transfer = to_asset(asset_rec->id, precision, real_amount_to_transfer);
+
+                //ShareType amount_for_exec = exec_cost * precision;
+                //Asset asset_for_exec(amount_for_exec, asset_id);
+                Asset asset_for_exec = to_asset(asset_rec->id, precision, exec_cost);
+
+
+                Address        sender_account_address = Address(sender_public_key);
+
+                SignedTransaction     trx;
+                unordered_set<Address> required_signatures;
+
+                const auto required_fees = get_transaction_fee(asset_to_transfer.asset_id);
+                map<BalanceIdType, ShareType> balances;
+
+                if (!is_testing)
+                {
+                    get_enough_balances_by_address(from_account_public_key_str, required_fees + asset_to_transfer + asset_for_exec, balances, required_signatures);
+                }
+                else
+                    required_signatures.insert(sender_account_address);
+
+                my->transfer_to_contract_trx(trx, to_contract_address, asset_to_transfer, asset_for_exec, required_fees, sender_public_key, balances);
+                //trx.deposit_to_contract(to_contract_address, asset_to_transfer);
+                trx.expiration = consensus::now() + get_transaction_expiration();
+
+                auto entry = LedgerEntry();
+                entry.from_account = sender_public_key;
+                entry.amount = asset_to_transfer;
+
+                auto trans_entry = WalletTransactionEntry();
+                trans_entry.entry_id = trx.id();
+                trans_entry.ledger_entries.push_back(entry);
+                trans_entry.fee = required_fees;
+                trans_entry.extra_addresses.push_back(to_contract_address);
+                trans_entry.trx = trx;
+                return trans_entry;
+            } FC_CAPTURE_AND_RETHROW((real_amount_to_transfer)(amount_to_transfer_symbol)(from_account_public_key_str)(to_contract_address))
+        }
+
+        WalletTransactionEntry Wallet::transfer_asset_to_address_without_signature(
+            const string& real_amount_to_transfer,
+            const string& amount_to_transfer_symbol,
+            const PublicKeyType& from_account_public_key,
+            const Address& to_address,
+            const string& memo_message,
+            VoteStrategy strategy,
+            bool sign,
+            const string& cdc_account)
+        {
+            try {
+                FC_ASSERT(my->_blockchain->is_valid_symbol(amount_to_transfer_symbol), "Invalid asset symbol");
+
+                const auto asset_rec = my->_blockchain->get_asset_entry(amount_to_transfer_symbol);
+                FC_ASSERT(asset_rec.valid(), "Asset not exist!");
+                const auto asset_id = asset_rec->id;
+
+                const int64_t precision = asset_rec->precision ? asset_rec->precision : 1;
+                FC_ASSERT(utilities::isNumber(real_amount_to_transfer), "inputed amount is not a number");
+                auto ipos = real_amount_to_transfer.find(".");
+                if (ipos != string::npos)
+                {
+                    string str = real_amount_to_transfer.substr(ipos + 1);
+                    int64_t precision_input = static_cast<int64_t>(pow(10, str.size()));
+                    FC_ASSERT((precision_input <= precision), "Precision is not correct");
+                }
+                double dAmountToTransfer = std::stod(real_amount_to_transfer);
+                ShareType amount_to_transfer = static_cast<ShareType>(floor(dAmountToTransfer * precision + 0.5));
+                Asset asset_to_transfer(amount_to_transfer, asset_id);
+
+                PublicKeyType sender_public_key = from_account_public_key;
+                Address          sender_account_address = (Address)sender_public_key;
+
+                SignedTransaction     trx;
+                unordered_set<Address> required_signatures;
+                if (cdc_account != "")
+                {
+                    //trx.from_account = from_account_name;
+                    trx.cdc_account = cdc_account;
+                    trx.cdc_inport_asset = asset_to_transfer;
+                }
+                // 	  if (memo_message != "")
+                // 	  {
+                // 		  trx.AddtionImessage(memo_message);
+                // 	  }
+                const auto required_fees = get_transaction_fee(asset_to_transfer.asset_id);
+                const auto required_imessage_fee = get_transaction_imessage_fee(memo_message);
+                if (required_fees.asset_id == asset_to_transfer.asset_id)
+                {
+                    my->withdraw_to_transaction_by_address(required_fees + asset_to_transfer + required_imessage_fee,
+                        sender_account_address,
+                        trx,
+                        required_signatures);
+                }
+                else
+                {
+                    my->withdraw_to_transaction_by_address(asset_to_transfer,
+                        sender_account_address,
+                        trx,
+                        required_signatures);
+
+                    my->withdraw_to_transaction_by_address(required_fees + required_imessage_fee,
+                        sender_account_address,
+                        trx,
+                        required_signatures);
+                }
+
+                trx.deposit(to_address, asset_to_transfer);
+                trx.expiration = consensus::now() + get_transaction_expiration();
+                my->set_delegate_slate(trx, strategy);
+
+                //       if( sign )
+                //           my->sign_transaction( trx, required_signatures );
+
+                auto entry = LedgerEntry();
+                entry.from_account = sender_public_key;
+                entry.amount = asset_to_transfer;
+                if (memo_message != "")
+                {
+                    entry.memo = memo_message;
+                    trx.AddtionImessage(memo_message);
+                    //AddtionImessage(memo_message);
+                }
+                else
+                    entry.memo = "To: " + string(to_address).substr(0, 8) + "...";
+                /*if (sign)
+                my->sign_transaction(trx, required_signatures);*/
+                try
+                {
+                    auto account_rec = my->_blockchain->get_account_entry(to_address);
+                    if (account_rec.valid()) {
+                        entry.to_account = account_rec->owner_key;
+                    }
+                    else {
+                        auto acc_rec = get_account_for_address(to_address);
+                        if (acc_rec.valid()) {
+                            entry.to_account = acc_rec->owner_key;
+                        }
+                    }
+                }
+                catch (...)
+                {
+                }
+                auto trans_entry = WalletTransactionEntry();
+                trans_entry.ledger_entries.push_back(entry);
+                trans_entry.fee = required_fees + required_imessage_fee;
+                trans_entry.extra_addresses.push_back(to_address);
+                trans_entry.trx = trx;
+                return trans_entry;
+            } FC_CAPTURE_AND_RETHROW((real_amount_to_transfer)(amount_to_transfer_symbol)(from_account_public_key)(to_address)(memo_message))
+        }
+
+
 
         std::vector<cdcchain::consensus::Asset> Wallet::contract_register_testing(const string& owner, const fc::path codefile)
         {

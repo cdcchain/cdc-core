@@ -558,6 +558,29 @@ namespace cdcchain {
                 return entry;
             }
 
+            WalletTransactionEntry detail::ClientImpl::wallet_transfer_to_contract_build(
+                double amount_to_transfer,
+                const string& asset_symbol,
+                const string& from_account_public_key,
+                const string& to_contract, double amount_for_exec)
+            {
+                // set limit in  sandbox state
+                if (_chain_db->get_is_in_simulator())
+                    FC_THROW_EXCEPTION(simulator_command_forbidden, "in sandbox, this command is forbidden, you cannot call it!");
+
+                Address contract_address;
+
+                contract_address = get_contract_address(to_contract);
+
+                auto entry = _wallet->transfer_asset_to_contract_without_signature(amount_to_transfer,
+                    asset_symbol,
+                    from_account_public_key,
+                    contract_address, amount_for_exec,
+                    true);
+                return entry;
+            }
+
+
             std::vector<cdcchain::consensus::Asset> ClientImpl::wallet_transfer_to_contract_testing(
                 double amount_to_transfer,
                 const string& asset_symbol,

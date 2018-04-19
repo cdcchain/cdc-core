@@ -7495,5 +7495,130 @@ namespace cdcchain {
             FC_RETHROW_EXCEPTIONS(warn, "")
         }
 
+        cdcchain::wallet::WalletTransactionEntry CommonApiClient::wallet_transfer_to_address_build(const std::string& amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_address, const cdcchain::consensus::Imessage& memo_message /* = fc::json::from_string("\"\"").as<cdcchain::consensus::Imessage>() */, const cdcchain::wallet::VoteStrategy& strategy /* = fc::json::from_string("\"vote_none\"").as<cdcchain::wallet::VoteStrategy>() */)
+        {
+            ilog("received RPC call: wallet_transfer_to_address_build(${amount_to_transfer}, ${asset_symbol}, ${from_account_public_key}, ${to_address}, ${memo_message}, ${strategy})", ("amount_to_transfer", amount_to_transfer)("asset_symbol", asset_symbol)("from_account_public_key", from_account_public_key)("to_address", to_address)("memo_message", memo_message)("strategy", strategy));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if (glog != NULL)
+            {
+                args.push_back(fc::variant(amount_to_transfer));
+                args.push_back(fc::variant(asset_symbol));
+                args.push_back(fc::variant(from_account_public_key));
+                args.push_back(fc::variant(to_address));
+                args.push_back(fc::variant(memo_message));
+                args.push_back(fc::variant(strategy));
+                call_id = glog->log_call_started(this, "wallet_transfer_to_address_build", args);
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call wallet_transfer_to_address_build finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                cdcchain::wallet::WalletTransactionEntry result = get_impl()->wallet_transfer_to_address_build(amount_to_transfer, asset_symbol, from_account_public_key, to_address, memo_message, strategy);
+                if (call_id != 0)
+                    glog->log_call_finished(call_id, this, "wallet_transfer_to_address_build", args, fc::variant(result));
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
+        cdcchain::wallet::WalletTransactionEntry CommonApiClient::wallet_transfer_to_contract_build(double amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_contract, double amount_for_exec)
+        {
+            ilog("received RPC call: wallet_transfer_to_contract_build(${amount_to_transfer}, ${asset_symbol}, ${from_account_public_key}, ${to_contract}, ${amount_for_exec})", ("amount_to_transfer", amount_to_transfer)("asset_symbol", asset_symbol)("from_account_public_key", from_account_public_key)("to_contract", to_contract)("amount_for_exec", amount_for_exec));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if (glog != NULL)
+            {
+                args.push_back(fc::variant(amount_to_transfer));
+                args.push_back(fc::variant(asset_symbol));
+                args.push_back(fc::variant(from_account_public_key));
+                args.push_back(fc::variant(to_contract));
+                args.push_back(fc::variant(amount_for_exec));
+                call_id = glog->log_call_started(this, "wallet_transfer_to_contract_build", args);
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call wallet_transfer_to_contract_build finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                cdcchain::wallet::WalletTransactionEntry result = get_impl()->wallet_transfer_to_contract_build(amount_to_transfer, asset_symbol, from_account_public_key, to_contract, amount_for_exec);
+                if (call_id != 0)
+                    glog->log_call_finished(call_id, this, "wallet_transfer_to_contract_build", args, fc::variant(result));
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
+        cdcchain::wallet::WalletTransactionEntry CommonApiClient::sign_build_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building)
+        {
+            ilog("received RPC call: sign_build_transaction(${trasaction_building})", ("trasaction_building", trasaction_building));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if (glog != NULL)
+            {
+                args.push_back(fc::variant(trasaction_building));
+                call_id = glog->log_call_started(this, "sign_build_transaction", args);
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call sign_build_transaction finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                cdcchain::wallet::WalletTransactionEntry result = get_impl()->sign_build_transaction(trasaction_building);
+                if (call_id != 0)
+                    glog->log_call_finished(call_id, this, "sign_build_transaction", args, fc::variant(result));
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
+        bool CommonApiClient::broadcast_building_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building)
+        {
+            ilog("received RPC call: broadcast_building_transaction(${trasaction_building})", ("trasaction_building", trasaction_building));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if (glog != NULL)
+            {
+                args.push_back(fc::variant(trasaction_building));
+                call_id = glog->log_call_started(this, "broadcast_building_transaction", args);
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call broadcast_building_transaction finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                bool result = get_impl()->broadcast_building_transaction(trasaction_building);
+                if (call_id != 0)
+                    glog->log_call_finished(call_id, this, "broadcast_building_transaction", args, fc::variant(result));
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
     }
 } // end namespace cdcchain::rpc_stubs
