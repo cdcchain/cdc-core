@@ -501,6 +501,7 @@ namespace cdcchain {
                                 summary.block_position = pretty_contract_trx.block_position;
                                 summary.trx_type = pretty_contract_trx.trx_type;
                                 summary.contract_address = pretty_contract_trx.to_contract_ledger_entry.to_account;
+								summary.is_completed = pretty_contract_trx.is_completed;
 
                                 if (summary.trx_type == cdcchain::consensus::TransactionType::contract_call_transaction)
                                 {
