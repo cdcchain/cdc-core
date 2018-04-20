@@ -101,6 +101,7 @@ namespace cdcchain {
             std::string             contract_address;
             std::string             method;
             std::string             params;
+			bool					is_completed;
         };
         struct PrettyReserveBalance
         {
@@ -198,6 +199,7 @@ FC_REFLECT(cdcchain::wallet::ContractTransactionSummary,
 (contract_address)
 (method)
 (params)
+(is_completed)
 )
 FC_REFLECT(cdcchain::wallet::PrettyReserveBalance,
 (balance_id)
