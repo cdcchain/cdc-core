@@ -580,6 +580,30 @@ namespace cdcchain {
                 return entry;
             }
 
+            WalletTransactionEntry detail::ClientImpl::wallet_call_contract_build(
+                const std::string& contract,
+                const std::string& caller_publickey,
+                const std::string& function_name,
+                const std::string& params,
+                const std::string& asset_symbol,
+                const fc::optional<double>& call_limit
+            )
+            {
+                // set limit in  sandbox state
+                if (_chain_db->get_is_in_simulator())
+                    FC_THROW_EXCEPTION(simulator_command_forbidden, "in sandbox, this command is forbidden, you cannot call it!");
+
+                Address contract_address;
+
+                contract_address = get_contract_address(contract);
+
+                auto  entry = _wallet->contract_call_without_signature(caller_publickey, contract_address, function_name, params, asset_symbol, *call_limit);
+
+                return entry;
+            }
+
+
+
 
             std::vector<cdcchain::consensus::Asset> ClientImpl::wallet_transfer_to_contract_testing(
                 double amount_to_transfer,

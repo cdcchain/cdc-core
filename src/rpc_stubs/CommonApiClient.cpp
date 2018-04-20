@@ -7562,6 +7562,41 @@ namespace cdcchain {
             FC_RETHROW_EXCEPTIONS(warn, "")
         }
 
+        cdcchain::wallet::WalletTransactionEntry CommonApiClient::wallet_call_contract_build(const std::string& contract, const std::string& caller_publickey, const std::string& function_name, const std::string& params, const std::string& asset_symbol, const fc::optional<double>& call_limit)
+        {
+            ilog("received RPC call: wallet_call_contract_build(${contract}, ${caller_publickey}, ${function_name}, ${params}, ${asset_symbol}, ${call_limit})", ("contract", contract)("caller_publickey", caller_publickey)("function_name", function_name)("params", params)("asset_symbol", asset_symbol)("call_limit", call_limit));
+            cdcchain::api::GlobalApiLogger* glog = cdcchain::api::GlobalApiLogger::get_instance();
+            uint64_t call_id = 0;
+            fc::variants args;
+            if (glog != NULL)
+            {
+                args.push_back(fc::variant(contract));
+                args.push_back(fc::variant(caller_publickey));
+                args.push_back(fc::variant(function_name));
+                args.push_back(fc::variant(params));
+                args.push_back(fc::variant(asset_symbol));
+                args.push_back(fc::variant(call_limit));
+                call_id = glog->log_call_started(this, "wallet_call_contract_build", args);
+            }
+
+            struct scope_exit
+            {
+                fc::time_point start_time;
+                scope_exit() : start_time(fc::time_point::now()) {}
+                ~scope_exit() { dlog("RPC call wallet_call_contract_build finished in ${time} ms", ("time", (fc::time_point::now() - start_time).count() / 1000)); }
+            } execution_time_logger;
+            try
+            {
+                cdcchain::wallet::WalletTransactionEntry result = get_impl()->wallet_call_contract_build(contract, caller_publickey, function_name, params, asset_symbol, call_limit);
+                if (call_id != 0)
+                    glog->log_call_finished(call_id, this, "wallet_call_contract_build", args, fc::variant(result));
+
+                return result;
+            }
+            FC_RETHROW_EXCEPTIONS(warn, "")
+        }
+
+
         cdcchain::wallet::WalletTransactionEntry CommonApiClient::sign_build_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building)
         {
             ilog("received RPC call: sign_build_transaction(${trasaction_building})", ("trasaction_building", trasaction_building));

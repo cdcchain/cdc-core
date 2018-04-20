@@ -3493,6 +3493,60 @@ namespace cdcchain {
             return asset_vec;
         }
 
+        WalletTransactionEntry Wallet::contract_call_without_signature(const string caller_publickey, const ContractIdType contract, const string method, const string& arguments, const string& asset_symbol, double cost_limit, bool is_testing)
+        {
+            ChainInterfacePtr data_ptr = get_correct_state_ptr();
+
+            if (arguments.length() > CONTRACT_PARAM_MAX_LEN)
+                FC_CAPTURE_AND_THROW(contract_parameter_length_over_limit, ("the parameter length of contract function is over limit"));
+            if (CallContractOperation::is_function_not_allow_call(method))
+            {
+                FC_CAPTURE_AND_THROW(method_can_not_be_called_explicitly, (method)("method can't be called explicitly !"));
+            }
+
+            FC_ASSERT(cost_limit > 0, "cost_limit should greater than 0");
+            FC_ASSERT(is_open(), "Wallet not open!");
+            FC_ASSERT(data_ptr->is_valid_symbol(asset_symbol), "Invalid asset symbol");
+            FC_ASSERT(asset_symbol == CDC_BLOCKCHAIN_SYMBOL, "asset_symbol must be CDC");
+
+            const auto asset_rec = data_ptr->get_asset_entry(asset_symbol);
+            FC_ASSERT(asset_rec.valid(), "Asset not exist!");
+            FC_ASSERT(asset_rec->id == 0, "asset_symbol must be GDW");
+
+            const auto asset_id = asset_rec->id;
+            const int64_t precision = asset_rec->precision ? asset_rec->precision : 1;
+            //ShareType amount_limit = cost_limit * precision;
+            //Asset asset_limit(amount_limit, asset_id);
+            Asset asset_limit = to_asset(asset_rec->id, precision, cost_limit);
+            SignedTransaction     trx;
+            unordered_set<Address> required_signatures;
+
+            PublicKeyType  caller_public_key(caller_publickey);
+            Address        caller_address = Address(caller_public_key);
+
+            Asset fee = get_transaction_fee(asset_limit.asset_id);
+
+            map<BalanceIdType, ShareType> balances;
+
+            if (!is_testing)
+            {
+                get_enough_balances_by_address(caller_publickey, asset_limit + fee, balances, required_signatures);
+            }
+            else
+                required_signatures.insert(caller_address);
+
+            trx.contract_call(contract, method, arguments, caller_public_key, asset_limit, fee, balances);//插入合约调用op
+            FC_ASSERT(fee.asset_id == 0, "register fee must be GDW");
+            trx.expiration = cdcchain::consensus::now() + get_transaction_expiration();
+
+            auto trans_entry = WalletTransactionEntry();
+            trans_entry.fee = fee;
+            trans_entry.trx = trx;
+            trans_entry.entry_id = trx.id();
+            return trans_entry;
+
+        }
+
 		cdcchain::wallet::WalletTransactionEntry Wallet::contract_call(const string caller, const ContractIdType contract, const string method, const string& arguments, const string& asset_symbol, double cost_limit, bool is_testing)
 		{
 			ChainInterfacePtr data_ptr = get_correct_state_ptr();

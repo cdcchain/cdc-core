@@ -1224,6 +1224,12 @@ namespace cdcchain {
             return result.as<cdcchain::wallet::WalletTransactionEntry>();
         }
 
+        cdcchain::wallet::WalletTransactionEntry CommonApiRpcClient::wallet_call_contract_build(const std::string& contract, const std::string& caller_publickey, const std::string& function_name, const std::string& params, const std::string& asset_symbol, const fc::optional<double>& call_limit)
+        {
+            fc::variant result = get_json_connection()->async_call("wallet_call_contract_build", std::vector<fc::variant>{fc::variant(contract), fc::variant(caller_publickey), fc::variant(function_name), fc::variant(params), fc::variant(asset_symbol), fc::variant(call_limit)}).wait();
+            return result.as<cdcchain::wallet::WalletTransactionEntry>();
+        }
+
         cdcchain::wallet::WalletTransactionEntry CommonApiRpcClient::sign_build_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building)
         {
             fc::variant result = get_json_connection()->async_call("sign_build_transaction", std::vector<fc::variant>{fc::variant(trasaction_building)}).wait();

@@ -1669,6 +1669,7 @@ namespace cdcchain {
             std::vector<cdcchain::consensus::Asset> contract_register_testing(const string& owner, const fc::path codefile);
 
             WalletTransactionEntry contract_call(const string caller, const ContractIdType contract, const string method, const string& arguments, const string& asset_symbol, double cost_limit, bool is_testing = false);
+            WalletTransactionEntry contract_call_without_signature(const string caller_public_key, const ContractIdType contract, const string method, const string& arguments, const string& asset_symbol, double cost_limit, bool is_testing = false);
             std::vector<cdcchain::consensus::Asset> contract_call_testing(const string caller, const ContractIdType contract, const string method, const string& arguments);
             std::string contract_call_offline(const string caller, const ContractIdType contract, const string method, const string& arguments);
 

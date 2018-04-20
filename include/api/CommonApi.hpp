@@ -2206,6 +2206,19 @@ namespace cdcchain {
             */
             virtual cdcchain::wallet::WalletTransactionEntry wallet_transfer_to_contract_build(double amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_contract, double amount_for_exec) = 0;
 
+            /**
+            * call contract by contract name or contract address without signature.
+            *
+            * @param contract contract name or contract address need to be called (string, required)
+            * @param caller_publickey caller public key (string, required)
+            * @param function_name function in contract (string, required)
+            * @param params parameters which would be passed to function (string, required)
+            * @param asset_symbol symbol of asset used to call (string, required)
+            * @param call_limit the limit of asset amount used to call contract (optional_double, required)
+            *
+            * @return transaction_entry
+            */
+            virtual cdcchain::wallet::WalletTransactionEntry wallet_call_contract_build(const std::string& contract, const std::string& caller_publickey, const std::string& function_name, const std::string& params, const std::string& asset_symbol, const fc::optional<double>& call_limit) = 0;
 
 
             /**

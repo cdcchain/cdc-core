@@ -3195,7 +3195,6 @@ namespace cdcchain {
             // check all of this method's prerequisites
             verify_json_connection_is_authenticated(json_connection);
             verify_wallet_is_open();
-            verify_wallet_is_unlocked();
             // done checking prerequisites
 
             if (parameters.size() <= 0)
@@ -3223,7 +3222,6 @@ namespace cdcchain {
             // check all of this method's prerequisites
             verify_json_connection_is_authenticated(json_connection);
             verify_wallet_is_open();
-            verify_wallet_is_unlocked();
             // done checking prerequisites
 
             if (!parameters.contains("amount_to_transfer"))
@@ -3243,6 +3241,66 @@ namespace cdcchain {
             double amount_for_exec = parameters["amount_for_exec"].as<double>();
 
             cdcchain::wallet::WalletTransactionEntry result = get_client()->wallet_transfer_to_contract_build(amount_to_transfer, asset_symbol, from_account_public_key, to_contract, amount_for_exec);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::wallet_call_contract_build_positional(fc::rpc::json_connection* json_connection, const fc::variants& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            // done checking prerequisites
+
+            if (parameters.size() <= 0)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 1 (contract)");
+            std::string contract = parameters[0].as<std::string>();
+            if (parameters.size() <= 1)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 2 (caller_publickey)");
+            std::string caller_publickey = parameters[1].as<std::string>();
+            if (parameters.size() <= 2)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 3 (function_name)");
+            std::string function_name = parameters[2].as<std::string>();
+            if (parameters.size() <= 3)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 4 (params)");
+            std::string params = parameters[3].as<std::string>();
+            if (parameters.size() <= 4)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 5 (asset_symbol)");
+            std::string asset_symbol = parameters[4].as<std::string>();
+            if (parameters.size() <= 5)
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 6 (call_limit)");
+            fc::optional<double> call_limit = parameters[5].as<fc::optional<double>>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->wallet_call_contract_build(contract, caller_publickey, function_name, params, asset_symbol, call_limit);
+            return fc::variant(result);
+        }
+
+        fc::variant CommonApiRpcServer::wallet_call_contract_build_named(fc::rpc::json_connection* json_connection, const fc::variant_object& parameters)
+        {
+            // check all of this method's prerequisites
+            verify_json_connection_is_authenticated(json_connection);
+            verify_wallet_is_open();
+            // done checking prerequisites
+
+            if (!parameters.contains("contract"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'contract'");
+            std::string contract = parameters["contract"].as<std::string>();
+            if (!parameters.contains("caller_publickey"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'caller_publickey'");
+            std::string caller_publickey = parameters["caller_publickey"].as<std::string>();
+            if (!parameters.contains("function_name"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'function_name'");
+            std::string function_name = parameters["function_name"].as<std::string>();
+            if (!parameters.contains("params"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'params'");
+            std::string params = parameters["params"].as<std::string>();
+            if (!parameters.contains("asset_symbol"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'asset_symbol'");
+            std::string asset_symbol = parameters["asset_symbol"].as<std::string>();
+            if (!parameters.contains("call_limit"))
+                FC_THROW_EXCEPTION(fc::invalid_arg_exception, "missing required parameter 'call_limit'");
+            fc::optional<double> call_limit = parameters["call_limit"].as<fc::optional<double>>();
+
+            cdcchain::wallet::WalletTransactionEntry result = get_client()->wallet_call_contract_build(contract, caller_publickey, function_name, params, asset_symbol, call_limit);
             return fc::variant(result);
         }
 
@@ -9023,6 +9081,14 @@ namespace cdcchain {
                 this, capture_con, _1);
             json_connection->add_named_param_method("wallet_transfer_to_contract_build", bound_named_method);
 
+            // register method wallet_call_contract_build
+            bound_positional_method = boost::bind(&CommonApiRpcServer::wallet_call_contract_build_positional,
+                this, capture_con, _1);
+            json_connection->add_method("wallet_call_contract_build", bound_positional_method);
+            bound_named_method = boost::bind(&CommonApiRpcServer::wallet_call_contract_build_named,
+                this, capture_con, _1);
+            json_connection->add_named_param_method("wallet_call_contract_build", bound_named_method);
+
             // register method sign_build_transaction
             bound_positional_method = boost::bind(&CommonApiRpcServer::sign_build_transaction_positional,
                 this, capture_con, _1);
@@ -11413,6 +11479,25 @@ namespace cdcchain {
                 /* detailed description */ "Do a simple transfer to a contract (name or address)\n\nParameters:\n  amount_to_transfer (real_amount, required): the amount of shares to transfer\n  asset_symbol (asset_symbol, required): the asset to transfer\n  from_account_public_key (string, required): the source account public key to draw the shares from\n  to_contract (string, required): the contract name or contract address to transfer to\n  amount_for_exec (real_amount, required): the amount of shares to exec  on_deposit callback of target contract\n\nReturns:\n  transaction_entry\n",
                 /* aliases */{}, false };
             store_method_metadata(wallet_transfer_to_contract_build_method_metadata);
+            }
+
+            {
+                // register method wallet_call_contract_build
+                cdcchain::api::MethodData wallet_call_contract_build_method_metadata{ "wallet_call_contract_build", nullptr,
+                    /* description */ "call contract by contract name or contract address without signature",
+                    /* returns */ "transaction_entry",
+                    /* params: */{
+                        { "contract", "string", cdcchain::api::required_positional, fc::ovariant() },
+                { "caller_publickey", "string", cdcchain::api::required_positional, fc::ovariant() },
+                { "function_name", "string", cdcchain::api::required_positional, fc::ovariant() },
+                { "params", "string", cdcchain::api::required_positional, fc::ovariant() },
+                { "asset_symbol", "string", cdcchain::api::required_positional, fc::ovariant() },
+                { "call_limit", "optional_double", cdcchain::api::required_positional, fc::ovariant() }
+                },
+                    /* prerequisites */ (cdcchain::api::MethodPrerequisites) 2,
+                    /* detailed description */ "call contract by contract name or contract address without signature\n\nParameters:\n  contract (string, required): contract name or contract address need to be called\n  caller_publickey (string, required): caller public key\n  function_name (string, required): function in contract \n  params (string, required): parameters which would be passed to function\n  asset_symbol (string, required): symbol of asset used to call\n  call_limit (optional_double, required): the limit of asset amount used to call contract \n\nReturns:\n  transaction_entry\n",
+                    /* aliases */{}, false };
+                store_method_metadata(wallet_call_contract_build_method_metadata);
             }
 
             {
@@ -14834,6 +14919,8 @@ namespace cdcchain {
                 return wallet_transfer_to_address_build_positional(nullptr, parameters);
             if (method_name == "wallet_transfer_to_contract_build")
                 return wallet_transfer_to_contract_build_positional(nullptr, parameters);
+            if (method_name == "wallet_call_contract_build")
+                return wallet_call_contract_build_positional(nullptr, parameters);
             if (method_name == "sign_build_transaction")
                 return sign_build_transaction_positional(nullptr, parameters);
             if (method_name == "broadcast_building_transaction")
