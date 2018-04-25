@@ -1824,6 +1824,15 @@ namespace cdcchain {
                     trx_eval_state->throw_exec_exception = throw_exec_exception;
 					trx_eval_state_res->is_delegate = generating_block;
                     trx_eval_state_res->evaluate(trx_eval_state->p_result_trx);
+
+					//  对于CDC合约交易  
+					//  可能会存在合约中操作role和cdcdata的情况，这些变化记录只存在
+					//  于原始交易验证的pend_state中， 因此需要把相关的记录同步到结果交易验证的pend_state_res中
+					pend_state_res->_role_addr_to_entry = pend_state->_role_addr_to_entry;
+					pend_state_res->_role_addr_remove = pend_state->_role_addr_remove;
+					pend_state_res->_cdcdata_id_to_entry = pend_state->_cdcdata_id_to_entry;
+					pend_state_res->_cdcdata_id_remove = pend_state->_cdcdata_id_remove;
+
                     pend_state_res->apply_changes();
 
                     TransactionEvaluationStatePtr eval_state = std::make_shared<TransactionEvaluationState>(pend_state.get());
@@ -2484,6 +2493,14 @@ namespace cdcchain {
                                         result_trx.result_trx_type = ResultTransactionType::complete_result_transaction;
                                         trx = result_trx;
                                     }
+
+									//  对于CDC合约交易  
+									//  可能会存在合约中操作role和cdcdata的情况，这些变化记录只存在
+									//  于原始交易验证的pend_state中， 因此需要把相关的记录同步到结果交易验证的pend_state_res中
+									pending_trx_state->_role_addr_to_entry = origin_trx_state->_role_addr_to_entry;
+									pending_trx_state->_role_addr_remove = origin_trx_state->_role_addr_remove;
+									pending_trx_state->_cdcdata_id_to_entry = origin_trx_state->_cdcdata_id_to_entry;
+									pending_trx_state->_cdcdata_id_remove = origin_trx_state->_cdcdata_id_remove;
                                 }
                                 else
                                 {
