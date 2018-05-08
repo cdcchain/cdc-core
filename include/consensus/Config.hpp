@@ -23,7 +23,7 @@
 #define CDC_ADDRESS_PREFIX                                  "0x"
 #define CDC_BLOCKCHAIN_SYMBOL                               "CDC"
 #define CDC_BLOCKCHAIN_NAME                                 "CDC"
-#define CDC_BLOCKCHAIN_DESCRIPTION                          "CDC chain for future "
+#define CDC_BLOCKCHAIN_DESCRIPTION                          "Commerce Data Connection"
 			
 #define CDC_BLOCKCHAIN_PRECISION                            (int64_t(100000000))
 
@@ -33,7 +33,7 @@
 #define CDC_BLOCKCHAIN_BLOCKS_PER_DAY                       (CDC_BLOCKCHAIN_BLOCKS_PER_HOUR*int64_t(24))
 #define CDC_BLOCKCHAIN_BLOCKS_PER_YEAR                      (CDC_BLOCKCHAIN_BLOCKS_PER_DAY*int64_t(365))
 
-#define CDC_BLOCKCHAIN_NUM_DELEGATES                        uint32_t(9)
+#define CDC_BLOCKCHAIN_NUM_DELEGATES                        uint32_t(21)
 #define CDC_MAX_DELEGATE_PAY_PER_BLOCK                      int64_t( 1.7 * CDC_BLOCKCHAIN_PRECISION ) 
 #define CDC_BLOCKCHAIN_MAX_UNDO_HISTORY                     CDC_BLOCKCHAIN_BLOCKS_PER_HOUR
 
@@ -51,7 +51,8 @@
 
 #define CDC_DEFAULT_TRANSACTION_FEE                         (int64_t(1000000)) // 
 #define CDC_DEFAULT_TRANSACTION_EXPIRATION_SEC              (60*60)
-#define CDC_DEFAULT_CONTRACT_MARGIN                         10 * CDC_BLOCKCHAIN_PRECISION 
+#define CDC_DEFAULT_CONTRACT_MARGIN                         int64_t(100) * int64_t(10000) * CDC_BLOCKCHAIN_PRECISION
+#define CDC_DEFAULT_DELEGATE_REGISTER_FEE					int64_t(10) * int64_t(10000) * CDC_BLOCKCHAIN_PRECISION
 
 /**
  *  The maximum amount that can be issued for user assets.
@@ -61,7 +62,7 @@
  *
  *  10^15 / 2^53 < 1 allows all values to be represented as a double or an int64
  */
-#define CDC_BLOCKCHAIN_MAX_SHARES                           (int64_t(2100)*int64_t(1000)*int64_t(1000)*int64_t(1000)*int64_t(1000))
+#define CDC_BLOCKCHAIN_MAX_SHARES                           (int64_t(100)*int64_t(10000)*int64_t(10000)*CDC_BLOCKCHAIN_PRECISION)
 
 #define CDC_BLOCKCHAIN_MIN_NAME_SIZE                        1
 #define CDC_BLOCKCHAIN_MAX_NAME_SIZE                        63

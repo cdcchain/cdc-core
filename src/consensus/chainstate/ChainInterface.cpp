@@ -127,7 +127,9 @@ namespace cdcchain {
         ShareType ChainInterface::get_max_delegate_pay_issued_per_block()const
         {
 			return ShareType(0);
-            ShareType pay_per_block = CDC_MAX_DELEGATE_PAY_PER_BLOCK;
+
+#if 0
+			ShareType pay_per_block = CDC_MAX_DELEGATE_PAY_PER_BLOCK;
 			const auto share_entry = get_asset_entry(CDC_BLOCKCHAIN_SYMBOL);
 			static const time_point_sec start_timestamp = get_genesis_timestamp();
 			static const uint32_t seconds_per_period = fc::days( 365 ).to_seconds(); // Ignore leap years, leap seconds, etc.
@@ -141,6 +143,7 @@ namespace cdcchain {
 			        pay_per_block /= 2;
 			}
             return pay_per_block;
+#endif
         }
 
         ShareType ChainInterface::get_delegate_registration_fee(uint8_t pay_rate)const
@@ -149,13 +152,16 @@ namespace cdcchain {
             // return get_delegate_registration_fee_v1( pay_rate );
 
             if (pay_rate == 0) return 0;
-			return ShareType(6000 * CDC_BLOCKCHAIN_PRECISION);
+			return ShareType(CDC_DEFAULT_DELEGATE_REGISTER_FEE);
+
+#if 0
             static const uint32_t blocks_per_two_weeks = 14 * CDC_BLOCKCHAIN_BLOCKS_PER_DAY;
             const ShareType max_total_pay_per_two_weeks = blocks_per_two_weeks * get_max_delegate_pay_issued_per_block();
             const ShareType max_pay_per_two_weeks = max_total_pay_per_two_weeks / CDC_BLOCKCHAIN_NUM_DELEGATES;
             const ShareType registration_fee = (max_pay_per_two_weeks * pay_rate) / 100;
             FC_ASSERT(registration_fee > 0, "Registration_fee must be bigger than 0");
             return registration_fee;
+#endif
         }
         ShareType ChainInterface::get_imessage_need_fee(const string & imessage)const
         {
@@ -505,6 +511,8 @@ namespace cdcchain {
 
         int ChainInterface::get_limit(AssetIdType id, ShareType amount)
         {
+			return amount / 10000;
+#if 0
             //to do  根据设定设置指定资产指定amount对应的limit值
             if (id != 0)
             {
@@ -512,15 +520,18 @@ namespace cdcchain {
             }
             //return amount / LIMIT_PRICE;
 			return amount / 10 * LIMIT_PER_AMOUNT;
-
+#endif
         }
 
         cdcchain::consensus::Asset ChainInterface::get_amount(ShareType limit, AssetIdType asset_id)
         {
+			return Asset(limit * 10000, asset_id);
+#if 0
 			ShareType res = limit / LIMIT_PER_AMOUNT;
 			if (limit % LIMIT_PER_AMOUNT != 0)
 				++res;
 			return Asset(res * 10, asset_id);
+#endif
         }
 
         // for contract to address (default fee)

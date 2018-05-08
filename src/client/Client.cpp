@@ -189,7 +189,7 @@ namespace cdcchain {
 
                 ("growl", program_options::value<std::string>()->implicit_value("127.0.0.1"), "Send notifications about potential problems to Growl")
                 ("growl-password", program_options::value<std::string>(), "Password for authenticating to a Growl server")
-                ("growl-identifier", program_options::value<std::string>(), "A name displayed in growl messages to identify this ub_client instance")
+                ("growl-identifier", program_options::value<std::string>(), "A name displayed in growl messages to identify this cdc_client instance")
                 ;
 
             program_options::variables_map option_variables;
