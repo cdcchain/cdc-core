@@ -1830,8 +1830,8 @@ namespace cdcchain {
                         int64_t precision_input = static_cast<int64_t>(pow(10, str.size()));
                         FC_ASSERT((precision_input <= CDC_BLOCKCHAIN_PRECISION), "Precision is not correct");
                     }
-                    double dFee = std::stod(fee_coe);
-                    _wallet->set_transaction_imessage_fee_coe(static_cast<int64_t>(floor(dFee * CDC_BLOCKCHAIN_PRECISION + 0.5)));
+                    Asset asset_to_transfer = _chain_db->to_ugly_asset(fee_coe, CDC_BLOCKCHAIN_SYMBOL);
+                    _wallet->set_transaction_imessage_fee_coe(asset_to_transfer.amount);
                 }
                 FC_CAPTURE_AND_RETHROW((fee_coe))
             }
@@ -1881,8 +1881,9 @@ namespace cdcchain {
                         int64_t precision_input = static_cast<int64_t>(pow(10, str.size()));
                         FC_ASSERT((static_cast<uint64_t>(precision_input) <= asset_entry->precision), "Precision is not correct");
                     }
-                    double dFee = std::stod(fee);
-                    _wallet->set_transaction_fee(Asset(static_cast<ShareType>(floor(dFee * asset_entry->precision + 0.5))));
+
+                    Asset asset_to_transfer = _chain_db->to_ugly_asset(fee, CDC_BLOCKCHAIN_SYMBOL);
+                    _wallet->set_transaction_fee(asset_to_transfer);
                     return _wallet->get_transaction_fee();
                 } FC_CAPTURE_AND_RETHROW((fee))
             }

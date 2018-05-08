@@ -12,7 +12,7 @@
 
 #define CDC_WALLET_DEFAULT_UNLOCK_TIME_SEC                  ( 60 * 60 )
 
-#define CDC_WALLET_DEFAULT_TRANSACTION_FEE                  1 // 
+#define CDC_WALLET_DEFAULT_TRANSACTION_FEE                  ((int64_t)1000000) // 
 
 #define CDC_WALLET_DEFAULT_TRANSACTION_EXPIRATION_SEC       ( 60 * 60 )
 

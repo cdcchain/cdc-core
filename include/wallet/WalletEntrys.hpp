@@ -162,6 +162,7 @@ namespace cdcchain {
             fc::time_point_sec        created_time;
             fc::time_point_sec        received_time;
             vector<Address>           extra_addresses;
+            vector<char>			  trx_data;
         };
 
         struct LedgerEntry

@@ -193,8 +193,8 @@ namespace cdcchain {
             std::string wallet_account_balance_rpc(const std::string& account_name = fc::json::from_string("\"\"").as<std::string>()) const override;
             std::string wallet_transfer_to_public_account_rpc(const std::string& amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_name, const std::string& to_account_name, const cdcchain::consensus::Imessage& memo_message = fc::json::from_string("\"\"").as<cdcchain::consensus::Imessage>(), const cdcchain::wallet::VoteStrategy& strategy = fc::json::from_string("\"vote_recommended\"").as<cdcchain::wallet::VoteStrategy>()) override;
             cdcchain::consensus::PublicKeyType wallet_get_account_owner_publickey(const std::string& account_name) override;
-            cdcchain::wallet::WalletTransactionEntry wallet_transfer_to_contract(double amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_name, const std::string& to_contract, double amount_for_exec) override;
-            std::vector<cdcchain::consensus::Asset> wallet_transfer_to_contract_testing(double amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_name, const std::string& to_contract) override;
+            cdcchain::wallet::WalletTransactionEntry wallet_transfer_to_contract(const std::string& amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_name, const std::string& to_contract, double amount_for_exec) override;
+            std::vector<cdcchain::consensus::Asset> wallet_transfer_to_contract_testing(const std::string& amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_name, const std::string& to_contract) override;
             vector<string> wallet_get_contracts(const std::string& account_name = fc::json::from_string("\"\"").as<std::string>()) override;
             void wallet_scan_contracts() override;
             cdcchain::wallet::TransactionBuilder wallet_builder_add_signature(const cdcchain::wallet::TransactionBuilder& builder, bool broadcast = fc::json::from_string("false").as<bool>()) override;
@@ -250,13 +250,13 @@ namespace cdcchain {
             std::vector<cdcchain::consensus::Asset> simulator_contract_destroy_testing(const std::string& contract_address, const std::string& destroyer_name) override;
             cdcchain::consensus::ContractEntryPrintable simulator_contract_get_info(const std::string& contract) override;
             std::vector<cdcchain::consensus::BalanceEntry> simulator_contract_get_balance(const std::string& contract) override;
-            cdcchain::wallet::WalletTransactionEntry simulator_transfer_to_contract(double amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_name, const std::string& to_contract, double amount_for_exec) override;
+            cdcchain::wallet::WalletTransactionEntry simulator_transfer_to_contract(const std::string& amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_name, const std::string& to_contract, double amount_for_exec) override;
             cdcchain::wallet::AccountBalanceSummaryType simulator_account_balance(const std::string& account_name = fc::json::from_string("\"\"").as<std::string>()) override;
             fc::path simulator_contract_compile(const fc::path& filename) const override;
             cdcchain::consensus::ContractEntryPrintable simulator_contract_load_to_file(const std::string& contract, const fc::path& file) override;
             std::vector<cdcchain::consensus::Asset> simulator_contract_register_testing(const std::string& owner, const fc::path& codefile) override;
             std::vector<cdcchain::consensus::Asset> simulator_contract_call_testing(const std::string& contract, const std::string& caller_name, const std::string& function_name, const std::string& params) override;
-            std::vector<cdcchain::consensus::Asset> simulator_transfer_to_contract_testing(double amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_name, const std::string& to_contract) override;
+            std::vector<cdcchain::consensus::Asset> simulator_transfer_to_contract_testing(const std::string& amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_name, const std::string& to_contract) override;
             vector<cdcchain::consensus::SimulatorAccountInfo> simulator_list_my_addresses(const std::string& account_name = fc::json::from_string("\"\"").as<std::string>()) override;
             std::string get_contract_registered_in_transaction(const cdcchain::consensus::TransactionIdType& trx_id) override;
             cdcchain::consensus::TransactionIdType get_transaction_id_contract_registered(const std::string& contract_id) override;
@@ -285,7 +285,7 @@ namespace cdcchain {
 
             std::string wallet_import_ethereum_private_key(const std::string& priv_key_str, const std::string& account_name = fc::json::from_string("null").as<std::string>(), bool create_new_account = fc::json::from_string("false").as<bool>(), bool rescan = fc::json::from_string("false").as<bool>()) override;
             cdcchain::wallet::WalletTransactionEntry wallet_transfer_to_address_build(const std::string& amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_address, const cdcchain::consensus::Imessage& memo_message = fc::json::from_string("\"\"").as<cdcchain::consensus::Imessage>(), const cdcchain::wallet::VoteStrategy& strategy = fc::json::from_string("\"vote_none\"").as<cdcchain::wallet::VoteStrategy>()) override;
-            cdcchain::wallet::WalletTransactionEntry wallet_transfer_to_contract_build(double amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_contract, double amount_for_exec) override;
+            cdcchain::wallet::WalletTransactionEntry wallet_transfer_to_contract_build(const std::string& amount_to_transfer, const std::string& asset_symbol, const std::string& from_account_public_key, const std::string& to_contract, double amount_for_exec) override;
             cdcchain::wallet::WalletTransactionEntry wallet_call_contract_build(const std::string& contract, const std::string& caller_publickey, const std::string& function_name, const std::string& params, const std::string& asset_symbol, const fc::optional<double>& call_limit) override;
             cdcchain::wallet::WalletTransactionEntry sign_build_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building) override;
             bool broadcast_building_transaction(const cdcchain::wallet::WalletTransactionEntry& trasaction_building) override;

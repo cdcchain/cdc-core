@@ -37,6 +37,11 @@ namespace cdcchain {
             // example: 100.500019 becomes 10050001
             const auto decimal = amount.find(".");
             ugly_asset.amount += atoll(amount.substr(0, decimal).c_str()) * precision;
+            
+            //judge if amount is overflow
+            const auto amount_origin = amount.substr(0, decimal);
+            const auto amount_asset = fc::to_string(ugly_asset.amount / precision);
+            FC_ASSERT(amount_origin == amount_asset, "invalid input amount!");
 
             if (decimal != string::npos)
             {

@@ -25,7 +25,7 @@
 #define CDC_BLOCKCHAIN_NAME                                 "CDC"
 #define CDC_BLOCKCHAIN_DESCRIPTION                          "CDC chain for future "
 			
-#define CDC_BLOCKCHAIN_PRECISION                            10000
+#define CDC_BLOCKCHAIN_PRECISION                            (int64_t(100000000))
 
 #define CDC_BLOCKCHAIN_MAX_UIA_MARKET_FEE                   10000
 #define CDC_BLOCKCHAIN_BLOCK_INTERVAL_SEC                   int64_t(10)
@@ -49,7 +49,7 @@
 #define CDC_BLOCKCHAIN_EXTENDED_MEMO_SIZE                   32 // bytes
 #define CDC_BLOCKCHAIN_MAX_EXTENDED_MEMO_SIZE               (CDC_BLOCKCHAIN_MAX_MEMO_SIZE + CDC_BLOCKCHAIN_EXTENDED_MEMO_SIZE)
 
-#define CDC_DEFAULT_TRANSACTION_FEE                         1 // 
+#define CDC_DEFAULT_TRANSACTION_FEE                         (int64_t(1000000)) // 
 #define CDC_DEFAULT_TRANSACTION_EXPIRATION_SEC              (60*60)
 #define CDC_DEFAULT_CONTRACT_MARGIN                         10 * CDC_BLOCKCHAIN_PRECISION 
 

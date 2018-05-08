@@ -139,7 +139,7 @@ namespace cdcchain {
                 const string& cdc_account = "");
 
             cdcchain::wallet::WalletTransactionEntry transfer_asset_to_contract_without_signature(
-                double real_amount_to_transfer,
+                const string& real_amount_to_transfer,
                 const string& amount_to_transfer_symbol,
                 const string& from_account_public_key_str,
                 const Address& to_contract_address,
@@ -982,7 +982,7 @@ namespace cdcchain {
                 );
 
             WalletTransactionEntry transfer_asset_to_contract(
-                double real_amount_to_transfer,
+                const string& real_amount_to_transfer,
                 const string& amount_to_transfer_symbol,
                 const string& from_account_name,
                 const Address& to_contract_address,
@@ -991,7 +991,7 @@ namespace cdcchain {
                 bool is_testing = false);
 
             std::vector<cdcchain::consensus::Asset> transfer_asset_to_contract_testing(
-                double real_amount_to_transfer,
+                const string& real_amount_to_transfer,
                 const string& amount_to_transfer_symbol,
                 const string& from_account_name,
                 const Address& to_contract_address,
