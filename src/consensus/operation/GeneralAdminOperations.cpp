@@ -13,27 +13,32 @@ namespace cdcchain {
 
 		void AppointGeneralAdminOperation::evaluate(TransactionEvaluationState& eval_state)const
 		{
-			oAccountEntry account_entry = eval_state._current_state->get_account_entry(appointer);
-			FC_ASSERT(account_entry.valid(), "appointer must be registered account");
-
-			bool active_delegate = eval_state._current_state->is_active_delegate(account_entry->id);
-			FC_ASSERT(active_delegate, "appointer must be active delegate");
-
 			if (!eval_state.check_signature(appointer))
 				FC_CAPTURE_AND_THROW(missing_signature, ("AppointGeneralAdminOperation need appointer's signature"));
 
-			// 判断是否已经是管理员
 			oRoleEntry role_entry = eval_state._current_state->get_role_entry(ContractIdType());
-			RoleEntry entry;
-			if (role_entry.valid()) {
-				for (const auto& role_cond : role_entry->role_cond_vec) {
-					if (role_cond.role_address == candidate &&
-						role_cond.role_type == RoleTypeEnum::general_admin)
-						FC_CAPTURE_AND_THROW(is_general_admin, ("candidate has already been a general admin"));
-				}
-				entry = *role_entry;
-			}
+			FC_ASSERT(role_entry.valid(), "can not get admin role entry");
 
+			bool is_privlege_admin = false;
+			// 判断appointer是否为特权管理员
+			for (const auto& role_cond : role_entry->role_cond_vec) {
+				if (role_cond.role_address == appointer &&
+					role_cond.role_type == RoleTypeEnum::privilege_admin) {
+					is_privlege_admin = true;
+					break;
+				}
+			}
+			FC_ASSERT(is_privlege_admin, "appointer is not privilege admin");
+
+			RoleEntry entry;	
+			// 判断candidate是否已经是一般管理员
+			for (const auto& role_cond : role_entry->role_cond_vec) {
+				if (role_cond.role_address == candidate &&
+					role_cond.role_type == RoleTypeEnum::general_admin)
+					FC_CAPTURE_AND_THROW(is_general_admin, ("candidate has already been a general admin"));
+			}
+			entry = *role_entry;
+			
 			GeneralAdminRole general_admin;
 			general_admin.gain_auth_time = eval_state._current_state->now();
 			RoleCondition role_cond(candidate, RoleSubTypeEnum::sub_none, general_admin);
@@ -45,20 +50,24 @@ namespace cdcchain {
 
 		void RevokeGeneralAdminOperation::evaluate(TransactionEvaluationState& eval_state)const
 		{
-			oAccountEntry account_entry = eval_state._current_state->get_account_entry(appointer);
-			FC_ASSERT(account_entry.valid(), "appointer must be registered account");
-
-			bool active_delegate = eval_state._current_state->is_active_delegate(account_entry->id);
-			FC_ASSERT(active_delegate, "appointer must be active delegate");
-
 			if (!eval_state.check_signature(appointer))
 				FC_CAPTURE_AND_THROW(missing_signature, ("RevokeGeneralAdminOperation need appointer's signature"));
 
-			// 判断是否已经不是管理员
 			oRoleEntry role_entry = eval_state._current_state->get_role_entry(ContractIdType());
-			if (!role_entry.valid())
-				FC_CAPTURE_AND_THROW(is_not_general_admin, ("this address is not a general admin"));
+			FC_ASSERT(role_entry.valid(), "can not get admin role entry");
 
+			bool is_privlege_admin = false;
+			// 判断appointer是否为特权管理员
+			for (const auto& role_cond : role_entry->role_cond_vec) {
+				if (role_cond.role_address == appointer &&
+					role_cond.role_type == RoleTypeEnum::privilege_admin) {
+					is_privlege_admin = true;
+					break;
+				}
+			}
+			FC_ASSERT(is_privlege_admin, "appointer is not privilege admin");
+
+			// 判断candidate是否不是一般管理员
 			bool is_general_admin = false;
 			for (const auto& role_cond : role_entry->role_cond_vec) {
 				if (role_cond.role_address == general_admin &&
