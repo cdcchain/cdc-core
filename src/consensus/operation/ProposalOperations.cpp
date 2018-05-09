@@ -180,10 +180,13 @@ namespace cdcchain {
 				if (proposal_entry->proposal_voter.size() >= revoke_privilege_admin.delegate_vote_need)
 				{
 					for (auto iter = role_entry->role_cond_vec.begin(); iter != role_entry->role_cond_vec.end(); ) {
-						auto iter_tmp = iter++;
-						if (iter_tmp->role_address == revoke_privilege_admin.privilege_admin &&
-							iter_tmp->role_type == RoleTypeEnum::privilege_admin)
-							role_entry->role_cond_vec.erase(iter_tmp);
+						if (iter->role_address == revoke_privilege_admin.privilege_admin &&
+							iter->role_type == RoleTypeEnum::privilege_admin) {
+							iter = role_entry->role_cond_vec.erase(iter);
+						}
+						else {
+							++iter;
+						}
 					}
 
 					role_entry->update_time = eval_state._current_state->now();
