@@ -56,27 +56,37 @@ namespace cdcchain {
 
        if (address_type == AddressType::cdc_address)
        {
-           FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == CDC_ADDRESS_PREFIX[0] && hex_str[1] == CDC_ADDRESS_PREFIX[1]);
-           addr_str = hex_str.substr(2, hex_str.size());
+           //FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == CDC_ADDRESS_PREFIX[0] && hex_str[1] == CDC_ADDRESS_PREFIX[1]);
+		   if (!(hex_str.size() >= 2 && hex_str[0] == CDC_ADDRESS_PREFIX[0] && hex_str[1] == CDC_ADDRESS_PREFIX[1]))
+			  return false;
+		   addr_str = hex_str.substr(2, hex_str.size());
        }        
        else if (address_type == AddressType::contract_address)
        {
-           FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == CONTRACT_ADDRESS_PREFIX[0]);
+           //FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == CONTRACT_ADDRESS_PREFIX[0]);
+		   if (!(hex_str.size() >= 2 && hex_str[0] == CONTRACT_ADDRESS_PREFIX[0]))
+			  return false;
            addr_str = hex_str.substr(1, hex_str.size());
 
        }           
        else if (address_type == AddressType::script_id)
        {
-           FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == SCRIPT_ID_PREFIX[0]);
+           //FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == SCRIPT_ID_PREFIX[0]);
+		   if (!(hex_str.size() >= 2 && hex_str[0] == SCRIPT_ID_PREFIX[0]))
+		       return false;
            addr_str = hex_str.substr(1, hex_str.size());
        }           
        else if (address_type == AddressType::multisig_address)
        {
-           FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == MULTI_ADDRESS_PREFIX[0]);
+           //FC_ASSERT(hex_str.size() >= 2 && hex_str[0] == MULTI_ADDRESS_PREFIX[0]);
+		   if (!(hex_str.size() >= 2 && hex_str[0] == MULTI_ADDRESS_PREFIX[0]))
+		       return false;
            addr_str = hex_str.substr(1, hex_str.size());
        }
 
-       FC_ASSERT(addr_str.size() == ADDRESS_HEX_LEN, "the address hex str length is invalid!");
+       //FC_ASSERT(addr_str.size() == ADDRESS_HEX_LEN, "the address hex str length is invalid!");
+	   if (!(addr_str.size() == ADDRESS_HEX_LEN, "the address hex str length is invalid!"))
+	       return false;
 
        for (auto i = addr_str.begin(); i != addr_str.end(); ++i)
        {
