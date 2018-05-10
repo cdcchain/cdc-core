@@ -967,10 +967,15 @@ bool WalletImpl::scan_proposal_for_privilege(const ProposalForPrivilegeOperation
 
 		for (auto& entry : trx_rec.ledger_entries)
 		{
+			/*
 			if (!entry.to_account.valid())
 			{
-				entry.from_account = op.proposal_from;
-				entry.to_account = op.candidate;
+				if (opt_key_rec1.valid()) {
+					entry.from_account = opt_key_rec1->public_key;
+				}
+				if (opt_key_rec2.valid()) {
+					entry.to_account = opt_key_rec2->public_key;
+				}
 				entry.amount = Asset(0); 
 				entry.memo = "proposal for privilege, from: " 
 					+ op.proposal_from.AddressToString(AddressType::cdc_address)
@@ -982,6 +987,19 @@ bool WalletImpl::scan_proposal_for_privilege(const ProposalForPrivilegeOperation
 				entry.amount = Asset(0); 
 				break;
 			}
+			*/
+
+			if (opt_key_rec1.valid()) {
+				entry.from_account = opt_key_rec1->public_key;
+			}
+			if (opt_key_rec2.valid()) {
+				entry.to_account = opt_key_rec2->public_key;
+			}
+			entry.amount = Asset(0);
+			entry.memo = "proposal for privilege, from: "
+				+ op.proposal_from.AddressToString(AddressType::cdc_address)
+				+ " to: " + op.candidate.AddressToString(AddressType::cdc_address);
+			break;
 		}
 
 		_dirty_accounts = true;
@@ -1001,10 +1019,15 @@ bool WalletImpl::scan_proposal_revoke_privilege(const ProposalRevokePrivilegeOpe
 
 		for (auto& entry : trx_rec.ledger_entries)
 		{
+			/*
 			if (!entry.to_account.valid())
 			{
-				entry.from_account = op.proposal_from;
-				entry.to_account = op.privilege_admin;
+				if (opt_key_rec1.valid()) {
+					entry.from_account = opt_key_rec1->public_key;
+				}
+				if (opt_key_rec2.valid()) {
+					entry.to_account = opt_key_rec2->public_key;
+				}
 				entry.amount = Asset(0);
 				entry.memo = "proposal for revoking privilege, from: "
 					+ op.proposal_from.AddressToString(AddressType::cdc_address)
@@ -1016,6 +1039,19 @@ bool WalletImpl::scan_proposal_revoke_privilege(const ProposalRevokePrivilegeOpe
 				entry.amount = Asset(0);
 				break;
 			}
+			*/
+
+			if (opt_key_rec1.valid()) {
+				entry.from_account = opt_key_rec1->public_key;
+			}
+			if (opt_key_rec2.valid()) {
+				entry.to_account = opt_key_rec2->public_key;
+			}
+			entry.amount = Asset(0);
+			entry.memo = "proposal for revoking privilege, from: "
+				+ op.proposal_from.AddressToString(AddressType::cdc_address)
+				+ " to: " + op.privilege_admin.AddressToString(AddressType::cdc_address);
+			break;
 		}
 
 		_dirty_accounts = true;
@@ -1035,11 +1071,14 @@ bool WalletImpl::scan_proposal_approve(const ProposalApproveOperation& op, Walle
 
 		for (auto& entry : trx_rec.ledger_entries)
 		{
+			/*
 			if (!entry.from_account.valid())
 			{
-				entry.from_account = op.approver;
+				if (opt_key_rec.valid()) {
+					entry.from_account = opt_key_rec->public_key;
+				}
 				entry.amount = Asset(0);
-				entry.memo = op.approver.AddressToString(AddressType::cdc_address) + " approve proposal : " + proposal_id;
+				entry.memo = op.approver.AddressToString(AddressType::cdc_address) + " approve proposal: " + proposal_id;
 				break;
 			}
 			else if (entry.from_account == op.approver)
@@ -1047,6 +1086,14 @@ bool WalletImpl::scan_proposal_approve(const ProposalApproveOperation& op, Walle
 				entry.amount = Asset(0);
 				break;
 			}
+			*/
+
+			if (opt_key_rec.valid()) {
+				entry.from_account = opt_key_rec->public_key;
+			}
+			entry.amount = Asset(0);
+			entry.memo = op.approver.AddressToString(AddressType::cdc_address) + " approve proposal: " + proposal_id;
+			break;
 		}
 
 		_dirty_accounts = true;
@@ -1066,10 +1113,15 @@ bool WalletImpl::scan_appoint_general_admin(const AppointGeneralAdminOperation& 
 
 		for (auto& entry : trx_rec.ledger_entries)
 		{
+			/*
 			if (!entry.to_account.valid())
 			{
-				entry.from_account = op.appointer;
-				entry.to_account = op.candidate;
+				if (opt_key_rec1.valid()) {
+					entry.from_account = opt_key_rec1->public_key;
+				}
+				if (opt_key_rec2.valid()) {
+					entry.to_account = opt_key_rec2->public_key;
+				}
 				entry.amount = Asset(0);
 				entry.memo = op.appointer.AddressToString(AddressType::cdc_address) + " appoint "
 					+ op.candidate.AddressToString(AddressType::cdc_address) + " as general admin";
@@ -1080,6 +1132,18 @@ bool WalletImpl::scan_appoint_general_admin(const AppointGeneralAdminOperation& 
 				entry.amount = Asset(0);
 				break;
 			}
+			*/
+
+			if (opt_key_rec1.valid()) {
+				entry.from_account = opt_key_rec1->public_key;
+			}
+			if (opt_key_rec2.valid()) {
+				entry.to_account = opt_key_rec2->public_key;
+			}
+			entry.amount = Asset(0);
+			entry.memo = op.appointer.AddressToString(AddressType::cdc_address) + " appoint "
+				+ op.candidate.AddressToString(AddressType::cdc_address) + " as general admin";
+			break;
 		}
 
 		_dirty_accounts = true;
@@ -1098,10 +1162,15 @@ bool WalletImpl::scan_revoke_general_admin(const RevokeGeneralAdminOperation& op
 
 		for (auto& entry : trx_rec.ledger_entries)
 		{
+			/*
 			if (!entry.to_account.valid())
 			{
-				entry.from_account = op.appointer;
-				entry.to_account = op.general_admin;
+				if (opt_key_rec1.valid()) {
+					entry.from_account = opt_key_rec1->public_key;
+				}
+				if (opt_key_rec2.valid()) {
+					entry.to_account = opt_key_rec2->public_key;
+				}
 				entry.amount = Asset(0);
 				entry.memo = op.appointer.AddressToString(AddressType::cdc_address) + " revoke "
 					+ op.general_admin.AddressToString(AddressType::cdc_address) + " from general admin";
@@ -1112,6 +1181,18 @@ bool WalletImpl::scan_revoke_general_admin(const RevokeGeneralAdminOperation& op
 				entry.amount = Asset(0);
 				break;
 			}
+			*/
+
+			if (opt_key_rec1.valid()) {
+				entry.from_account = opt_key_rec1->public_key;
+			}
+			if (opt_key_rec2.valid()) {
+				entry.to_account = opt_key_rec2->public_key;
+			}
+			entry.amount = Asset(0);
+			entry.memo = op.appointer.AddressToString(AddressType::cdc_address) + " revoke "
+				+ op.general_admin.AddressToString(AddressType::cdc_address) + " from general admin";
+			break;
 		}
 
 		_dirty_accounts = true;

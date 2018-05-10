@@ -4688,7 +4688,7 @@ namespace cdcchain {
 				entry.from_account = owner_pub_key;
 				entry.amount = Asset(0, 0);
 
-				entry.memo = "Proposal for:" + candidate_address.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
+				entry.memo = "Proposal for: " + candidate_address.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
 				if (sign)
 					my->sign_transaction(trx, required_signatures);
 
@@ -4753,7 +4753,7 @@ namespace cdcchain {
 				entry.from_account = owner_pub_key;
 				entry.amount = Asset(0, 0);
 
-				entry.memo = "Proposal for:" + privilege_admin.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
+				entry.memo = "Proposal for: " + privilege_admin.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
 				if (sign)
 					my->sign_transaction(trx, required_signatures);
 
@@ -4810,7 +4810,7 @@ namespace cdcchain {
 				entry.from_account = owner_pub_key;
 				entry.amount = Asset(0, 0);
 
-				entry.memo = "Approve:" + proposal_id.str().substr(0, 8) + "...";
+				entry.memo = "Approve: " + proposal_id.str().substr(0, 8) + "...";
 				if (sign)
 					my->sign_transaction(trx, required_signatures);
 
@@ -4850,7 +4850,7 @@ namespace cdcchain {
 				entry.from_account = owner_pub_key;
 				entry.amount = Asset(0, 0);
 
-				entry.memo = "Appoint to:" + candidate_address.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
+				entry.memo = "Appoint to: " + candidate_address.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
 				if (sign)
 					my->sign_transaction(trx, required_signatures);
 
@@ -4907,7 +4907,7 @@ namespace cdcchain {
 				entry.from_account = owner_pub_key;
 				entry.amount = Asset(0, 0);
 
-				entry.memo = "Revoke to:" + general_admin_address.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
+				entry.memo = "Revoke to: " + general_admin_address.AddressToString(AddressType::cdc_address).substr(0, 8) + "...";
 				if (sign)
 					my->sign_transaction(trx, required_signatures);
 
