@@ -28,6 +28,12 @@ AUX_SOURCE_DIRECTORY(src/consensus/cdcdata      CONSENSUS_SRC_cdcdata)
 
 
 ADD_DEFINITIONS("-DHAVE_CXX_STDHEADERS")
+
+OPTION(CDCTEST "ON for testnet or OFF for mainnet" ON)
+IF(CDCTEST)
+ADD_DEFINITIONS("-DCDC_TEST_NETWORK")
+ENDIF()
+
 cmake_minimum_required(VERSION 2.8)
 SET (CMAKE_CXX_COMPILER     "/usr/bin/g++")
 
