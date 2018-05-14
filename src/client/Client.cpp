@@ -392,7 +392,7 @@ namespace cdcchain {
 					auto temp_data_dir = option_variables["data-dir"].as<string>();
 					if (cdcchain::utilities::isGBK(temp_data_dir.data()))
 					{
-						temp_data_dir = GBKToUTF8(temp_data_dir);
+						temp_data_dir = cdcchain::console::GBKToUTF8(temp_data_dir);
 					}
                     datadir = fc::path(temp_data_dir.c_str());
 #else
