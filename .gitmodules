@@ -1,0 +1,3 @@
+[submodule "dependence"]
+	path = dependence
+	url = https://github.com/cdcchain/cdc-dependence.git
