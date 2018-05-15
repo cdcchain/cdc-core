@@ -1,38 +1,44 @@
-AUX_SOURCE_DIRECTORY(src/api API_SRC)
-AUX_SOURCE_DIRECTORY(src/client CLIENT_SRC)
-AUX_SOURCE_DIRECTORY(src/console CONSOLE_SRC)
-AUX_SOURCE_DIRECTORY(src/db DB_SRC)
-AUX_SOURCE_DIRECTORY(src/network NETWORK_SRC)
-AUX_SOURCE_DIRECTORY(src/rpc RPC_SRC)
-AUX_SOURCE_DIRECTORY(src/rpc_stubs RPC_STUBS_SRC)
-AUX_SOURCE_DIRECTORY(src/utilities UTILITIES_SRC)
-AUX_SOURCE_DIRECTORY(src/wallet WALLET_SRC)
-AUX_SOURCE_DIRECTORY(src/consensus            CONSENSUS_SRC)
-AUX_SOURCE_DIRECTORY(src/consensus/account    CONSENSUS_SRC_account)
-AUX_SOURCE_DIRECTORY(src/consensus/address    CONSENSUS_SRC_address)
-AUX_SOURCE_DIRECTORY(src/consensus/asset      CONSENSUS_SRC_asset)
-AUX_SOURCE_DIRECTORY(src/consensus/balance    CONSENSUS_SRC_balance)
-AUX_SOURCE_DIRECTORY(src/consensus/block      CONSENSUS_SRC_block)
-AUX_SOURCE_DIRECTORY(src/consensus/chainstate CONSENSUS_SRC_chainstate)
-AUX_SOURCE_DIRECTORY(src/consensus/contract   CONSENSUS_SRC_contract)
-AUX_SOURCE_DIRECTORY(src/consensus/contract_engine  CONSENSUS_SRC_contract_engine)
-AUX_SOURCE_DIRECTORY(src/consensus/genesis    CONSENSUS_SRC_genesis)
-AUX_SOURCE_DIRECTORY(src/consensus/operation  CONSENSUS_SRC_operation)
-AUX_SOURCE_DIRECTORY(src/consensus/property   CONSENSUS_SRC_property)
-AUX_SOURCE_DIRECTORY(src/consensus/slate      CONSENSUS_SRC_slate)
-AUX_SOURCE_DIRECTORY(src/consensus/slot       CONSENSUS_SRC_slot)
-AUX_SOURCE_DIRECTORY(src/consensus/transaction      CONSENSUS_SRC_transaction)
-AUX_SOURCE_DIRECTORY(src/consensus/proposal      CONSENSUS_SRC_proposal)
-AUX_SOURCE_DIRECTORY(src/consensus/role      CONSENSUS_SRC_role)
-AUX_SOURCE_DIRECTORY(src/consensus/cdcdata      CONSENSUS_SRC_cdcdata)
+option(TESTNET "ON for testnet or OFF for mainnet" OFF)
+if(${TESTNET} STREQUAL "ON")
+set(CDC_BIN_NAME "cdc-test")
+else()
+set(CDC_BIN_NAME "cdc")
+endif()
 
+aux_source_directory(src/api API_SRC)
+aux_source_directory(src/client CLIENT_SRC)
+aux_source_directory(src/console CONSOLE_SRC)
+aux_source_directory(src/db DB_SRC)
+aux_source_directory(src/network NETWORK_SRC)
+aux_source_directory(src/rpc RPC_SRC)
+aux_source_directory(src/rpc_stubs RPC_STUBS_SRC)
+aux_source_directory(src/utilities UTILITIES_SRC)
+aux_source_directory(src/wallet WALLET_SRC)
+aux_source_directory(src/consensus            CONSENSUS_SRC)
+aux_source_directory(src/consensus/account    CONSENSUS_SRC_account)
+aux_source_directory(src/consensus/address    CONSENSUS_SRC_address)
+aux_source_directory(src/consensus/asset      CONSENSUS_SRC_asset)
+aux_source_directory(src/consensus/balance    CONSENSUS_SRC_balance)
+aux_source_directory(src/consensus/block      CONSENSUS_SRC_block)
+aux_source_directory(src/consensus/chainstate CONSENSUS_SRC_chainstate)
+aux_source_directory(src/consensus/contract   CONSENSUS_SRC_contract)
+aux_source_directory(src/consensus/contract_engine  CONSENSUS_SRC_contract_engine)
+aux_source_directory(src/consensus/genesis    CONSENSUS_SRC_genesis)
+aux_source_directory(src/consensus/operation  CONSENSUS_SRC_operation)
+aux_source_directory(src/consensus/property   CONSENSUS_SRC_property)
+aux_source_directory(src/consensus/slate      CONSENSUS_SRC_slate)
+aux_source_directory(src/consensus/slot       CONSENSUS_SRC_slot)
+aux_source_directory(src/consensus/transaction      CONSENSUS_SRC_transaction)
+aux_source_directory(src/consensus/proposal      CONSENSUS_SRC_proposal)
+aux_source_directory(src/consensus/role      CONSENSUS_SRC_role)
+aux_source_directory(src/consensus/cdcdata      CONSENSUS_SRC_cdcdata)
 
-ADD_DEFINITIONS("-DHAVE_CXX_STDHEADERS")
+add_definitions("-DHAVE_CXX_STDHEADERS")
 
-OPTION(CDCTEST "ON for testnet or OFF for mainnet" ON)
-IF(CDCTEST)
-ADD_DEFINITIONS("-DCDC_TEST_NETWORK")
-ENDIF()
+option(TESTNET "ON for testnet or OFF for mainnet" ON)
+if(TESTNET)
+add_definitions("-DCDC_TEST_NETWORK")
+endif()
 
 cmake_minimum_required(VERSION 2.8)
 SET (CMAKE_CXX_COMPILER     "/usr/bin/g++")
@@ -43,13 +49,13 @@ set(Boost_USE_MULTITHREADED   ON)
 set(Boost_USE_STATIC_RUNTIME  ON)
 
 # Specify Boost libraries that will use.
-FIND_PACKAGE( Boost REQUIRED COMPONENTS system program_options chrono context coroutine date_time exception filesystem iostreams locale thread )
+find_package( Boost REQUIRED COMPONENTS system program_options chrono context coroutine date_time exception filesystem iostreams locale thread )
 
 set(CMAKE_CXX_FLAGS "-std=c++11 -w -DCDC_GLOBAL_API_LOG=1" )
 set(Boost_INCLUDE_DIR　"/usr/include/boost")
 set(Boost_LIBRARY_DIR  "/usr/lib/x86_64-linux-gnu")
 
-INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR}
+include_directories( ${Boost_INCLUDE_DIR}
         "include"
         "dependence/fc/include"
         "dependence/leveldb/include"
@@ -58,7 +64,7 @@ INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR}
         "dependence/libuvm/include"
 )
 
-LINK_DIRECTORIES( ${Boost_LIBRARY_DIR}
+link_directories( ${Boost_LIBRARY_DIR}
         "dependence/fc"
         "dependence/leveldb/out-static"
         "dependence/miniupnp/miniupnpc"
@@ -89,7 +95,5 @@ add_library(blockchain ${API_SRC} ${CLIENT_SRC} ${CONSOLE_SRC} ${DB_SRC} ${NETWO
                 ${CONSENSUS_SRC_proposal} ${CONSENSUS_SRC_role} ${CONSENSUS_SRC_cdcdata} 
 )
 
-
-add_executable(cdc ${SOURCE_FILES})
-
-TARGET_LINK_LIBRARIES(cdc blockchain libuvm.a libfc.a libsecp256k1.a libleveldb.a libminiupnpc.a ${Boost_LIBRARIES} libcrypto.a dl)
+add_executable(${CDC_BIN_NAME} ${SOURCE_FILES})
+target_link_libraries(${CDC_BIN_NAME} blockchain libuvm.a libfc.a libsecp256k1.a libleveldb.a libminiupnpc.a ${Boost_LIBRARIES} libcrypto.a dl)
