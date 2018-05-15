@@ -1391,7 +1391,7 @@ namespace cdcchain {
                 fc::variant dispatch_authenticated_method(const cdcchain::api::MethodData& method_data,
                     const fc::variants& arguments_from_caller)
                 {
-                    fc::scoped_lock<fc::mutex> lock(_rpc_mutex);
+                    //fc::scoped_lock<fc::mutex> lock(_rpc_mutex);
 
                     if (!method_data.method)
                     {

@@ -25,6 +25,7 @@ namespace cdcchain {
 #else
         static const std::vector<std::string> SeedNodes
         {
+			"13.114.42.81:50166"   //node for open test
         };
 #endif
 
