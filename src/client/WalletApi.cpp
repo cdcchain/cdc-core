@@ -342,13 +342,9 @@ namespace cdcchain {
                 if (_chain_db->get_is_in_simulator())
                     FC_THROW_EXCEPTION(simulator_command_forbidden, "in simulator, this command is forbidden, you cannot call it!");
 
-                size_t first = address.find_first_of("U");
-                if (first != std::string::npos&&first == 0)
+				if (address.size() >= 2 && address[0] == CDC_ADDRESS_PREFIX[0] && address[1] == CDC_ADDRESS_PREFIX[1])
                 {
-                    string strToAccount;
-                    string strSubAccount;
-                    _wallet->accountsplit(address, strToAccount, strSubAccount);
-                    return Address::is_valid(strToAccount);
+                    return Address::is_valid(address);
                 }
                 else
                 {
