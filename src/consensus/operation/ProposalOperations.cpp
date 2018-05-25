@@ -14,6 +14,7 @@ namespace cdcchain {
 		void ProposalForPrivilegeOperation::evaluate(TransactionEvaluationState& eval_state)const
 		{
 			FC_ASSERT(delegate_vote_need >= CDC_BLOCKCHAIN_NUM_DELEGATES / 2 + 1);
+			FC_ASSERT(delegate_vote_need <= CDC_BLOCKCHAIN_NUM_DELEGATES);
 			FC_ASSERT(expected_end_time > start_time);
 			FC_ASSERT(expected_end_time > eval_state._current_state->now());
 			
@@ -50,6 +51,7 @@ namespace cdcchain {
 		void ProposalRevokePrivilegeOperation::evaluate(TransactionEvaluationState& eval_state)const
 		{
 			FC_ASSERT(delegate_vote_need >= CDC_BLOCKCHAIN_NUM_DELEGATES / 2 + 1);
+			FC_ASSERT(delegate_vote_need <= CDC_BLOCKCHAIN_NUM_DELEGATES);
 			FC_ASSERT(expected_end_time > start_time);
 			FC_ASSERT(expected_end_time > eval_state._current_state->now());
 
