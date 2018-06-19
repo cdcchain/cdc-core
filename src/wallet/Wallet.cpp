@@ -165,7 +165,7 @@ namespace cdcchain {
                         if (!owner.valid())
                             continue;
 
-                        //ÏÈ´¦Àí¿ÉÒÔÍËµÄwithdraw£¬ÔÙ´¦Àí²»¿ÉÒÔÍËµÄwithdraw
+                        //å…ˆå¤„ç†å¯ä»¥é€€çš„withdrawï¼Œå†å¤„ç†ä¸å¯ä»¥é€€çš„withdraw
                         if (deal_for_refund)
                         {
                             if (amount_remaining.amount > balance.amount)
@@ -1302,7 +1302,8 @@ namespace cdcchain {
 
                     if (timeout_seconds < 1)
                         FC_THROW_EXCEPTION(invalid_timeout, "Invalid timeout!");
-                    const uint32_t max_timeout_seconds = std::numeric_limits<uint32_t>::max() - cdcchain::consensus::now().sec_since_epoch();
+                    // const uint32_t max_timeout_seconds = std::numeric_limits<uint32_t>::max() - cdcchain::consensus::now().sec_since_epoch();
+                    const uint32_t max_timeout_seconds = std::numeric_limits<int32_t>::max() - cdcchain::consensus::now().sec_since_epoch();
                     if (timeout_seconds > max_timeout_seconds)
                         FC_THROW_EXCEPTION(invalid_timeout, "Timeout too large!", ("max_timeout_seconds", max_timeout_seconds));
 
@@ -3132,7 +3133,7 @@ namespace cdcchain {
             else
                 required_signatures.insert(owner_address);
 
-            ContractIdType contract_id = trx.contract_register(contract_code, owner_public_key, asset_limit,fee, balances);//²åÈëºÏÔ¼×¢²áop
+            ContractIdType contract_id = trx.contract_register(contract_code, owner_public_key, asset_limit,fee, balances);//æ’å…¥åˆçº¦æ³¨å†Œop
             FC_ASSERT(register_fee.asset_id == 0, "register fee must be CDC");
             FC_ASSERT(margin.asset_id == 0, "register fee must be CDC");
             FC_ASSERT(fee.asset_id == 0, "register fee must be CDC");
@@ -3536,7 +3537,7 @@ namespace cdcchain {
             else
                 required_signatures.insert(caller_address);
 
-            trx.contract_call(contract, method, arguments, caller_public_key, asset_limit, fee, balances);//²åÈëºÏÔ¼µ÷ÓÃop
+            trx.contract_call(contract, method, arguments, caller_public_key, asset_limit, fee, balances);//æ’å…¥åˆçº¦è°ƒç”¨op
             FC_ASSERT(fee.asset_id == 0, "register fee must be GDW");
             trx.expiration = cdcchain::consensus::now() + get_transaction_expiration();
 
@@ -3595,7 +3596,7 @@ namespace cdcchain {
             else
                 required_signatures.insert(caller_address);
 
-            trx.contract_call(contract, method, arguments, caller_public_key, asset_limit,fee, balances);//²åÈëºÏÔ¼µ÷ÓÃop
+            trx.contract_call(contract, method, arguments, caller_public_key, asset_limit,fee, balances);//æ’å…¥åˆçº¦è°ƒç”¨op
             FC_ASSERT(fee.asset_id == 0, "register fee must be CDC");
             trx.expiration = cdcchain::consensus::now() + get_transaction_expiration();
             my->sign_transaction(trx, required_signatures);
