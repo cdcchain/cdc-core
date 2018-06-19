@@ -434,7 +434,7 @@ namespace cdcchain {
             */
             void                               store_slot_entry(const SlotEntry& entry);
 
-            int  get_limit(AssetIdType id, ShareType amount);
+            int64_t  get_limit(AssetIdType id, ShareType amount);
             Asset get_amount(ShareType limit, AssetIdType asset_id = 0);
             Asset  get_transaction_fee(const AssetIdType desired_fee_asset_id = 0)const;
 

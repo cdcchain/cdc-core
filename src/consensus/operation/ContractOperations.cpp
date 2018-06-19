@@ -234,7 +234,7 @@ namespace cdcchain
 							engine->set_state_pointer_value("evaluate_state", &eval_state);
 							engine->clear_exceptions();
 
-                            int limit = eval_state._current_state->get_limit(0, exec_limit.amount);
+                            int64_t limit = eval_state._current_state->get_limit(0, exec_limit.amount);
                             if (limit <= 0)
                                 FC_CAPTURE_AND_THROW(cdcchain::consensus::contract_run_out_of_money);
 
@@ -447,7 +447,7 @@ namespace cdcchain
 							engine->set_state_pointer_value("evaluate_state", &eval_state);
 							engine->clear_exceptions();
 
-                            int limit = eval_state._current_state->get_limit(0, exec_limit.amount);
+                            int64_t limit = eval_state._current_state->get_limit(0, exec_limit.amount);
                             if (limit <= 0)
                                 FC_CAPTURE_AND_THROW(cdcchain::consensus::contract_run_out_of_money);
 
@@ -737,7 +737,7 @@ namespace cdcchain
 					engine->set_caller((string)(this->owner), (string)(Address(this->owner)));
 					engine->set_state_pointer_value("evaluate_state", &eval_state);
 					engine->clear_exceptions();
-                    int limit = eval_state._current_state->get_limit(0, initcost.amount);
+                    int64_t limit = eval_state._current_state->get_limit(0, initcost.amount);
                     if (limit <= 0)
                         FC_CAPTURE_AND_THROW(cdcchain::consensus::contract_run_out_of_money);
 
@@ -886,8 +886,7 @@ namespace cdcchain
 
 						engine->clear_exceptions();
 
-                        int limit = 0;
-                        limit = eval_state._current_state->get_limit(0, costlimit.amount);
+                        int64_t limit = eval_state._current_state->get_limit(0, costlimit.amount);
                         if (limit <= 0)
                         {
                             FC_CAPTURE_AND_THROW(cdcchain::consensus::contract_run_out_of_money);
@@ -1065,7 +1064,7 @@ namespace cdcchain
 							engine->set_state_pointer_value("evaluate_state", &eval_state);
 							engine->clear_exceptions();
 
-                            int limit = eval_state._current_state->get_limit(0, costlimit.amount);
+                            int64_t limit = eval_state._current_state->get_limit(0, costlimit.amount);
                             if (limit <= 0)
                                 FC_CAPTURE_AND_THROW(cdcchain::consensus::contract_run_out_of_money);
 

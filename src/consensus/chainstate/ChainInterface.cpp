@@ -509,7 +509,7 @@ namespace cdcchain {
         }
 
 
-        int ChainInterface::get_limit(AssetIdType id, ShareType amount)
+        int64_t ChainInterface::get_limit(AssetIdType id, ShareType amount)
         {
 			return amount / 10000;
 #if 0
