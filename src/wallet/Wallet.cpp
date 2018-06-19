@@ -4487,6 +4487,7 @@ namespace cdcchain {
 				my->_dirty_contracts = true;
                 auto entry = LedgerEntry();         
                 auto trans_entry = WalletTransactionEntry();
+                trans_entry.entry_id = trx.id();
                 trans_entry.ledger_entries.push_back(entry);
                 trans_entry.fee = required_fees + margin_balance;
                 trans_entry.extra_addresses.push_back(contract_id);
@@ -4644,6 +4645,7 @@ namespace cdcchain {
 				my->_dirty_contracts = true;
                 auto entry = LedgerEntry();
                 auto trans_entry = WalletTransactionEntry();
+                trans_entry.entry_id = trx.id();
                 trans_entry.ledger_entries.push_back(entry);
                 trans_entry.fee = required_fees;
                 trans_entry.extra_addresses.push_back(contract_id);
