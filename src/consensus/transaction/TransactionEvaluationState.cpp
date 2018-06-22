@@ -331,7 +331,7 @@ namespace cdcchain {
                         FC_CAPTURE_AND_THROW(expired_transaction, (trx_arg)(_current_state->now())(expired_by_sec));
                     }
 
-                    // ��Ϊ current_state->now ��ȡ����slot time��slot_time����expiration_time���п���С�ڽ����е�expiration����˼���һ��slot����
+                    // 因为 current_state->now 获取的是slot time，slot_time加上expiration_time很有可能小于交易中的expiration，因此加上一个slot区间
                     if ((_current_state->now() + CDC_BLOCKCHAIN_BLOCK_INTERVAL_SEC + CDC_BLOCKCHAIN_MAX_TRANSACTION_EXPIRATION_SEC) < trx_arg.expiration)
                         FC_CAPTURE_AND_THROW(invalid_transaction_expiration, (trx_arg)(_current_state->now()));
 
@@ -369,7 +369,7 @@ namespace cdcchain {
                     {
                         const auto trx_digest = trx_arg.digest(_current_state->get_chain_id());
 						set<fc::ecc::compact_signature> sig_set;
-						for (const auto& sig : trx_arg.signatures)//�������ͬ��ǩ�����ظ���ǩ����������ĳ���Ż������Ǵ󲿷�����¶�û������
+						for (const auto& sig : trx_arg.signatures)//避免对相同的签名做重复解签，可以算是某种优化，但是大部分情况下都没有意义
 						{
 							sig_set.insert(sig);
 						}
@@ -394,7 +394,7 @@ namespace cdcchain {
                         ++current_op_index;
                         if (!skipexec)
                         {
-                            //FC_ASSERT(is_contract_trxs_same(trx_arg, p_result_trx));//����operation�Ա�
+                            //FC_ASSERT(is_contract_trxs_same(trx_arg, p_result_trx));//进行operation对比
                             FC_ASSERT(trx_arg.result_trx_id == p_result_trx.id());
                         }
                         evaluate_contract_result = true;
@@ -405,7 +405,7 @@ namespace cdcchain {
                             ++current_op_index;
                         }
 
-                        //��������еĲ������Ľ�����ף�Ҳ��Ҫ��¼����
+                        //如果块中有的不完整的结果交易，也需要记录下来
                         if (trx_arg.result_trx_type == ResultTransactionType::incomplete_result_transaction)
                         {
                             trx = trx_arg;
@@ -525,7 +525,7 @@ namespace cdcchain {
                         ++current_op_index;
                         if (!skipexec)
                         {
-                            FC_ASSERT(is_contract_trxs_same(trx_arg, p_result_trx));//����operation�Ա�
+                            FC_ASSERT(is_contract_trxs_same(trx_arg, p_result_trx));//进行operation对比
                         }
 
                         evaluate_contract_result = true;

@@ -148,15 +148,15 @@ namespace cdcchain {
 			bool                                        ignore_state = true;
 
             // for contract
-            // �������
+            // 结果交易
             SignedTransaction                 p_result_trx;
             uint32_t                                       current_op_index = 0;
-            bool                                           skipexec;//���ڱ�ʾ�Ƿ�������Լ�����ִ��
+            bool                                           skipexec;//用于表示是否跳过合约代码的执行
 			bool										  throw_exec_exception;
-			bool										   is_delegate = false; //��֤���Ƿ��Ǵ���
+			bool										   is_delegate = false; //验证者是否是代理
             Asset                                          exec_cost;
             PublicKeyType                                  contract_operator;
-            bool                                           evaluate_contract_result = false; //�Ƿ�Ϊ�������, ���ڷ�ֹ�Ӻ�Լ�˻�ȡǮ���Լ��޸�storage�Ƚ��׶����ں�Լִ�г���
+            bool                                           evaluate_contract_result = false; //是否为结果交易, 用于防止从合约账户取钱，以及修改storage等交易独立于合约执行出现
 			string				contract_address;
             // for event
             vector<EventOperation>							event_vector;

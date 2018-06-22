@@ -2722,9 +2722,9 @@ PrettyTransaction		Wallet::to_pretty_trx(const cdcchain::consensus::TransactionE
 			pretty_entry.to_account_name = account_name_entry->name;
 			pretty_entry.amount = Asset(0); // Assume scan_withdraw came first
 
-            //����޷�ͨ�������������ֳ����ֽ����������˻�Ϊ�������ֽ����Ǹ����˻���Ϣ
-            //���ֻ�ܿ���ͨ���������������жϣ����������Ѳ���һ����һ���̶�������
-            //��������ֻ�ܼ򵥴ֱ�����һ��1000CDC�����л��֣�ֻҪ�Ǵ���1000CDC����Ϊ����������
+            //这边无法通过受托率来区分出哪种交易是升级账户为代理，哪种交易是更新账户信息
+            //因此只能考虑通过手续费来进行判断，但是手续费并不一定是一个固定的数额
+            //所以现在只能简单粗暴得用一个1000CDC来进行划分，只要是大于1000CDC都认为是升级代理
             if (total_fee <= Asset( 1000 * CDC_BLOCKCHAIN_PRECISION ))
             {
                 pretty_entry.memo = "update " + account_name_entry->name;
@@ -2895,7 +2895,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
 
         for (const auto& op : result_trx.operations)
         {
-            // ע��ĺ�Լ�ɹ�����
+            // 注册的合约成功上链
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(contract_info_op_type))
                 register_success = true;
             
@@ -2921,7 +2921,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
         }
 
         pretty_trx.to_contract_ledger_entry = to_contract_ledger_entry;
-        // from_contract_ledger_entries Ϊ��
+        // from_contract_ledger_entries 为空
         pretty_trx.from_contract_ledger_entries = from_contract_ledger_entries;
     }
     else if (contract_op_type == cdcchain::consensus::OperationTypeEnum::contract_upgrade_op_type)
@@ -2951,17 +2951,17 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
                 to_contract_ledger_entry.from_account_name = account_entry->name;
         }
 
-        //��Լ�����ߵĻ���
+        //合约升级者的花费
         ShareType all_cost = 0;
-        //��Լ�����еĳ��˽��
+        //合约的所有的出账金额
         ShareType withdraw_from_contract = 0;
-        //�Ӻ�Լת�˵���ͨ�˻��еĽ��
+        //从合约转账到普通账户中的金额
         ShareType deposit_to_account = 0;
         bool upgrade_success = false;
 
         for (const auto& op : result_trx.operations)
         {
-            // ��Լ�ɹ�����
+            // 合约成功升级
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(on_upgrade_op_type))
                 upgrade_success = true;
 
@@ -2972,20 +2972,20 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
                     all_cost = all_cost + balance.second;
             }
 
-            // ��Լ����(����֤��) 
+            // 合约出账(含保证金)  
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(withdraw_contract_op_type))
             {
                 WithdrawContractOperation withdraw_contract_op = op.as<WithdrawContractOperation>();
                 withdraw_from_contract = withdraw_from_contract + withdraw_contract_op.amount;
             }
 
-            // �û�����
+            // 用户入账
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(deposit_op_type))
             {
                 DepositOperation deposit_op = op.as<DepositOperation>();
                 deposit_to_account = deposit_to_account + deposit_op.amount;
 
-                // ���û�ת�˽������
+                // 向用户转账结果交易
                 PrettyContractLedgerEntry from_contract_ledger_entry;
                 from_contract_ledger_entry.from_account = contract_id.AddressToString(AddressType::contract_address);
                 from_contract_ledger_entry.from_account_name = to_contract_ledger_entry.to_account_name;
@@ -3009,7 +3009,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
             //to_contract_ledger_entry.memo = "upgrade contract success";
             pretty_trx.is_completed = true;
 
-            // ��֤����˽������
+            // 保证金出账结果交易
             ShareType withdraw_margin = withdraw_from_contract - deposit_to_account;
             PrettyContractLedgerEntry from_contract_ledger_entry;
             from_contract_ledger_entry.from_account = contract_id.AddressToString(AddressType::contract_address);
@@ -3059,18 +3059,18 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
                 to_contract_ledger_entry.from_account_name = account_entry->name;
         }
 
-        //��Լ�����ߵĻ���
+        //合约销毁者的花费
         ShareType all_cost = 0;
         bool destroy_success = false;
 
         for (const auto& op : result_trx.operations)
         {
-            // ��Լ�ɹ�����
+            // 合约成功销毁
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(on_destroy_op_type))
             {
                 destroy_success = true;
 
-                // ��Լ�˻���on_destroyû�����������˻�����Լ������  
+                // 合约账户中on_destroy没有退完的余额退还给合约所有者  
                 OnDestroyOperation on_destroy_op = op.as<OnDestroyOperation>();
 
                 if (on_destroy_op.amount.amount > 0)
@@ -3099,12 +3099,12 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
                     all_cost = all_cost + balance.second;
             }
 
-            // �û�����(���˻���֤��)
+            // 用户入账(含退还保证金)
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(deposit_op_type))
             {
                 DepositOperation deposit_op = op.as<DepositOperation>();
 
-                // ���û�ת�˽������
+                // 向用户转账结果交易
                 PrettyContractLedgerEntry from_contract_ledger_entry;
                 from_contract_ledger_entry.from_account = contract_id.AddressToString(AddressType::contract_address);
                 from_contract_ledger_entry.from_account_name = to_contract_ledger_entry.to_account_name;
@@ -3148,7 +3148,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
         Address contract_caller = cdcchain::consensus::Address(contract_call_op.caller);
         ContractIdType contract_id = contract_call_op.contract;
 
-        //������Ϊ���ú�Լ����ʱ����¼�µ��ú�Լ�ķ�������ú�Լ����Ĳ���
+        //当交易为调用合约交易时，记录下调用合约的方法与调用合约传入的参数
         pretty_trx.reserved.clear();
         pretty_trx.reserved.push_back(contract_call_op.method);
         pretty_trx.reserved.push_back(contract_call_op.args);
@@ -3167,13 +3167,13 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
         if (contract_entry.valid() && (contract_entry->level == ContractLevel::forever))
             to_contract_ledger_entry.to_account_name = contract_entry->contract_name;
 
-        //��Լ�����ߵĻ���
+        //合约调用者的花费
         ShareType all_cost = 0;
         bool call_success = false;
 
         for (const auto& op : result_trx.operations)
         {
-            // ��Լ�ɹ�����
+            // 合约成功调用
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(on_call_success_op_type))
                 call_success = true;
 
@@ -3188,7 +3188,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
             {
                 DepositOperation deposit_op = op.as<DepositOperation>();
 
-                // ���û�ת�˽������
+                // 向用户转账结果交易
                 PrettyContractLedgerEntry from_contract_ledger_entry;
                 from_contract_ledger_entry.from_account = contract_id.AddressToString(AddressType::contract_address);
                 from_contract_ledger_entry.from_account_name = to_contract_ledger_entry.to_account_name;
@@ -3249,13 +3249,13 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
        
         ShareType transfer_amount = transfer_contract_op.transfer_amount.amount;
 
-        //��Լת���ߵĻ���
+        //合约转账者的花费
         ShareType all_cost = 0;
         bool transfer_success = false;
 
         for (const auto& op : result_trx.operations)
         {
-            // ���Լ�ɹ���ֵ
+            // 向合约成功充值ֵ
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(deposit_contract_op_type))
                 transfer_success = true;
 
@@ -3270,7 +3270,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
             {
                 DepositOperation deposit_op = op.as<DepositOperation>();
 
-                // ���û�ת�˽������
+                // 向用户转账结果交易
                 PrettyContractLedgerEntry from_contract_ledger_entry;
                 from_contract_ledger_entry.from_account = contract_id.AddressToString(AddressType::contract_address);
                 from_contract_ledger_entry.from_account_name = to_contract_ledger_entry.to_account_name;
