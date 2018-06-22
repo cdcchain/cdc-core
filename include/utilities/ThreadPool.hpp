@@ -167,7 +167,7 @@ public:
     ThreadPool():done(std::atomic<bool>(false)),joiner(threads)
 #endif
     {
-        unsigned const thread_count = std::thread::hardware_concurrency() - 1;
+        unsigned const thread_count = std::thread::hardware_concurrency() > 1 ? std::thread::hardware_concurrency() - 1 : 1;
 
         try{
             for (unsigned i = 0; i < thread_count; ++i)

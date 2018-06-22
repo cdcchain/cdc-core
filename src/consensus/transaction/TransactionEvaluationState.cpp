@@ -49,6 +49,13 @@ namespace cdcchain {
             } FC_CAPTURE_AND_RETHROW((a))
         }
 
+        bool TransactionEvaluationState::check_signature(const Address& a,set<Address> temp_signed_keys)const
+		{
+			try {
+				return _skip_signature_check || temp_signed_keys.find(a) != temp_signed_keys.end();
+			} FC_CAPTURE_AND_RETHROW((a))
+		}
+
         bool TransactionEvaluationState::check_multisig(const MultisigCondition& condition)const
         {
             try {
@@ -74,6 +81,21 @@ namespace cdcchain {
                 return false;
             } FC_CAPTURE_AND_RETHROW((entry))
         }
+
+        bool TransactionEvaluationState::account_has_signed(const AccountEntry& entry,set<Address> temp_signed_keys)const
+		{
+			try {
+				if (!entry.is_retracted())
+				{
+					if (check_signature(entry.active_key(), temp_signed_keys))
+						return true;
+
+					if (check_signature(entry.owner_key, temp_signed_keys))
+						return true;
+				}
+				return false;
+			} FC_CAPTURE_AND_RETHROW((entry))
+		}
 
         void TransactionEvaluationState::update_delegate_votes()
         {
@@ -243,14 +265,15 @@ namespace cdcchain {
         bool TransactionEvaluationState::transaction_signature_check(const SignedTransaction& trx_arg,const std::vector<BalanceEntry> all_balances,const std::vector<AccountEntry> all_account)
         {
             const auto trx_digest = trx_arg.digest(_current_state->get_chain_id());
+            set<Address> temp_signed_keys;
             for (const auto& sig : trx_arg.signatures)
             {
                 const auto key = fc::ecc::public_key(sig, trx_digest, _enforce_canonical_signatures).serialize();
-                signed_keys.insert(Address(key));
-                signed_keys.insert(Address(PtsAddress(key, false, 56)));
-                signed_keys.insert(Address(PtsAddress(key, true, 56)));
-                signed_keys.insert(Address(PtsAddress(key, false, 0)));
-                signed_keys.insert(Address(PtsAddress(key, true, 0)));
+                temp_signed_keys.insert(Address(key));
+				temp_signed_keys.insert(Address(PtsAddress(key, false, 56)));
+				temp_signed_keys.insert(Address(PtsAddress(key, true, 56)));
+				temp_signed_keys.insert(Address(PtsAddress(key, false, 0)));
+				temp_signed_keys.insert(Address(PtsAddress(key, true, 0)));
             }
             for (const auto& balance_entry : all_balances)
             {
@@ -260,7 +283,7 @@ namespace cdcchain {
                 {
                     const WithdrawWithSignature condition = balance_entry.condition.as<WithdrawWithSignature>();
                     const Address owner = condition.owner;
-                    if (!check_signature(owner))
+                    if (!check_signature(owner, temp_signed_keys))
                         return false;
                     break;
                 }
@@ -274,7 +297,7 @@ namespace cdcchain {
                         // TODO
                         //if( asset_rec->is_restricted() && NOT eval_state._current_state->get_authorization(asset_rec->id, owner) )
                         //continue;
-                        valid_signatures += check_signature(sig);
+                        valid_signatures += check_signature(sig, temp_signed_keys);
                     }
                     if (valid_signatures < multisig.required)
                         return false;
@@ -288,7 +311,7 @@ namespace cdcchain {
 
             for (const auto& account_entry : all_account)
             {
-                if (!account_has_signed(account_entry))
+                if (!account_has_signed(account_entry, temp_signed_keys))
                     return false;
             }
             return true;
@@ -308,7 +331,7 @@ namespace cdcchain {
                         FC_CAPTURE_AND_THROW(expired_transaction, (trx_arg)(_current_state->now())(expired_by_sec));
                     }
 
-                    // ÒòÎª current_state->now »ñÈ¡µÄÊÇslot time£¬slot_time¼ÓÉÏexpiration_timeºÜÓÐ¿ÉÄÜÐ¡ÓÚ½»Ò×ÖÐµÄexpiration£¬Òò´Ë¼ÓÉÏÒ»¸öslotÇø¼ä
+                    // ï¿½ï¿½Îª current_state->now ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½slot timeï¿½ï¿½slot_timeï¿½ï¿½ï¿½ï¿½expiration_timeï¿½ï¿½ï¿½Ð¿ï¿½ï¿½ï¿½Ð¡ï¿½Ú½ï¿½ï¿½ï¿½ï¿½Ðµï¿½expirationï¿½ï¿½ï¿½ï¿½Ë¼ï¿½ï¿½ï¿½Ò»ï¿½ï¿½slotï¿½ï¿½ï¿½ï¿½
                     if ((_current_state->now() + CDC_BLOCKCHAIN_BLOCK_INTERVAL_SEC + CDC_BLOCKCHAIN_MAX_TRANSACTION_EXPIRATION_SEC) < trx_arg.expiration)
                         FC_CAPTURE_AND_THROW(invalid_transaction_expiration, (trx_arg)(_current_state->now()));
 
@@ -346,7 +369,7 @@ namespace cdcchain {
                     {
                         const auto trx_digest = trx_arg.digest(_current_state->get_chain_id());
 						set<fc::ecc::compact_signature> sig_set;
-						for (const auto& sig : trx_arg.signatures)//±ÜÃâ¶ÔÏàÍ¬µÄÇ©Ãû×öÖØ¸´½âÇ©£¬¿ÉÒÔËãÊÇÄ³ÖÖÓÅ»¯£¬µ«ÊÇ´ó²¿·ÖÇé¿öÏÂ¶¼Ã»ÓÐÒâÒå
+						for (const auto& sig : trx_arg.signatures)//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½Ç©ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½Ç©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½Å»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ó²¿·ï¿½ï¿½ï¿½ï¿½ï¿½Â¶ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 						{
 							sig_set.insert(sig);
 						}
@@ -371,7 +394,7 @@ namespace cdcchain {
                         ++current_op_index;
                         if (!skipexec)
                         {
-                            //FC_ASSERT(is_contract_trxs_same(trx_arg, p_result_trx));//½øÐÐoperation¶Ô±È
+                            //FC_ASSERT(is_contract_trxs_same(trx_arg, p_result_trx));//ï¿½ï¿½ï¿½ï¿½operationï¿½Ô±ï¿½
                             FC_ASSERT(trx_arg.result_trx_id == p_result_trx.id());
                         }
                         evaluate_contract_result = true;
@@ -382,7 +405,7 @@ namespace cdcchain {
                             ++current_op_index;
                         }
 
-                        //Èç¹û¿éÖÐÓÐµÄ²»ÍêÕûµÄ½á¹û½»Ò×£¬Ò²ÐèÒª¼ÇÂ¼ÏÂÀ´
+                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½Ò²ï¿½ï¿½Òªï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½
                         if (trx_arg.result_trx_type == ResultTransactionType::incomplete_result_transaction)
                         {
                             trx = trx_arg;
@@ -502,7 +525,7 @@ namespace cdcchain {
                         ++current_op_index;
                         if (!skipexec)
                         {
-                            FC_ASSERT(is_contract_trxs_same(trx_arg, p_result_trx));//½øÐÐoperation¶Ô±È
+                            FC_ASSERT(is_contract_trxs_same(trx_arg, p_result_trx));//ï¿½ï¿½ï¿½ï¿½operationï¿½Ô±ï¿½
                         }
 
                         evaluate_contract_result = true;

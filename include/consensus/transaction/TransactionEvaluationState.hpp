@@ -58,9 +58,11 @@ namespace cdcchain {
             void update_delegate_votes();
 
             bool check_signature(const Address& a)const;
+            bool check_signature(const Address& a, set<Address> temp_signed_keys)const;
             bool check_multisig(const MultisigCondition& a)const;
 
             bool account_has_signed(const AccountEntry& entry)const;
+            bool account_has_signed(const AccountEntry& entry, set<Address> temp_signed_keys)const;
 
             void sub_balance(const BalanceIdType& addr, const Asset& amount);
             void add_balance(const Asset& amount);
@@ -146,15 +148,15 @@ namespace cdcchain {
 			bool                                        ignore_state = true;
 
             // for contract
-            // ½á¹û½»Ò×
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             SignedTransaction                 p_result_trx;
             uint32_t                                       current_op_index = 0;
-            bool                                           skipexec;//ÓÃÓÚ±íÊ¾ÊÇ·ñÌø¹ýºÏÔ¼´úÂëµÄÖ´ÐÐ
+            bool                                           skipexec;//ï¿½ï¿½ï¿½Ú±ï¿½Ê¾ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 			bool										  throw_exec_exception;
-			bool										   is_delegate = false; //ÑéÖ¤ÕßÊÇ·ñÊÇ´úÀí
+			bool										   is_delegate = false; //ï¿½ï¿½Ö¤ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ç´ï¿½ï¿½ï¿½
             Asset                                          exec_cost;
             PublicKeyType                                  contract_operator;
-            bool                                           evaluate_contract_result = false; //ÊÇ·ñÎª½á¹û½»Ò×, ÓÃÓÚ·ÀÖ¹´ÓºÏÔ¼ÕË»§È¡Ç®£¬ÒÔ¼°ÐÞ¸ÄstorageµÈ½»Ò×¶ÀÁ¢ÓÚºÏÔ¼Ö´ÐÐ³öÏÖ
+            bool                                           evaluate_contract_result = false; //ï¿½Ç·ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ú·ï¿½Ö¹ï¿½Óºï¿½Ô¼ï¿½Ë»ï¿½È¡Ç®ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½Þ¸ï¿½storageï¿½È½ï¿½ï¿½×¶ï¿½ï¿½ï¿½ï¿½Úºï¿½Ô¼Ö´ï¿½Ð³ï¿½ï¿½ï¿½
 			string				contract_address;
             // for event
             vector<EventOperation>							event_vector;
