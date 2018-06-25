@@ -1775,6 +1775,7 @@ namespace cdcchain {
 				
 				// 总是需要执行解释器
 				trx_eval_state->skipexec = false;
+				trx_eval_state->throw_exec_exception = throw_exec_exception;
 
                 if (trx_eval_state->origin_trx_basic_verify(trx) == false)
                     FC_CAPTURE_AND_THROW(illegal_transaction, (trx));
