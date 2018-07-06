@@ -768,19 +768,25 @@ namespace cdcchain {
                         if (trx_eval_state->skipexec)
                             trx_eval_state->skipexec = !self->get_node_vm_enabled();
 
+						// 总是需要执行解释器
+						trx_eval_state->skipexec = false;
+
 						if (trx.result_trx_type == ResultTransactionType::incomplete_result_transaction) {
 							PendingChainStatePtr incomplete_trx_state = std::make_shared<PendingChainState>(pending_state);
 							TransactionEvaluationStatePtr incomplete_trx_eval_state = std::make_shared<TransactionEvaluationState>(incomplete_trx_state.get());
 							incomplete_trx_eval_state->skipexec = false;
-							incomplete_trx_eval_state->evaluate(trx);
-							trx = incomplete_trx_eval_state->p_result_trx;
+							SignedTransaction origin_trx = trx.operations[0].as<TransactionOperation>().trx;
+							incomplete_trx_eval_state->evaluate(origin_trx);
+							incomplete_trx_eval_state->p_result_trx.result_trx_id = incomplete_trx_eval_state->p_result_trx.id();
+							incomplete_trx_eval_state->p_result_trx.result_trx_type = ResultTransactionType::complete_result_transaction;
+
+							trx_eval_state->is_delegate = self->generating_block;
+							trx_eval_state->evaluate(incomplete_trx_eval_state->p_result_trx);
 						}
-
-						// 总是需要执行解释器
-						trx_eval_state->skipexec = false;
-
-						trx_eval_state->is_delegate = self->generating_block;
-                        trx_eval_state->evaluate(trx);
+						else {
+							trx_eval_state->is_delegate = self->generating_block;
+							trx_eval_state->evaluate(trx);
+						}
 
                         if (trx.result_trx_type == ResultTransactionType::origin_transaction)
                         {
@@ -792,11 +798,13 @@ namespace cdcchain {
                         }
                         else if (trx.result_trx_type == ResultTransactionType::incomplete_result_transaction)
                         {
+							/*
                             const TransactionIdType& trx_id = trx.id();
                             oTransactionEntry entry = pending_state->lookup<TransactionEntry>(trx_id);
                             FC_ASSERT(entry.valid(), "Invalid transaction");
                             entry->chain_location = TransactionLocation(block_data.block_num, trx_num);
                             pending_state->store_transaction(trx_id, *entry);
+							*/
 
                             const TransactionIdType& origin_trx_id = trx.operations[0].as<TransactionOperation>().trx.id();
                             oTransactionEntry origin_entry = pending_state->lookup<TransactionEntry>(origin_trx_id);

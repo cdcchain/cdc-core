@@ -405,6 +405,7 @@ namespace cdcchain {
                             ++current_op_index;
                         }
 
+						/*
                         //如果块中有的不完整的结果交易，也需要记录下来
                         if (trx_arg.result_trx_type == ResultTransactionType::incomplete_result_transaction)
                         {
@@ -415,6 +416,7 @@ namespace cdcchain {
                             result_trx.result_trx_type = complete_result_transaction;
                             result_trx.result_trx_id = result_trx.id();
                         }
+						*/
 
                         evaluate_contract_result = false;
                         p_result_trx.operations.resize(0);
