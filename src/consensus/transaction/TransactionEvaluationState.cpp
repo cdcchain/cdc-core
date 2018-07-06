@@ -398,15 +398,29 @@ namespace cdcchain {
                             FC_ASSERT(trx_arg.result_trx_id == p_result_trx.id());
                         }
                         evaluate_contract_result = true;
-                        while (opit != trx_arg.operations.end())
-                        {
-                            evaluate_operation(*opit);
-                            ++opit;
-                            ++current_op_index;
-                        }
 
-						/*
-                        //如果块中有的不完整的结果交易，也需要记录下来
+						if (!skipexec && trx_arg.result_trx_type == ResultTransactionType::incomplete_result_transaction
+							&& trx_arg.result_trx_id == p_result_trx.id()) {
+							//trx_arg可能会是不完整的结果交易 所以从第二个op开始切换到p_result_trx中来
+							opit = p_result_trx.operations.begin();
+							++opit;
+							while (opit != p_result_trx.operations.end())
+							{
+								evaluate_operation(*opit);
+								++opit;
+								++current_op_index;
+							}
+						}
+						else {
+							while (opit != trx_arg.operations.end())
+							{
+								evaluate_operation(*opit);
+								++opit;
+								++current_op_index;
+							}
+						}
+						
+                        //如果块中有的不完整的结果交易，需要把结果交易记录下来
                         if (trx_arg.result_trx_type == ResultTransactionType::incomplete_result_transaction)
                         {
                             trx = trx_arg;
@@ -416,7 +430,6 @@ namespace cdcchain {
                             result_trx.result_trx_type = complete_result_transaction;
                             result_trx.result_trx_id = result_trx.id();
                         }
-						*/
 
                         evaluate_contract_result = false;
                         p_result_trx.operations.resize(0);
