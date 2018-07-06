@@ -742,8 +742,10 @@ namespace cdcchain {
 
 
                     //多线程测试代码
-                    for (const auto& trx : block_data.user_transactions)
+                    for (const auto& _trx : block_data.user_transactions)
                     {
+						SignedTransaction trx = _trx;
+
                         TransactionEvaluationStatePtr trx_eval_state = std::make_shared<TransactionEvaluationState>(pending_state.get());
                         trx_eval_state->_skip_signature_check = !self->_verify_transaction_signatures;
                         if (!trx_eval_state->_skip_signature_check)
@@ -762,14 +764,17 @@ namespace cdcchain {
 
                         FC_ASSERT(trx.data_size() <= CDC_BLOCKCHAIN_MAX_TRX_SIZE, "trx size is out of the max trx size range");
 
-						/*
                         trx_eval_state->skipexec = !(self->generating_block);
                         if (trx_eval_state->skipexec)
                             trx_eval_state->skipexec = !self->get_node_vm_enabled();
 
-                        if (trx.result_trx_type == ResultTransactionType::incomplete_result_transaction)
-                            trx_eval_state->skipexec = false;
-						*/
+						if (trx.result_trx_type == ResultTransactionType::incomplete_result_transaction) {
+							PendingChainStatePtr incomplete_trx_state = std::make_shared<PendingChainState>(pending_state);
+							TransactionEvaluationStatePtr incomplete_trx_eval_state = std::make_shared<TransactionEvaluationState>(incomplete_trx_state.get());
+							incomplete_trx_eval_state->skipexec = false;
+							incomplete_trx_eval_state->evaluate(trx);
+							trx = incomplete_trx_eval_state->p_result_trx;
+						}
 
 						// 总是需要执行解释器
 						trx_eval_state->skipexec = false;
