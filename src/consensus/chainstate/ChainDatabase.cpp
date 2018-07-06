@@ -1930,8 +1930,15 @@ namespace cdcchain {
                 vector<TransactionEntry> entrys;
                 entrys.reserve(block.user_transactions.size());
 
-                for (const SignedTransaction& transaction : block.user_transactions)
-                    entrys.push_back(my->_transaction_id_to_entry.fetch(transaction.id()));
+				for (const SignedTransaction& transaction : block.user_transactions)
+				{
+					if (transaction.result_trx_type == ResultTransactionType::incomplete_result_transaction) {
+						entrys.push_back(my->_transaction_id_to_entry.fetch(transaction.result_trx_id));
+					}
+					else {
+						entrys.push_back(my->_transaction_id_to_entry.fetch(transaction.id()));
+					}
+				}
 
                 return entrys;
             } FC_CAPTURE_AND_RETHROW((block_id))
