@@ -2722,9 +2722,9 @@ PrettyTransaction		Wallet::to_pretty_trx(const cdcchain::consensus::TransactionE
 			pretty_entry.to_account_name = account_name_entry->name;
 			pretty_entry.amount = Asset(0); // Assume scan_withdraw came first
 
-            //è¿™è¾¹æ— æ³•é€šè¿‡å—æ‰˜ç‡æ¥åŒºåˆ†å‡ºå“ªç§äº¤æ˜“æ˜¯å‡çº§è´¦æˆ·ä¸ºä»£ç†ï¼Œå“ªç§äº¤æ˜“æ˜¯æ›´æ–°è´¦æˆ·ä¿¡æ¯
-            //å› æ­¤åªèƒ½è€ƒè™‘é€šè¿‡æ‰‹ç»­è´¹æ¥è¿›è¡Œåˆ¤æ–­ï¼Œä½†æ˜¯æ‰‹ç»­è´¹å¹¶ä¸ä¸€å®šæ˜¯ä¸€ä¸ªå›ºå®šçš„æ•°é¢
-            //æ‰€ä»¥ç°åœ¨åªèƒ½ç®€å•ç²—æš´å¾—ç”¨ä¸€ä¸ª1000CDCæ¥è¿›è¡Œåˆ’åˆ†ï¼Œåªè¦æ˜¯å¤§äº1000CDCéƒ½è®¤ä¸ºæ˜¯å‡çº§ä»£ç†
+            //Õâ±ßÎŞ·¨Í¨¹ıÊÜÍĞÂÊÀ´Çø·Ö³öÄÄÖÖ½»Ò×ÊÇÉı¼¶ÕË»§Îª´úÀí£¬ÄÄÖÖ½»Ò×ÊÇ¸üĞÂÕË»§ĞÅÏ¢
+            //Òò´ËÖ»ÄÜ¿¼ÂÇÍ¨¹ıÊÖĞø·ÑÀ´½øĞĞÅĞ¶Ï£¬µ«ÊÇÊÖĞø·Ñ²¢²»Ò»¶¨ÊÇÒ»¸ö¹Ì¶¨µÄÊı¶î
+            //ËùÒÔÏÖÔÚÖ»ÄÜ¼òµ¥´Ö±©µÃÓÃÒ»¸ö1000CDCÀ´½øĞĞ»®·Ö£¬Ö»ÒªÊÇ´óÓÚ1000CDC¶¼ÈÏÎªÊÇÉı¼¶´úÀí
             if (total_fee <= Asset( 1000 * CDC_BLOCKCHAIN_PRECISION ))
             {
                 pretty_entry.memo = "update " + account_name_entry->name;
@@ -2895,7 +2895,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
 
         for (const auto& op : result_trx.operations)
         {
-            // æ³¨å†Œçš„åˆçº¦æˆåŠŸä¸Šé“¾
+            // ×¢²áµÄºÏÔ¼³É¹¦ÉÏÁ´
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(contract_info_op_type))
                 register_success = true;
             
@@ -2921,7 +2921,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
         }
 
         pretty_trx.to_contract_ledger_entry = to_contract_ledger_entry;
-        // from_contract_ledger_entries ä¸ºç©º
+        // from_contract_ledger_entries Îª¿Õ
         pretty_trx.from_contract_ledger_entries = from_contract_ledger_entries;
     }
     else if (contract_op_type == cdcchain::consensus::OperationTypeEnum::contract_upgrade_op_type)
@@ -2951,17 +2951,17 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
                 to_contract_ledger_entry.from_account_name = account_entry->name;
         }
 
-        //åˆçº¦å‡çº§è€…çš„èŠ±è´¹
+        //ºÏÔ¼Éı¼¶ÕßµÄ»¨·Ñ
         ShareType all_cost = 0;
-        //åˆçº¦çš„æ‰€æœ‰çš„å‡ºè´¦é‡‘é¢
+        //ºÏÔ¼µÄËùÓĞµÄ³öÕË½ğ¶î
         ShareType withdraw_from_contract = 0;
-        //ä»åˆçº¦è½¬è´¦åˆ°æ™®é€šè´¦æˆ·ä¸­çš„é‡‘é¢
+        //´ÓºÏÔ¼×ªÕËµ½ÆÕÍ¨ÕË»§ÖĞµÄ½ğ¶î
         ShareType deposit_to_account = 0;
         bool upgrade_success = false;
 
         for (const auto& op : result_trx.operations)
         {
-            // åˆçº¦æˆåŠŸå‡çº§
+            // ºÏÔ¼³É¹¦Éı¼¶
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(on_upgrade_op_type))
                 upgrade_success = true;
 
@@ -2972,20 +2972,20 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
                     all_cost = all_cost + balance.second;
             }
 
-            // åˆçº¦å‡ºè´¦(å«ä¿è¯é‡‘)  
+            // ºÏÔ¼³öÕË(º¬±£Ö¤½ğ) 
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(withdraw_contract_op_type))
             {
                 WithdrawContractOperation withdraw_contract_op = op.as<WithdrawContractOperation>();
                 withdraw_from_contract = withdraw_from_contract + withdraw_contract_op.amount;
             }
 
-            // ç”¨æˆ·å…¥è´¦
+            // ÓÃ»§ÈëÕË
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(deposit_op_type))
             {
                 DepositOperation deposit_op = op.as<DepositOperation>();
                 deposit_to_account = deposit_to_account + deposit_op.amount;
 
-                // å‘ç”¨æˆ·è½¬è´¦ç»“æœäº¤æ˜“
+                // ÏòÓÃ»§×ªÕË½á¹û½»Ò×
                 PrettyContractLedgerEntry from_contract_ledger_entry;
                 from_contract_ledger_entry.from_account = contract_id.AddressToString(AddressType::contract_address);
                 from_contract_ledger_entry.from_account_name = to_contract_ledger_entry.to_account_name;
@@ -3009,7 +3009,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
             //to_contract_ledger_entry.memo = "upgrade contract success";
             pretty_trx.is_completed = true;
 
-            // ä¿è¯é‡‘å‡ºè´¦ç»“æœäº¤æ˜“
+            // ±£Ö¤½ğ³öÕË½á¹û½»Ò×
             ShareType withdraw_margin = withdraw_from_contract - deposit_to_account;
             PrettyContractLedgerEntry from_contract_ledger_entry;
             from_contract_ledger_entry.from_account = contract_id.AddressToString(AddressType::contract_address);
@@ -3059,18 +3059,18 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
                 to_contract_ledger_entry.from_account_name = account_entry->name;
         }
 
-        //åˆçº¦é”€æ¯è€…çš„èŠ±è´¹
+        //ºÏÔ¼Ïú»ÙÕßµÄ»¨·Ñ
         ShareType all_cost = 0;
         bool destroy_success = false;
 
         for (const auto& op : result_trx.operations)
         {
-            // åˆçº¦æˆåŠŸé”€æ¯
+            // ºÏÔ¼³É¹¦Ïú»Ù
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(on_destroy_op_type))
             {
                 destroy_success = true;
 
-                // åˆçº¦è´¦æˆ·ä¸­on_destroyæ²¡æœ‰é€€å®Œçš„ä½™é¢é€€è¿˜ç»™åˆçº¦æ‰€æœ‰è€…  
+                // ºÏÔ¼ÕË»§ÖĞon_destroyÃ»ÓĞÍËÍêµÄÓà¶îÍË»¹¸øºÏÔ¼ËùÓĞÕß  
                 OnDestroyOperation on_destroy_op = op.as<OnDestroyOperation>();
 
                 if (on_destroy_op.amount.amount > 0)
@@ -3099,12 +3099,12 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
                     all_cost = all_cost + balance.second;
             }
 
-            // ç”¨æˆ·å…¥è´¦(å«é€€è¿˜ä¿è¯é‡‘)
+            // ÓÃ»§ÈëÕË(º¬ÍË»¹±£Ö¤½ğ)
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(deposit_op_type))
             {
                 DepositOperation deposit_op = op.as<DepositOperation>();
 
-                // å‘ç”¨æˆ·è½¬è´¦ç»“æœäº¤æ˜“
+                // ÏòÓÃ»§×ªÕË½á¹û½»Ò×
                 PrettyContractLedgerEntry from_contract_ledger_entry;
                 from_contract_ledger_entry.from_account = contract_id.AddressToString(AddressType::contract_address);
                 from_contract_ledger_entry.from_account_name = to_contract_ledger_entry.to_account_name;
@@ -3148,7 +3148,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
         Address contract_caller = cdcchain::consensus::Address(contract_call_op.caller);
         ContractIdType contract_id = contract_call_op.contract;
 
-        //å½“äº¤æ˜“ä¸ºè°ƒç”¨åˆçº¦äº¤æ˜“æ—¶ï¼Œè®°å½•ä¸‹è°ƒç”¨åˆçº¦çš„æ–¹æ³•ä¸è°ƒç”¨åˆçº¦ä¼ å…¥çš„å‚æ•°
+        //µ±½»Ò×Îªµ÷ÓÃºÏÔ¼½»Ò×Ê±£¬¼ÇÂ¼ÏÂµ÷ÓÃºÏÔ¼µÄ·½·¨Óëµ÷ÓÃºÏÔ¼´«ÈëµÄ²ÎÊı
         pretty_trx.reserved.clear();
         pretty_trx.reserved.push_back(contract_call_op.method);
         pretty_trx.reserved.push_back(contract_call_op.args);
@@ -3167,13 +3167,13 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
         if (contract_entry.valid() && (contract_entry->level == ContractLevel::forever))
             to_contract_ledger_entry.to_account_name = contract_entry->contract_name;
 
-        //åˆçº¦è°ƒç”¨è€…çš„èŠ±è´¹
+        //ºÏÔ¼µ÷ÓÃÕßµÄ»¨·Ñ
         ShareType all_cost = 0;
         bool call_success = false;
 
         for (const auto& op : result_trx.operations)
         {
-            // åˆçº¦æˆåŠŸè°ƒç”¨
+            // ºÏÔ¼³É¹¦µ÷ÓÃ
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(on_call_success_op_type))
                 call_success = true;
 
@@ -3188,7 +3188,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
             {
                 DepositOperation deposit_op = op.as<DepositOperation>();
 
-                // å‘ç”¨æˆ·è½¬è´¦ç»“æœäº¤æ˜“
+                // ÏòÓÃ»§×ªÕË½á¹û½»Ò×
                 PrettyContractLedgerEntry from_contract_ledger_entry;
                 from_contract_ledger_entry.from_account = contract_id.AddressToString(AddressType::contract_address);
                 from_contract_ledger_entry.from_account_name = to_contract_ledger_entry.to_account_name;
@@ -3249,13 +3249,13 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
        
         ShareType transfer_amount = transfer_contract_op.transfer_amount.amount;
 
-        //åˆçº¦è½¬è´¦è€…çš„èŠ±è´¹
+        //ºÏÔ¼×ªÕËÕßµÄ»¨·Ñ
         ShareType all_cost = 0;
         bool transfer_success = false;
 
         for (const auto& op : result_trx.operations)
         {
-            // å‘åˆçº¦æˆåŠŸå……å€¼Öµ
+            // ÏòºÏÔ¼³É¹¦³äÖµ
             if (op.type == fc::enum_type<uint8_t, cdcchain::consensus::OperationTypeEnum>(deposit_contract_op_type))
                 transfer_success = true;
 
@@ -3270,7 +3270,7 @@ PrettyContractTransaction		Wallet::to_pretty_contract_trx(const cdcchain::consen
             {
                 DepositOperation deposit_op = op.as<DepositOperation>();
 
-                // å‘ç”¨æˆ·è½¬è´¦ç»“æœäº¤æ˜“
+                // ÏòÓÃ»§×ªÕË½á¹û½»Ò×
                 PrettyContractLedgerEntry from_contract_ledger_entry;
                 from_contract_ledger_entry.from_account = contract_id.AddressToString(AddressType::contract_address);
                 from_contract_ledger_entry.from_account_name = to_contract_ledger_entry.to_account_name;

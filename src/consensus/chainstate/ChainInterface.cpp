@@ -555,7 +555,7 @@ namespace cdcchain {
             //length += code.byte_code.size();
             //return Asset(length, 0);
 
-            return Asset(code.byte_code.size(), 0);
+            return Asset(ShareType(code.byte_code.size()) * 1000, 0);
         }
 
         // default contract margin
