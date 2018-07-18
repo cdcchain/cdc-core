@@ -98,8 +98,8 @@ namespace cdcchain {
 
                 lua_set_compile_error(L, msg);
 
-                //Èç¹ûÉÏ´ÎµÄexception codeÎªCDCCORE_API_LVM_LIMIT_OVER_ERROR, ²»ÄÜ±»ÆäËûÒì³£¸²¸Ç
-                //Ö»ÓĞµ÷ÓÃclearÇåÀíºó£¬²ÅÄÜ¼ÌĞø¼ÇÂ¼Òì³£
+                //å¦‚æœä¸Šæ¬¡çš„exception codeä¸ºCDCCORE_API_LVM_LIMIT_OVER_ERROR, ä¸èƒ½è¢«å…¶ä»–å¼‚å¸¸è¦†ç›–
+                //åªæœ‰è°ƒç”¨clearæ¸…ç†åï¼Œæ‰èƒ½ç»§ç»­è®°å½•å¼‚å¸¸
                 int last_code = uvm::lua::lib::get_lua_state_value(L, "exception_code").int_value;
                 if (last_code == UVM_API_LVM_LIMIT_OVER_ERROR
                     && code != UVM_API_LVM_LIMIT_OVER_ERROR)
@@ -533,7 +533,7 @@ namespace cdcchain {
 					return;
 				}
 				object_pools = (std::map<UvmOutsideObjectTypes, std::shared_ptr<std::map<intptr_t, intptr_t>>> *) node.value.pointer_value;
-				// ¶ÔÓÚobject_poolsÖĞ²»Í¬ÀàĞÍµÄ¶ÔÏó£¬·Ö±ğÊÍ·Å
+				// å¯¹äºobject_poolsä¸­ä¸åŒç±»å‹çš„å¯¹è±¡ï¼Œåˆ†åˆ«é‡Šæ”¾
 				for (const auto &p : *object_pools)
 				{
 					auto type = p.first;
@@ -836,9 +836,9 @@ namespace cdcchain {
                     return 0;
                 }
             }
-            //»ñÈ¡Ö¸¶¨¿éÓëÖ®Ç°50¿éµÄpre_secret hash³öµÄ½á¹û£¬¸ÃÖµÔÚÖ¸¶¨¿é±»²ú³öµÄÉÏÒ»ÂÖ³ö¿éÊ±¾ÍÒÑ¾­È·¶¨£¬¶øÎŞÈË¿ÉÖª£¬ÎŞ·¨²Ù¿Ø
-            //Èç¹ûÏ£ÍûÊ¹ÓÃ¸ÃÖµ×÷ÎªËæ»úÖµ£¬ÒÔËæ»úÖµ×÷ÎªÆäËûÊı¾İµÄÑ¡È¡ÒÀ¾İÊ±£¬ĞèÒªÔÚÄ¿±ê¿é±»²ú³öÇ°È·¶¨Òª±»É¸Ñ¡µÄÊı¾İ
-            //ÈçÍ¶×¢²ÊÆ±£¬Ö»ÔÊĞíÔÚÄ¿±ê¿é±»²ú³öÇ°Í¶×¢
+            //è·å–æŒ‡å®šå—ä¸ä¹‹å‰50å—çš„pre_secret hashå‡ºçš„ç»“æœï¼Œè¯¥å€¼åœ¨æŒ‡å®šå—è¢«äº§å‡ºçš„ä¸Šä¸€è½®å‡ºå—æ—¶å°±å·²ç»ç¡®å®šï¼Œè€Œæ— äººå¯çŸ¥ï¼Œæ— æ³•æ“æ§
+            //å¦‚æœå¸Œæœ›ä½¿ç”¨è¯¥å€¼ä½œä¸ºéšæœºå€¼ï¼Œä»¥éšæœºå€¼ä½œä¸ºå…¶ä»–æ•°æ®çš„é€‰å–ä¾æ®æ—¶ï¼Œéœ€è¦åœ¨ç›®æ ‡å—è¢«äº§å‡ºå‰ç¡®å®šè¦è¢«ç­›é€‰çš„æ•°æ®
+            //å¦‚æŠ•æ³¨å½©ç¥¨ï¼Œåªå…è®¸åœ¨ç›®æ ‡å—è¢«äº§å‡ºå‰æŠ•æ³¨
             int32_t UvmChainApi::get_waited(lua_State *L, uint32_t num)
             {
 				uvm::lua::lib::increment_lvm_instructions_executed_count(L, CHAIN_GLUA_API_EACH_INSTRUCTIONS_COUNT - 1);
@@ -864,7 +864,7 @@ namespace cdcchain {
                         _header = cur_state->get_block_header(id);
                         _hash = _hash.hash(_header.previous_secret);
                     }
-                    return _hash._hash[3] % (1 << 31 - 1);
+                    return _hash._hash[3] % ((1 << 31) - 1);
                 }
                 catch (const fc::exception& e)
                 {
