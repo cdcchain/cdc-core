@@ -352,7 +352,8 @@ namespace cdcchain {
                     //out << std::setw(35) << pretty_shorten(acct.name, 34);
                 }
 
-                out << std::setw(64) << string(acct.active_key());
+                //out << std::setw(64) << string(acct.active_key());
+                out << std::setw(64) << string(acct.owner_key());
 
                 if (acct.id == 0)
                 {
@@ -402,7 +403,8 @@ namespace cdcchain {
                 }
 
 
-                out << std::setw(64) << string(acct.active_key());
+                //out << std::setw(64) << string(acct.active_key());
+                out << std::setw(64) << string(acct.owner_key());
 
                 if (acct.id == 0)
                     out << std::setw(22) << "NO";
@@ -592,7 +594,8 @@ namespace cdcchain {
                     out << std::setw(35) << pretty_shorten(acct.name, 34);
                 }
 
-                out << std::setw(64) << string(acct.active_key());
+                //out << std::setw(64) << string(acct.active_key());
+                out << std::setw(64) << string(acct.owner_key());
                 out << std::setw(22) << pretty_timestamp(acct.registration_date);
 
                 if (acct.is_delegate())
